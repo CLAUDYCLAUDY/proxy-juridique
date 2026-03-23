@@ -8,8 +8,8 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; }
-#clamo-root { display: flex; flex-direction: column; align-items: center; padding: 0 24px; }
+body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; width: 100%; overflow-x: hidden; }
+#clamo-root { display: flex; flex-direction: column; align-items: center; padding: 0 24px; width: 100%; max-width: 100%; }
 #bloc1 { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0 50px; text-align: center; gap: 16px; width: 100%; }
 .clamo-logo-wrapper { border: 1.5px solid #1a4a2a; border-radius: 14px; padding: 18px 40px; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: #fff; }
 .clamo-title { font-size: 72px; font-weight: 700; letter-spacing: 10px; color: #111; }
@@ -67,7 +67,8 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
 .modal-box p { font-size: 13px; line-height: 1.8; color: #888; }
 .modal-close { background: transparent; border: 1px solid #e0e0e0; color: #888; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 11px; margin-top: 24px; letter-spacing: 1px; text-transform: uppercase; }
 #file-input { display: none; }
-@media (max-width: 600px) {
+@media (max-width: 600px) #bloc2, #bloc3 { max-width: 100%; width: 100%; }
+.sep { max-width: 100%; }{
   #clamo-root { padding: 0 16px; }
   #bloc1 { padding: 40px 0 32px; gap: 12px; }
   .clamo-logo-wrapper { padding: 14px 20px; }
