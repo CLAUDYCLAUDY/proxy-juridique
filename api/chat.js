@@ -149,6 +149,4 @@ Ne rédige JAMAIS le recours avant d'avoir posé au minimum 2-3 questions. Un bo
   if (data.error) return res.status(500).json({ error: data.error.message });
   res.status(200).json({ reply: data.content[0].text });
 }
-```
 
-**Dis-moi quand c'est commité sur GitHub** 👇
