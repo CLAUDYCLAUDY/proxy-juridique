@@ -1,14 +1,3 @@
-Parfait, je comprends exactement ! CLAMO doit être comme un **avocat humain** qui :
-
-- Parle simplement, sans jargon
-- Guide pas à pas sans perdre l'utilisateur
-- Pose **une seule question à la fois**
-- Rassure et explique pourquoi il demande chaque document
-- Ne liste pas 10 pièces d'un coup — il demande au fur et à mesure
-
-Voici le nouveau `api/chat.js` — remplace tout sur GitHub :
-
-```javascript
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -149,4 +138,3 @@ Ne rédige JAMAIS le recours avant d'avoir posé au minimum 2-3 questions. Un bo
   if (data.error) return res.status(500).json({ error: data.error.message });
   res.status(200).json({ reply: data.content[0].text });
 }
-
