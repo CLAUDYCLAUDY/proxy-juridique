@@ -5,25 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLAMO — La défense pour tous</title>
 <meta name="description" content="CLAMO analyse, structure et rédige pour vous aider à faire valoir vos droits. Plateforme d'assistance juridique de haute exigence.">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#1a4a2a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CLAMO">
+<link rel="apple-touch-icon" href="/icon-192.png">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
 body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, sans-serif; min-height: 100vh; width: 100%; overflow-x: hidden; }
-#clamo-root { display: flex; flex-direction: column; align-items: center; padding: 0 24px; width: 100%; max-width: 100%; }
-#bloc1 { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 0 50px; text-align: center; gap: 16px; width: 100%; }
-.clamo-logo-wrapper { border: 1.5px solid #1a4a2a; border-radius: 14px; padding: 18px 40px; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: #fff; }
-.clamo-title { font-size: 72px; font-weight: 700; letter-spacing: 10px; color: #111; }
-.clamo-logo-sub { font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase; color: #2d7a42; font-weight: 400; }
-.clamo-tagline { font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: #999; }
-.clamo-headline { font-size: 20px; font-weight: 400; color: #333; line-height: 1.6; max-width: 520px; }
-.sep { width: 100%; max-width: 600px; height: 1px; background: #e0e0e0; }
-#bloc2 { display: flex; flex-direction: column; align-items: center; padding: 50px 0; width: 100%; max-width: 600px; gap: 0; }
-.bloc2-intro { width: 100%; background: #fff; border: 1px solid #e0e0e0; border-bottom: none; border-radius: 14px 14px 0 0; padding: 18px 20px; }
-.bloc2-intro .intro-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 10px; line-height: 1.5; }
+#clamo-root { display: flex; flex-direction: column; align-items: center; padding: 0 16px; width: 100%; }
+#bloc1 { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 0 40px; text-align: center; gap: 14px; width: 100%; }
+.clamo-logo-wrapper { border: 1.5px solid #1a4a2a; border-radius: 14px; padding: 16px 32px; display: inline-flex; flex-direction: column; align-items: center; gap: 6px; background: #fff; }
+.clamo-title { font-size: 64px; font-weight: 700; letter-spacing: 8px; color: #111; }
+.clamo-logo-sub { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: #2d7a42; font-weight: 400; }
+.clamo-tagline { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #999; }
+.clamo-headline { font-size: 18px; font-weight: 400; color: #333; line-height: 1.6; max-width: 480px; }
+.sep { width: 100%; max-width: 640px; height: 1px; background: #e0e0e0; }
+#bloc2 { display: flex; flex-direction: column; align-items: center; padding: 40px 0; width: 100%; max-width: 640px; gap: 0; }
+.bloc2-intro { width: 100%; background: #fff; border: 1px solid #e0e0e0; border-bottom: none; border-radius: 14px 14px 0 0; padding: 16px 18px; }
+.bloc2-intro .intro-title { font-size: 14px; font-weight: 600; color: #111; margin-bottom: 8px; line-height: 1.5; }
 .bloc2-intro .intro-body { font-size: 12px; line-height: 1.9; color: #888; }
 .bloc2-intro .intro-body strong { color: #555; font-weight: 500; }
-.bloc2-intro .intro-cta { font-size: 13px; color: #333; font-weight: 500; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
-.clamo-chat-messages { width: 100%; background: #fafafa; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; min-height: 60px; max-height: 280px; overflow-y: auto; padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; }
+.bloc2-intro .intro-cta { font-size: 12px; color: #333; font-weight: 500; margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+.clamo-chat-messages { width: 100%; background: #fafafa; border-left: 1px solid #e0e0e0; border-right: 1px solid #e0e0e0; min-height: 60px; max-height: 260px; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
 .clamo-chat-messages::-webkit-scrollbar { width: 2px; }
 .clamo-chat-messages::-webkit-scrollbar-thumb { background: #ddd; }
 .clamo-msg-bot { background: #fff; border: 1px solid #e8e8e8; color: #444; padding: 10px 14px; border-radius: 10px 10px 10px 3px; font-size: 13px; line-height: 1.7; max-width: 94%; }
@@ -34,60 +40,40 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
 .clamo-msg-user { background: #111; color: #fff; padding: 10px 14px; border-radius: 10px 10px 3px 10px; font-size: 13px; max-width: 80%; align-self: flex-end; }
 .clamo-msg-file { background: #fff; border: 1px solid #e0e0e0; color: #999; padding: 6px 12px; border-radius: 8px; font-size: 12px; align-self: flex-end; }
 .clamo-chat-bar { width: 100%; display: flex; background: #fff; border: 1px solid #e0e0e0; border-top: 1px solid #eee; border-radius: 0 0 14px 14px; padding: 10px 12px; gap: 8px; align-items: center; flex-wrap: wrap; }
-.clamo-chat-bar input { flex: 1; min-width: 100px; background: #f5f5f3; border: 1px solid #e0e0e0; border-radius: 20px; color: #111; font-size: 13px; padding: 10px 16px; outline: none; }
+.clamo-chat-bar input { flex: 1; min-width: 100px; background: #f5f5f3; border: 1px solid #e0e0e0; border-radius: 20px; color: #111; font-size: 13px; padding: 10px 14px; outline: none; }
 .clamo-chat-bar input::placeholder { color: #bbb; font-style: italic; }
-.clamo-btn-add { background: #f5f5f3; border: 1px solid #ddd; color: #666; height: 38px; border-radius: 20px; cursor: pointer; font-size: 12px; padding: 0 14px; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
-.clamo-btn-add:hover { border-color: #999; color: #111; }
-.clamo-btn-send { background: #111; border: none; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 20px; border-radius: 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
-#bloc3 { display: flex; flex-direction: column; align-items: center; padding: 50px 0 60px; width: 100%; max-width: 600px; gap: 16px; }
+.clamo-btn-add { background: #f5f5f3; border: 1px solid #ddd; color: #666; height: 38px; border-radius: 20px; cursor: pointer; font-size: 11px; padding: 0 12px; display: flex; align-items: center; gap: 5px; white-space: nowrap; flex-shrink: 0; }
+.clamo-btn-add:active { background: #eee; }
+.clamo-btn-send { background: #111; border: none; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 18px; border-radius: 20px; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
+#bloc3 { display: flex; flex-direction: column; align-items: center; padding: 40px 0 50px; width: 100%; max-width: 640px; gap: 14px; }
 .clamo-section-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: #bbb; text-align: center; }
-.clamo-icons { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; width: 100%; }
-.clamo-icon-item { display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; padding: 12px 4px; border: 1px solid #e8e8e8; border-radius: 10px; background: #fff; transition: all 0.2s; }
-.clamo-icon-item:hover { border-color: #999; background: #f5f5f3; }
-.clamo-icon-item svg { width: 26px; height: 26px; stroke: #555; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
-.clamo-icon-item:hover svg { stroke: #111; }
-.clamo-icon-item span { font-size: 9px; text-align: center; color: #888; line-height: 1.2; }
-.clamo-icon-item:hover span { color: #111; }
-.clamo-footer { display: flex; gap: 20px; align-items: center; padding-top: 16px; border-top: 1px solid #e0e0e0; width: 100%; justify-content: center; }
-.clamo-footer a { font-size: 11px; color: #aaa; text-decoration: none; cursor: pointer; transition: color 0.2s; }
-.clamo-footer a:hover { color: #333; }
+.clamo-icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
+.clamo-icon-item { display: flex; flex-direction: column; align-items: center; gap: 7px; cursor: pointer; padding: 14px 6px; border: 1px solid #e8e8e8; border-radius: 12px; background: #fff; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+.clamo-icon-item:active { background: #f0f0f0; border-color: #999; }
+.clamo-icon-item svg { width: 28px; height: 28px; stroke: #555; fill: none; stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.clamo-icon-item span { font-size: 10px; text-align: center; color: #777; line-height: 1.3; font-weight: 400; }
+.clamo-footer { display: flex; gap: 16px; align-items: center; padding-top: 16px; border-top: 1px solid #e0e0e0; width: 100%; justify-content: center; }
+.clamo-footer a { font-size: 11px; color: #aaa; text-decoration: none; cursor: pointer; }
 .clamo-footer span { font-size: 11px; color: #ccc; }
-#rgpd-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.97); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 24px; }
-#rgpd-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 14px; padding: 30px; max-width: 440px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+#rgpd-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.97); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+#rgpd-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 14px; padding: 24px; max-width: 440px; width: 100%; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
 #rgpd-box h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: #111; }
 #rgpd-box p { font-size: 12px; line-height: 1.8; color: #888; margin-bottom: 14px; }
 #rgpd-box .rgpd-links { font-size: 11px; color: #bbb; margin-bottom: 20px; line-height: 2; border-top: 1px solid #eee; padding-top: 12px; }
 #rgpd-box .rgpd-links a { color: #888; text-decoration: underline; cursor: pointer; }
-#rgpd-btn { width: 100%; background: #111; color: #fff; border: none; border-radius: 10px; padding: 13px; font-size: 14px; font-weight: 600; cursor: pointer; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(245,245,243,0.98); z-index: 9998; display: none; align-items: flex-start; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+#rgpd-btn { width: 100%; background: #111; color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(245,245,243,0.98); z-index: 9998; display: none; align-items: flex-start; justify-content: center; padding: 24px; overflow-y: auto; }
 .modal-overlay.open { display: flex; }
-.modal-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 14px; padding: 32px; max-width: 560px; width: 100%; margin: auto; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+.modal-box { background: #fff; border: 1px solid #e0e0e0; border-radius: 14px; padding: 28px 24px; max-width: 560px; width: 100%; margin: auto; box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
 .modal-box h2 { font-size: 17px; font-weight: 600; margin-bottom: 20px; color: #111; }
 .modal-box h3 { font-size: 11px; font-weight: 600; color: #bbb; margin: 16px 0 5px; text-transform: uppercase; letter-spacing: 1px; }
 .modal-box p { font-size: 13px; line-height: 1.8; color: #888; }
-.modal-close { background: transparent; border: 1px solid #e0e0e0; color: #888; padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 11px; margin-top: 24px; letter-spacing: 1px; text-transform: uppercase; }
+.modal-close { background: transparent; border: 1px solid #e0e0e0; color: #888; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-top: 24px; letter-spacing: 1px; text-transform: uppercase; width: 100%; }
 #file-input { display: none; }
-@media (max-width: 600px) #bloc2, #bloc3 { max-width: 100%; width: 100%; }
-.sep { max-width: 100%; }{
-  #clamo-root { padding: 0 16px; }
-  #bloc1 { padding: 40px 0 32px; gap: 12px; }
-  .clamo-logo-wrapper { padding: 14px 20px; }
-  .clamo-title { font-size: 44px; letter-spacing: 6px; }
-  .clamo-logo-sub { font-size: 9px; }
-  .clamo-headline { font-size: 16px; }
-  #bloc2 { padding: 32px 0; }
-  #bloc3 { padding: 32px 0 48px; }
-  .clamo-icons { grid-template-columns: repeat(3, 1fr); }
-  .clamo-icon-item { padding: 12px 6px; }
-  .clamo-icon-item svg { width: 28px; height: 28px; }
-  .clamo-icon-item span { font-size: 10px; }
-  .clamo-btn-add { font-size: 11px; }
-  .modal-box { padding: 24px 20px; }
-  #rgpd-box { padding: 24px 20px; }
-}
 </style>
 </head>
 <body>
+
 <div id="rgpd-overlay">
   <div id="rgpd-box">
     <h2>CLAMO — Avant de commencer</h2>
@@ -96,6 +82,7 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
     <button id="rgpd-btn" onclick="acceptRgpd()">Accéder à CLAMO →</button>
   </div>
 </div>
+
 <div class="modal-overlay" id="modal-cgu">
   <div class="modal-box">
     <h2>Mentions légales</h2>
@@ -106,6 +93,7 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
     <button class="modal-close" onclick="closeModal('cgu')">Fermer</button>
   </div>
 </div>
+
 <div class="modal-overlay" id="modal-privacy">
   <div class="modal-box">
     <h2>Politique de confidentialité</h2>
@@ -117,6 +105,7 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
     <button class="modal-close" onclick="closeModal('privacy')">Fermer</button>
   </div>
 </div>
+
 <div id="clamo-root">
   <div id="bloc1">
     <div class="clamo-logo-wrapper">
@@ -124,9 +113,11 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
       <div class="clamo-logo-sub">La plateforme qui vous aide à faire valoir vos droits</div>
     </div>
     <div class="clamo-tagline">La défense pour tous</div>
-    <div class="clamo-headline">Votre premier droit est de mériter<br>une défense sans compromis.</div>
+    <div class="clamo-headline">Votre premier droit est de mériter une défense sans compromis.</div>
   </div>
+
   <div class="sep"></div>
+
   <div id="bloc2">
     <div class="bloc2-intro">
       <div class="intro-title">CLAMO analyse, structure et rédige — pour que vous ne soyez plus seul face à la complexité du droit.</div>
@@ -137,11 +128,13 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
     <div class="clamo-chat-bar">
       <button class="clamo-btn-add" onclick="document.getElementById('file-input').click()">📎 Joindre vos docs</button>
       <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFile(event)" multiple />
-      <input type="text" id="main-input" placeholder="Décrivez votre situation avec précision..." />
+      <input type="text" id="main-input" placeholder="Décrivez votre situation..." />
       <button class="clamo-btn-send" onclick="sendMessage()">Envoyer</button>
     </div>
   </div>
+
   <div class="sep"></div>
+
   <div id="bloc3">
     <div class="clamo-section-title">Choisissez votre situation</div>
     <div class="clamo-icons">
@@ -167,6 +160,7 @@ body { background: #f5f5f3; color: #111; font-family: 'Helvetica Neue', Arial, s
     </div>
   </div>
 </div>
+
 <script>
 const PROXY='https://proxy-juridique.vercel.app/api/chat';
 let history=[];
@@ -194,6 +188,7 @@ function handleFile(event){const files=event.target.files;for(let i=0;i<files.le
 async function sendMessage(){const input=document.getElementById('main-input');const text=input.value.trim();if(!text)return;addMsg(text,'user',false);input.value='';const thinking=addMsg('⏳ Analyse en cours...','bot',false);try{const r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history})});const d=await r.json();thinking.remove();if(d.reply){addMsg(parseMarkdown(d.reply),'bot',true);history.push({role:'user',content:text},{role:'assistant',content:d.reply});if(history.length>20)history=history.slice(-20);}}catch(e){thinking.remove();addMsg('Erreur, veuillez réessayer.','bot',false);}}
 function selectDomain(domain){const msg=DOMAIN_MESSAGES[domain]||domain;document.getElementById('main-input').value=msg;document.getElementById('main-input').focus();document.getElementById('bloc2').scrollIntoView({behavior:'smooth'});}
 document.getElementById('main-input').addEventListener('keypress',e=>{if(e.key==='Enter')sendMessage();});
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 </script>
 </body>
 </html>
