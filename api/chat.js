@@ -41,13 +41,11 @@ IMPORTANT : Tu n'es pas un cabinet d'avocats. Tes analyses constituent une assis
 
 Réponds toujours en français. Sois précis, structuré, et cite les articles de loi applicables.`;
 
-    // Construire le contenu du message utilisateur
     const userContent = [];
 
-    // Ajouter les fichiers si présents
     if (files && files.length > 0) {
       for (const file of files) {
-        if (file.type === "application/pdf" || file.mediaType === "application/pdf") {
+        if (file.mediaType === "application/pdf") {
           userContent.push({
             type: "document",
             source: {
@@ -71,7 +69,6 @@ Réponds toujours en français. Sois précis, structuré, et cite les articles d
             },
           });
         } else {
-          // Pour les fichiers texte (docx, txt, etc.) — contenu extrait côté client
           userContent.push({
             type: "text",
             text: `[Contenu du fichier "${file.name}" :\n${file.textContent}]`,
@@ -80,13 +77,11 @@ Réponds toujours en français. Sois précis, structuré, et cite les articles d
       }
     }
 
-    // Ajouter le message texte
     userContent.push({
       type: "text",
-      text: message,
+      text: message || "Analysez les documents joints.",
     });
 
-    // Construire l'historique
     const messages = [];
     if (history && history.length > 0) {
       for (const msg of history) {
@@ -102,7 +97,7 @@ Réponds toujours en français. Sois précis, structuré, et cite les articles d
     });
 
     const response = await client.messages.create({
-      model: "claude-opus-4-6",
+      model: "claude-sonnet-4-5",
       max_tokens: 4096,
       system: systemPrompt,
       messages: messages,
