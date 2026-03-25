@@ -45,11 +45,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .main-input-box { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 20px; color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; resize: none; outline: none; min-height: 58px; max-height: 200px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s, box-shadow 0.2s; display: block; }
 .main-input-box:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); background: var(--bg); }
 .main-input-box::placeholder { color: var(--text-light); }
-.input-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.input-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
 .attach-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--text-muted); height: 38px; border-radius: 8px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; padding: 0 14px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
 .attach-btn:hover { border-color: var(--green); color: var(--green); }
 .send-btn-main { background: var(--green); border: none; color: #fff; height: 38px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; padding: 0 20px; margin-left: auto; transition: background 0.2s; }
 .send-btn-main:hover { background: var(--green-mid); }
+.files-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; }
+.file-preview-tag { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px; }
+.file-preview-tag button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 14px; padding: 0; line-height: 1; }
 
 .chips-section { width: 100%; max-width: 660px; display: flex; flex-direction: column; gap: 10px; }
 .chips-label { font-size: 11px; font-weight: 500; color: var(--text-light); letter-spacing: 1.5px; text-transform: uppercase; }
@@ -67,7 +70,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 
 .clamo-about { width: 100%; max-width: 660px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px; }
 .clamo-about-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.clamo-about-badge { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.8px; text-transform: uppercase; text-align: center; }
+.clamo-about-badge { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.8px; text-transform: uppercase; }
 .clamo-about-title { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.45; letter-spacing: -0.2px; text-align: center; }
 .clamo-about-body { display: flex; flex-direction: column; gap: 12px; }
 .clamo-about-body p { font-size: 13px; color: var(--text-muted); line-height: 1.85; }
@@ -76,10 +79,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .source-tag { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 7px; justify-content: center; text-align: center; }
 .source-tag::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
 
-/* SIGNATURE */
 .clamo-signature { text-align: center; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; padding: 8px 24px 80px; width: 100%; max-width: 660px; }
 
-/* PAGE CHAT */
 #chat-page { display: none; flex-direction: column; height: 100vh; width: 100%; max-width: 760px; margin: 0 auto; }
 .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
 .chat-header-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
@@ -92,14 +93,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .chat-messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; }
 .chat-messages::-webkit-scrollbar { width: 3px; }
 .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.msg-bot { background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 14px 18px; border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.8; max-width: 85%; font-weight: 400; }
+.msg-bot { background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 14px 18px; border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.8; max-width: 85%; }
 .msg-bot strong { color: var(--text); font-weight: 600; }
 .msg-bot h3 { font-size: 14px; font-weight: 600; margin: 10px 0 4px; }
 .msg-bot ul { list-style: none; margin: 6px 0; padding: 0; }
 .msg-bot li { padding: 2px 0; color: var(--text-muted); font-size: 13px; }
 .msg-bot li::before { content: '›'; color: var(--green); margin-right: 8px; font-weight: 600; }
 .msg-user { background: var(--green); color: #fff; padding: 12px 18px; border-radius: 16px 4px 16px 16px; font-size: 14px; max-width: 75%; align-self: flex-end; line-height: 1.5; word-break: break-word; }
-.msg-file { background: var(--bg2); border: 1px solid var(--border); color: var(--text-muted); padding: 8px 14px; border-radius: 8px; font-size: 12px; align-self: flex-end; }
+.msg-file { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); color: var(--green); padding: 8px 14px; border-radius: 8px; font-size: 12px; align-self: flex-end; font-weight: 500; }
 .msg-typing { display: flex; gap: 5px; align-items: center; padding: 14px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; width: fit-content; }
 .msg-typing span { width: 7px; height: 7px; background: var(--text-light); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
 .msg-typing span:nth-child(2){animation-delay:0.2s;}
@@ -107,6 +108,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 @keyframes blink{0%,60%,100%{opacity:0.3;transform:scale(0.8);}30%{opacity:1;transform:scale(1.1);}}
 
 .chat-input-area { flex-shrink: 0; padding: 12px 20px 20px; border-top: 1px solid var(--border); background: var(--bg); }
+.chat-files-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.chat-file-tag { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px; }
+.chat-file-tag button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 14px; padding: 0; }
 .chat-textarea { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px; color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; resize: none; outline: none; min-height: 52px; max-height: 160px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s; display: block; }
 .chat-textarea:focus { border-color: var(--green); background: var(--bg); }
 .chat-textarea::placeholder { color: var(--text-light); }
@@ -142,20 +146,16 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   #home-page { padding: 28px 16px 90px; gap: 20px; justify-content: flex-start; padding-top: 40px; }
   .logo-title { font-size: 26px; }
   .logo-sub { font-size: 13px; max-width: 300px; }
-  .main-input-wrapper { max-width: 100%; }
   .main-input-box { font-size: 16px; min-height: 60px; border-radius: 16px; padding: 16px 18px; border-width: 2px; }
-  .input-actions { gap: 8px; }
   .attach-btn { font-size: 12px; height: 44px; padding: 0 14px; border-radius: 10px; }
-  .send-btn-main { height: 44px; font-size: 14px; padding: 0 22px; border-radius: 10px; flex-shrink: 0; }
+  .send-btn-main { height: 44px; font-size: 14px; padding: 0 22px; border-radius: 10px; }
   .chip { font-size: 12px; padding: 7px 13px; }
   .values-row { flex-direction: column; gap: 8px; }
   .value-card { flex-direction: row; align-items: flex-start; gap: 12px; padding: 14px; }
   .value-card-icon { flex-shrink: 0; }
   .clamo-about { padding: 20px 18px; gap: 14px; }
   .clamo-about-title { font-size: 15px; }
-  .clamo-about-body p { font-size: 13px; }
   .clamo-about-sources { grid-template-columns: repeat(2, 1fr); gap: 7px; }
-  .source-tag { font-size: 12px; padding: 9px 10px; }
   .clamo-signature { font-size: 16px; padding-bottom: 80px; }
   .chat-messages { padding: 14px 12px; }
   .msg-bot, .msg-user { max-width: 94%; font-size: 13px; }
@@ -209,9 +209,10 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 
   <div class="main-input-wrapper">
     <textarea class="main-input-box" id="home-input" placeholder="Décrivez votre situation juridique..." rows="2"></textarea>
+    <div id="home-files-preview" class="files-preview"></div>
     <div class="input-actions">
       <button class="attach-btn" onclick="document.getElementById('file-input').click()">📎 Joindre des documents</button>
-      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple onchange="handleFileHome(event)"/>
+      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileHome(event)"/>
       <button class="send-btn-main" onclick="startChat()">Envoyer</button>
     </div>
   </div>
@@ -276,7 +277,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   </div>
 
   <div class="clamo-signature">CLAMO — La défense pour tous.</div>
-
 </div>
 
 <div id="chat-page">
@@ -289,10 +289,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   </div>
   <div class="chat-messages" id="chat-messages"></div>
   <div class="chat-input-area">
+    <div id="chat-files-preview" class="chat-files-preview"></div>
     <textarea class="chat-textarea" id="chat-input" placeholder="Posez votre question ou ajoutez des détails..." rows="2"></textarea>
     <div class="chat-actions">
       <button class="chat-attach-btn" onclick="document.getElementById('file-input-chat').click()">📎 Joindre</button>
-      <input type="file" id="file-input-chat" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" multiple onchange="handleFileChat(event)"/>
+      <input type="file" id="file-input-chat" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileChat(event)"/>
       <span class="chat-hint">Shift+Entrée pour aller à la ligne</span>
       <button class="chat-send-btn" onclick="sendChatMessage()">Envoyer</button>
     </div>
@@ -310,7 +311,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 <script>
 const PROXY='https://proxy-juridique.vercel.app/api/chat';
 let history=[];
-let pendingFiles=[];
+let pendingFilesHome=[];
+let pendingFilesChat=[];
+
 const DOMAIN_MESSAGES={
   'licenciement':`Je viens d'être licencié(e).\n\nDocuments en ma possession :\n- Lettre de licenciement : oui / non\n- Contrat de travail : oui / non\n- 12 derniers bulletins de salaire : oui / non\n- Convocation entretien préalable : oui / non\n- Solde de tout compte : oui / non\n\nAncienneté : ___\nDate : ___\nMotif invoqué : ___`,
   'loyer impayé ou dépôt de garantie non rendu':`Litige locatif.\n\nSituation : dépôt non rendu / loyer impayé / autre : ___\n\nDocuments :\n- Bail : oui / non\n- États des lieux entrée ET sortie : oui / non\n- Quittances : oui / non\n- Photos : oui / non\n\nDate fin de bail : ___\nMontant : ___€`,
@@ -325,15 +328,92 @@ const DOMAIN_MESSAGES={
   'fraude bancaire ou litige avec ma banque':`Litige bancaire.\n\nSituation : fraude / frais / remboursement\nDate : ___\nMontant : ___€\n\nDocuments :\n- Relevés 6 mois : oui / non\n- Signalement banque : oui / non\n- Réponse banque : oui / non`,
   'données personnelles et RGPD':`Données personnelles.\n\nSituation : utilisation abusive / suppression ignorée / fuite\nOrganisme : ___\n\nDocuments :\n- Demande envoyée : oui / non\n- Réponse reçue : oui / non`
 };
+
+// Lit un fichier et retourne l'objet prêt pour l'API
+function readFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    const type = file.type;
+    const name = file.name;
+
+    if (type === 'application/pdf') {
+      reader.onload = (e) => {
+        const base64 = e.target.result.split(',')[1];
+        resolve({ name, type, mediaType: 'application/pdf', data: base64 });
+      };
+      reader.readAsDataURL(file);
+    } else if (type.startsWith('image/')) {
+      reader.onload = (e) => {
+        const base64 = e.target.result.split(',')[1];
+        resolve({ name, type, mediaType: type, data: base64 });
+      };
+      reader.readAsDataURL(file);
+    } else {
+      // txt, docx, doc — lecture texte brut
+      reader.onload = (e) => {
+        resolve({ name, type, textContent: e.target.result });
+      };
+      reader.readAsText(file);
+    }
+  });
+}
+
+function addFileTag(container, name, index, isHome) {
+  const tag = document.createElement('div');
+  tag.className = isHome ? 'file-preview-tag' : 'chat-file-tag';
+  tag.id = `tag-${isHome?'home':'chat'}-${index}`;
+  tag.innerHTML = `📎 ${name} <button onclick="removeFile(${index}, ${isHome})">×</button>`;
+  document.getElementById(container).appendChild(tag);
+}
+
+function removeFile(index, isHome) {
+  if (isHome) {
+    pendingFilesHome.splice(index, 1);
+    refreshFileTags('home-files-preview', pendingFilesHome, true);
+  } else {
+    pendingFilesChat.splice(index, 1);
+    refreshFileTags('chat-files-preview', pendingFilesChat, false);
+  }
+}
+
+function refreshFileTags(containerId, files, isHome) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  files.forEach((f, i) => addFileTag(containerId, f.name, i, isHome));
+}
+
+async function handleFileHome(event) {
+  const files = Array.from(event.target.files);
+  for (const file of files) {
+    const processed = await readFile(file);
+    pendingFilesHome.push(processed);
+    addFileTag('home-files-preview', file.name, pendingFilesHome.length - 1, true);
+  }
+  event.target.value = '';
+}
+
+async function handleFileChat(event) {
+  const files = Array.from(event.target.files);
+  for (const file of files) {
+    const processed = await readFile(file);
+    pendingFilesChat.push(processed);
+    addFileTag('chat-files-preview', file.name, pendingFilesChat.length - 1, false);
+  }
+  event.target.value = '';
+}
+
 function acceptRgpd(){document.getElementById('rgpd-overlay').style.display='none';try{localStorage.setItem('clamo_rgpd','1');}catch(e){}}
 try{if(localStorage.getItem('clamo_rgpd')==='1')document.getElementById('rgpd-overlay').style.display='none';}catch(e){}
 function openModal(t){document.getElementById('modal-'+t).classList.add('open');}
 function closeModal(t){document.getElementById('modal-'+t).classList.remove('open');}
+
 function goHome(){
   document.getElementById('home-page').style.display='flex';
   document.getElementById('chat-page').style.display='none';
   document.getElementById('footer').style.display='flex';
-  history=[];pendingFiles=[];
+  history=[];pendingFilesHome=[];pendingFilesChat=[];
+  document.getElementById('home-files-preview').innerHTML='';
+  document.getElementById('chat-files-preview').innerHTML='';
 }
 function showChat(){
   document.getElementById('home-page').style.display='none';
@@ -346,58 +426,63 @@ function selectChip(domain){
   autoResize(document.getElementById('home-input'));
   document.getElementById('home-input').focus();
 }
+
 async function startChat(){
   const input=document.getElementById('home-input');
   const text=input.value.trim();
-  if(!text)return;
+  if(!text && pendingFilesHome.length===0)return;
+  const files=[...pendingFilesHome];
+  pendingFilesHome=[];
+  document.getElementById('home-files-preview').innerHTML='';
   showChat();
   input.value='';
-  await processMessage(text);
+  await processMessage(text||'Veuillez analyser les documents joints.', files);
 }
+
 async function sendChatMessage(){
   const input=document.getElementById('chat-input');
   const text=input.value.trim();
-  if(!text)return;
+  if(!text && pendingFilesChat.length===0)return;
+  const files=[...pendingFilesChat];
+  pendingFilesChat=[];
+  document.getElementById('chat-files-preview').innerHTML='';
   input.value='';
   input.style.height='auto';
-  await processMessage(text);
+  await processMessage(text||'Veuillez analyser les documents joints.', files);
 }
-async function processMessage(text){
-  addMsg(text,'user',false);
+
+async function processMessage(text, files=[]){
+  // Affiche les fichiers joints
+  if(files.length>0){
+    files.forEach(f=>{
+      const box=document.createElement('div');
+      box.className='msg-file';
+      box.innerHTML='📎 '+f.name;
+      document.getElementById('chat-messages').appendChild(box);
+    });
+  }
+  // Affiche le message
+  if(text) addMsg(text,'user',false);
   scrollBottom();
   const typing=addTyping();
   scrollBottom();
+
   try{
-    const r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history})});
+    const payload={message:text, history};
+    if(files.length>0) payload.files=files;
+
+    const r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const d=await r.json();
     typing.remove();
     if(d.reply){
       const replyBox=addMsg(parseMarkdown(d.reply),'bot',true);
       setTimeout(()=>{replyBox.scrollIntoView({behavior:'smooth',block:'start'});},50);
-      history.push({role:'user',content:text},{role:'assistant',content:d.reply});
+      history.push({role:'user',content:text||'[Documents joints]'},{role:'assistant',content:d.reply});
       if(history.length>20)history=history.slice(-20);
     }
   }catch(e){typing.remove();addMsg('Erreur de connexion. Veuillez réessayer.','bot',false);}
 }
-function handleFileHome(event){
-  const files=event.target.files;
-  showChat();
-  for(let i=0;i<files.length;i++){
-    const box=document.createElement('div');box.className='msg-file';box.innerHTML='📎 '+files[i].name;
-    document.getElementById('chat-messages').appendChild(box);
-    history.push({role:'user',content:'[Document joint : '+files[i].name+']'});
-  }
-  scrollBottom();event.target.value='';
-}
-function handleFileChat(event){
-  const files=event.target.files;
-  for(let i=0;i<files.length;i++){
-    const box=document.createElement('div');box.className='msg-file';box.innerHTML='📎 '+files[i].name;
-    document.getElementById('chat-messages').appendChild(box);
-    history.push({role:'user',content:'[Document joint : '+files[i].name+']'});
-  }
-  scrollBottom();event.target.value='';
-}
+
 function parseMarkdown(t){return t.replace(/##\s(.+)/g,'<h3>$1</h3>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/^-\s(.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>').replace(/\n/g,'<br>');}
 function addMsg(text,type,isHTML){
   const box=document.createElement('div');
