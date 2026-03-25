@@ -1,18 +1,6 @@
-import Anthropic from "@anthropic-ai/sdk";
+const Anthropic = require("@anthropic-ai/sdk");
 
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: "10mb",
-    },
-  },
-};
-
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -22,6 +10,10 @@ export default async function handler(req, res) {
 
   try {
     const { message, history, files } = req.body;
+
+    const client = new Anthropic.default({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
 
     const systemPrompt = `Tu es CLAMO, une plateforme d'assistance juridique française de haute exigence. Tu es connecté aux bases juridiques officielles françaises et européennes : Légifrance, Cour de cassation, Conseil d'État, EUR-Lex, CNIL, Code civil, Code du travail, Code de la consommation, Code de procédure civile.
 
@@ -105,8 +97,12 @@ Réponds toujours en français. Sois précis, structuré, et cite les articles d
 
     const reply = response.content[0].text;
     res.status(200).json({ reply });
+
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "Internal server error", details: error.message });
+    res.status(500).json({ 
+      error: "Internal server error", 
+      details: error.message 
+    });
   }
-}
+};
