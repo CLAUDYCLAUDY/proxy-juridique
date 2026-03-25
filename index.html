@@ -4,169 +4,467 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CLAMO — La défense pour tous</title>
-<meta name="description" content="CLAMO analyse, structure et rédige pour vous aider à faire valoir vos droits. Plateforme d'assistance juridique de haute exigence.">
+<meta name="description" content="CLAMO analyse, structure et rédige pour vous aider à faire valoir vos droits.">
 <link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#0e1220">
+<meta name="theme-color" content="#f7f7f5">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="CLAMO">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --navy: #0e1220;
-  --navy-mid: #141928;
-  --navy-light: #1c2438;
-  --green: #5a7a54;
-  --green-light: #7a9a72;
-  --text: #d8d4cc;
-  --text-muted: #6a7080;
-  --border: rgba(90,122,84,0.2);
+  --bg: #f7f7f5;
+  --bg2: #ffffff;
+  --border: #e5e5e3;
+  --text: #0f0f0f;
+  --text-muted: #6b6b6b;
+  --text-light: #9b9b9b;
+  --green: #1a4a2a;
+  --green-mid: #2d6b40;
+  --green-light: #4a8a5a;
+  --green-pale: #f0f7f2;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
-body { background: var(--navy); color: var(--text); font-family: 'Montserrat', sans-serif; min-height: 100vh; width: 100%; overflow-x: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; width: 100%; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
 
-#clamo-root { display: flex; flex-direction: column; align-items: center; padding: 0 16px; width: 100%; }
+/* ===== LAYOUT ===== */
+#clamo-root { display: flex; flex-direction: column; align-items: center; width: 100%; padding-bottom: 0; }
 
-/* BLOC 1 */
-#bloc1 { display: flex; flex-direction: column; align-items: center; padding: 50px 0 40px; text-align: center; gap: 20px; width: 100%; }
+/* ===== BLOC 1 — HERO ===== */
+#bloc1 { display: flex; flex-direction: column; align-items: center; padding: 52px 24px 44px; text-align: center; gap: 0; width: 100%; max-width: 680px; }
 
 .clamo-logo-wrapper {
-  position: relative;
   display: inline-flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 20px 40px;
+  gap: 4px;
+  margin-bottom: 28px;
 }
-.clamo-logo-wrapper::before { content: ''; position: absolute; inset: 0; border: 1.5px solid var(--green); }
-.clamo-logo-wrapper::after { content: ''; position: absolute; inset: 4px; border: 1px solid rgba(90,122,84,0.3); }
 .clamo-title {
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 56px;
-  font-weight: 300;
-  letter-spacing: 12px;
-  color: var(--green-light);
-  position: relative;
-  z-index: 1;
+  font-size: 48px;
+  font-weight: 600;
+  letter-spacing: -1px;
+  color: var(--text);
+  line-height: 1;
 }
+.clamo-title span { color: var(--green); }
 .clamo-logo-sub {
-  font-size: 9px;
-  letter-spacing: 2.5px;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.clamo-tagline {
+  font-size: 10px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--green);
-  font-weight: 300;
-  position: relative;
-  z-index: 1;
+  font-weight: 500;
+  margin-bottom: 16px;
 }
-.clamo-tagline { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--text-muted); }
-.clamo-headline { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; font-style: italic; color: rgba(216,212,204,0.8); line-height: 1.7; max-width: 480px; }
 
-/* VALEURS */
-.clamo-value { display: flex; gap: 12px; width: 100%; max-width: 620px; }
-.clamo-value-item { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 12px; border: 1px solid var(--border); background: var(--navy-mid); }
-.clamo-value-item:hover { border-color: var(--green); }
-.clamo-value-item svg { width: 32px; height: 32px; stroke: var(--green); fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
-.clamo-value-item h4 { font-size: 10px; font-weight: 400; letter-spacing: 2px; text-transform: uppercase; color: var(--green-light); text-align: center; line-height: 1.5; }
-.clamo-value-item p { font-size: 11px; color: var(--text-muted); text-align: center; line-height: 1.6; font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 13px; }
+.clamo-headline {
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.5;
+  max-width: 480px;
+  margin-bottom: 32px;
+  letter-spacing: -0.3px;
+}
 
-.sep { width: 100%; max-width: 640px; height: 1px; background: var(--border); }
+/* 3 VALEURS */
+.clamo-value {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  max-width: 620px;
+  margin-bottom: 0;
+}
+.clamo-value-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 16px 14px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  transition: border-color 0.2s;
+}
+.clamo-value-item:hover { border-color: var(--green-light); }
+.clamo-value-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--green-pale);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.clamo-value-icon svg { width: 16px; height: 16px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.clamo-value-item h4 { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+.clamo-value-item p { font-size: 11px; color: var(--text-muted); line-height: 1.5; }
 
-/* BLOC 2 */
-#bloc2 { display: flex; flex-direction: column; align-items: center; padding: 40px 0; width: 100%; max-width: 640px; gap: 0; }
-.bloc2-intro { width: 100%; background: var(--navy-mid); border: 1px solid var(--border); border-bottom: none; border-radius: 2px 2px 0 0; padding: 18px 20px; }
-.intro-title { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 400; color: var(--text); margin-bottom: 10px; line-height: 1.5; }
-.intro-body { font-size: 12px; line-height: 1.9; color: var(--text-muted); font-weight: 300; }
-.intro-body strong { color: var(--green-light); font-weight: 400; }
-.intro-cta { font-size: 12px; color: var(--text); font-weight: 300; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+/* ===== SÉPARATEUR ===== */
+.sep { width: 100%; max-width: 680px; height: 1px; background: var(--border); margin: 0; }
 
-.clamo-chat-messages { width: 100%; background: var(--navy); border-left: 1px solid var(--border); border-right: 1px solid var(--border); height: 300px; overflow-y: scroll; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-.clamo-chat-messages::-webkit-scrollbar { width: 2px; }
-.clamo-chat-messages::-webkit-scrollbar-thumb { background: var(--green); opacity: 0.3; }
+/* ===== BLOC 2 — CHAT ===== */
+#bloc2 {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 680px;
+  padding: 32px 24px;
+  gap: 0;
+}
 
-.clamo-msg-bot { background: var(--navy-mid); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 16px; border-radius: 2px 12px 12px 2px; font-size: 13px; line-height: 1.75; max-width: 94%; font-weight: 300; }
-.clamo-msg-bot strong { color: var(--text); font-weight: 400; }
-.clamo-msg-bot h3 { font-size: 13px; font-weight: 400; color: var(--text); margin: 6px 0 2px; font-family: 'Cormorant Garamond', serif; font-size: 15px; }
+.bloc2-intro {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 18px;
+}
+.intro-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 6px; line-height: 1.5; }
+.intro-body { font-size: 12px; line-height: 1.8; color: var(--text-muted); }
+.intro-body strong { color: var(--text); font-weight: 500; }
+.intro-cta { font-size: 12px; color: var(--green); font-weight: 500; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); }
+
+/* ZONE MESSAGES */
+.clamo-chat-messages {
+  width: 100%;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  height: 320px;
+  overflow-y: scroll;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  scroll-behavior: smooth;
+}
+.clamo-chat-messages::-webkit-scrollbar { width: 3px; }
+.clamo-chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.clamo-msg-bot {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 12px 16px;
+  border-radius: 4px 16px 16px 4px;
+  font-size: 13px;
+  line-height: 1.75;
+  max-width: 92%;
+  font-weight: 400;
+}
+.clamo-msg-bot strong { color: var(--text); font-weight: 600; }
+.clamo-msg-bot h3 { font-size: 13px; font-weight: 600; color: var(--text); margin: 8px 0 3px; }
 .clamo-msg-bot ul { padding-left: 4px; list-style: none; margin: 4px 0; }
-.clamo-msg-bot li { margin: 2px 0; color: var(--text-muted); }
-.clamo-msg-user { background: var(--green); color: #fff; padding: 10px 16px; border-radius: 12px 2px 2px 12px; font-size: 13px; max-width: 85%; align-self: flex-end; font-weight: 300; }
-.clamo-msg-file { background: var(--navy-mid); border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 4px; font-size: 12px; align-self: flex-end; }
+.clamo-msg-bot li::before { content: '·'; color: var(--green); margin-right: 6px; }
+.clamo-msg-bot li { margin: 3px 0; color: var(--text-muted); }
+.clamo-msg-user {
+  background: var(--green);
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 16px 4px 4px 16px;
+  font-size: 13px;
+  max-width: 82%;
+  align-self: flex-end;
+  font-weight: 400;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.clamo-msg-file {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  align-self: flex-end;
+}
+.clamo-typing {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  padding: 12px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 4px 16px 16px 4px;
+  max-width: 80px;
+}
+.clamo-typing span {
+  width: 6px; height: 6px;
+  background: var(--text-muted);
+  border-radius: 50%;
+  animation: typing 1.2s ease-in-out infinite;
+}
+.clamo-typing span:nth-child(2) { animation-delay: 0.2s; }
+.clamo-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%,60%,100%{opacity:0.3;transform:scale(0.8);} 30%{opacity:1;transform:scale(1);} }
 
-.clamo-chat-bar { width: 100%; background: var(--navy-mid); border: 1px solid var(--border); border-top: 1px solid var(--border); border-radius: 0 0 2px 2px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; }
-.clamo-chat-bar textarea { width: 100%; background: var(--navy); border: 1px solid var(--border); border-radius: 2px; color: var(--text); font-size: 14px; font-family: 'Montserrat', sans-serif; font-weight: 300; padding: 12px 16px; outline: none; resize: none; min-height: 52px; max-height: 160px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s; }
+/* BARRE SAISIE — desktop intégrée */
+.clamo-chat-bar {
+  width: 100%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-radius: 0 0 16px 16px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.clamo-chat-bar textarea {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  padding: 11px 14px;
+  outline: none;
+  resize: none;
+  min-height: 48px;
+  max-height: 160px;
+  overflow-y: auto;
+  line-height: 1.5;
+  transition: border-color 0.2s;
+}
 .clamo-chat-bar textarea:focus { border-color: var(--green); }
-.clamo-chat-bar textarea::placeholder { color: var(--text-muted); font-style: italic; }
+.clamo-chat-bar textarea::placeholder { color: var(--text-light); }
 .clamo-bar-actions { display: flex; gap: 8px; align-items: center; }
-.clamo-btn-add { background: transparent; border: 1px solid var(--border); color: var(--text-muted); height: 40px; border-radius: 2px; cursor: pointer; font-size: 11px; font-family: 'Montserrat', sans-serif; font-weight: 300; letter-spacing: 1px; padding: 0 14px; display: flex; align-items: center; gap: 6px; white-space: nowrap; flex-shrink: 0; transition: all 0.2s; }
-.clamo-btn-add:hover { border-color: var(--green); color: var(--green-light); }
-.clamo-btn-send { background: var(--green); border: none; color: #fff; font-size: 11px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; padding: 12px 22px; border-radius: 2px; cursor: pointer; white-space: nowrap; margin-left: auto; flex-shrink: 0; transition: background 0.2s; }
-.clamo-btn-send:hover { background: var(--green-light); }
+.clamo-btn-add {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: 'Inter', sans-serif;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.clamo-btn-add:hover { border-color: var(--green); color: var(--green); }
+.clamo-btn-send {
+  background: var(--green);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  padding: 0 20px;
+  height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.clamo-btn-send:hover { background: var(--green-mid); }
+.clamo-btn-send svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* BLOC 3 */
-#bloc3 { display: flex; flex-direction: column; align-items: center; padding: 40px 0 50px; width: 100%; max-width: 640px; gap: 16px; }
-.clamo-section-title { font-size: 10px; letter-spacing: 4px; text-transform: uppercase; color: var(--green); text-align: center; font-weight: 300; }
-.clamo-icons { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; }
-.clamo-icon-item { display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; padding: 16px 6px; border: 1px solid var(--border); background: var(--navy-mid); transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
-.clamo-icon-item:hover, .clamo-icon-item:active { border-color: var(--green); background: var(--navy-light); }
-.clamo-icon-item svg { width: 28px; height: 28px; stroke: var(--green); fill: none; stroke-width: 1.2; stroke-linecap: round; stroke-linejoin: round; }
-.clamo-icon-item span { font-size: 9px; text-align: center; color: var(--text-muted); line-height: 1.3; letter-spacing: 1px; font-weight: 300; text-transform: uppercase; }
+/* ===== BARRE FIXE MOBILE ===== */
+.mobile-bar-fixed {
+  display: none;
+}
 
-.clamo-footer { display: flex; gap: 20px; align-items: center; padding-top: 16px; border-top: 1px solid var(--border); width: 100%; justify-content: center; }
-.clamo-footer a { font-size: 10px; color: var(--text-muted); text-decoration: none; cursor: pointer; letter-spacing: 1px; font-weight: 300; transition: color 0.2s; }
-.clamo-footer a:hover { color: var(--green-light); }
-.clamo-footer span { font-size: 10px; color: var(--text-muted); opacity: 0.4; }
+/* ===== BLOC 3 — ICÔNES ===== */
+#bloc3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 24px 48px;
+  width: 100%;
+  max-width: 680px;
+  gap: 14px;
+}
+.clamo-section-title {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+  font-weight: 500;
+}
+.clamo-icons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.clamo-icon-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  cursor: pointer;
+  padding: 14px 6px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg2);
+  transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+}
+.clamo-icon-item:hover { border-color: var(--green-light); background: var(--green-pale); }
+.clamo-icon-item:active { background: var(--green-pale); border-color: var(--green); }
+.clamo-icon-item svg { width: 24px; height: 24px; stroke: var(--text-muted); fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; transition: stroke 0.2s; }
+.clamo-icon-item:hover svg { stroke: var(--green); }
+.clamo-icon-item span { font-size: 10px; text-align: center; color: var(--text-muted); line-height: 1.3; font-weight: 400; }
+.clamo-icon-item:hover span { color: var(--green); }
 
-/* RGPD */
-#rgpd-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,18,32,0.98); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
-#rgpd-box { background: var(--navy-mid); border: 1px solid var(--border); padding: 32px; max-width: 440px; width: 100%; }
-#rgpd-box h2 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 400; margin-bottom: 14px; color: var(--text); }
-#rgpd-box p { font-size: 12px; line-height: 1.9; color: var(--text-muted); margin-bottom: 16px; font-weight: 300; }
-#rgpd-box .rgpd-links { font-size: 11px; color: var(--text-muted); margin-bottom: 24px; line-height: 2; border-top: 1px solid var(--border); padding-top: 14px; font-weight: 300; }
-#rgpd-box .rgpd-links a { color: var(--green-light); text-decoration: none; cursor: pointer; }
-#rgpd-btn { width: 100%; background: var(--green); color: #fff; border: none; padding: 15px; font-size: 11px; font-weight: 400; letter-spacing: 3px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; cursor: pointer; transition: background 0.2s; }
-#rgpd-btn:hover { background: var(--green-light); }
+.clamo-footer {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  width: 100%;
+  justify-content: center;
+}
+.clamo-footer a { font-size: 11px; color: var(--text-light); text-decoration: none; cursor: pointer; transition: color 0.2s; }
+.clamo-footer a:hover { color: var(--green); }
+.clamo-footer span { font-size: 11px; color: var(--border); }
 
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(14,18,32,0.98); z-index: 9998; display: none; align-items: flex-start; justify-content: center; padding: 40px 24px; overflow-y: auto; }
+/* ===== RGPD & MODALS ===== */
+#rgpd-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(247,247,245,0.96); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+#rgpd-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; max-width: 420px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+#rgpd-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: var(--text); letter-spacing: -0.3px; }
+#rgpd-box p { font-size: 13px; line-height: 1.8; color: var(--text-muted); margin-bottom: 16px; }
+#rgpd-box .rgpd-links { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 2; border-top: 1px solid var(--border); padding-top: 12px; }
+#rgpd-box .rgpd-links a { color: var(--green); text-decoration: none; }
+#rgpd-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; }
+#rgpd-btn:hover { background: var(--green-mid); }
+
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(247,247,245,0.96); z-index: 9998; display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; backdrop-filter: blur(4px); }
 .modal-overlay.open { display: flex; }
-.modal-box { background: var(--navy-mid); border: 1px solid var(--border); padding: 32px; max-width: 560px; width: 100%; margin: auto; }
-.modal-box h2 { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 400; margin-bottom: 24px; color: var(--text); }
-.modal-box h3 { font-size: 10px; font-weight: 400; color: var(--green); margin: 20px 0 6px; text-transform: uppercase; letter-spacing: 2px; }
-.modal-box p { font-size: 13px; line-height: 1.8; color: var(--text-muted); font-weight: 300; }
-.modal-close { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; cursor: pointer; font-size: 10px; margin-top: 28px; width: 100%; letter-spacing: 2px; text-transform: uppercase; font-family: 'Montserrat', sans-serif; font-weight: 300; transition: all 0.2s; }
-.modal-close:hover { border-color: var(--green); color: var(--green-light); }
+.modal-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 32px 28px; max-width: 540px; width: 100%; margin: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
+.modal-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--text); letter-spacing: -0.3px; }
+.modal-box h3 { font-size: 11px; font-weight: 600; color: var(--green); margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 1.5px; }
+.modal-box p { font-size: 13px; line-height: 1.8; color: var(--text-muted); }
+.modal-close { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-top: 24px; width: 100%; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+.modal-close:hover { border-color: var(--green); color: var(--green); }
 #file-input { display: none; }
 
-/* MOBILE */
+/* ===== MOBILE ===== */
 @media (max-width: 600px) {
-  #clamo-root { padding: 0 12px; }
-  #bloc1 { padding: 36px 0 28px; gap: 16px; }
-  .clamo-logo-wrapper { padding: 16px 24px; }
-  .clamo-title { font-size: 38px; letter-spacing: 8px; }
-  .clamo-headline { font-size: 17px; }
-  .clamo-value { flex-direction: column; gap: 8px; }
-  .clamo-value-item { flex-direction: row; align-items: flex-start; gap: 14px; padding: 14px; text-align: left; }
-  .clamo-value-item h4 { text-align: left; }
-  .clamo-value-item p { text-align: left; }
-  #bloc2 { padding: 28px 0; max-width: 100%; }
-  #bloc3 { padding: 28px 0 44px; max-width: 100%; }
+  #clamo-root { padding-bottom: 80px; }
+  #bloc1 { padding: 40px 16px 32px; gap: 0; }
+  .clamo-title { font-size: 38px; }
+  .clamo-headline { font-size: 18px; }
+  .clamo-value { flex-direction: column; gap: 8px; margin-bottom: 0; }
+  .clamo-value-item { flex-direction: row; align-items: flex-start; gap: 12px; }
+  .clamo-value-icon { flex-shrink: 0; }
+
+  #bloc2 { padding: 24px 16px; max-width: 100%; }
+  .clamo-chat-messages { height: 280px; }
+  /* Cache la barre intégrée sur mobile */
+  .clamo-chat-bar { display: none; }
+
+  /* Barre fixe en bas sur mobile */
+  .mobile-bar-fixed {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 10px 14px 20px;
+    z-index: 500;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.06);
+  }
+  .mobile-bar-fixed textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    padding: 12px 14px;
+    outline: none;
+    resize: none;
+    min-height: 48px;
+    max-height: 140px;
+    overflow-y: auto;
+    line-height: 1.5;
+    transition: border-color 0.2s;
+  }
+  .mobile-bar-fixed textarea:focus { border-color: var(--green); }
+  .mobile-bar-fixed textarea::placeholder { color: var(--text-light); }
+  .mobile-bar-actions { display: flex; gap: 8px; align-items: center; }
+  .mobile-btn-add {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    padding: 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .mobile-btn-send {
+    background: var(--green);
+    border: none;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    padding: 0 18px;
+    height: 40px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .mobile-btn-send svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  #bloc3 { padding: 24px 16px 40px; max-width: 100%; }
   .sep { max-width: 100%; }
   .clamo-icons { grid-template-columns: repeat(3, 1fr); }
-  .clamo-chat-messages { height: 260px; }
-  .clamo-chat-bar textarea { font-size: 16px; }
-  .modal-box { padding: 24px 18px; }
-  #rgpd-box { padding: 24px 18px; }
+  .modal-box, #rgpd-box { padding: 24px 18px; border-radius: 16px; }
 }
 </style>
 </head>
 <body>
 
+<!-- RGPD -->
 <div id="rgpd-overlay">
   <div id="rgpd-box">
-    <h2>CLAMO — Avant de commencer</h2>
-    <p>CLAMO est une plateforme d'assistance juridique par intelligence artificielle. Nos analyses s'appuient sur les documents et informations que vous transmettez. Elles ne constituent pas une consultation juridique au sens de la loi du 31 décembre 1971.</p>
-    <div class="rgpd-links">En continuant, vous acceptez nos <a onclick="openModal('cgu')">Mentions légales</a> et notre <a onclick="openModal('privacy')">Politique de confidentialité</a>. Vos échanges transitent via l'API Anthropic et ne sont pas conservés au-delà de votre session.</div>
+    <h2>Avant de commencer</h2>
+    <p>CLAMO est une plateforme d'assistance juridique par intelligence artificielle. Nos analyses ne constituent pas une consultation juridique au sens de la loi du 31 décembre 1971.</p>
+    <div class="rgpd-links">En continuant, vous acceptez nos <a onclick="openModal('cgu')">Mentions légales</a> et notre <a onclick="openModal('privacy')">Politique de confidentialité</a>.</div>
     <button id="rgpd-btn" onclick="acceptRgpd()">Accéder à CLAMO →</button>
   </div>
 </div>
@@ -195,57 +493,72 @@ body { background: var(--navy); color: var(--text); font-family: 'Montserrat', s
 </div>
 
 <div id="clamo-root">
+
+  <!-- BLOC 1 -->
   <div id="bloc1">
     <div class="clamo-logo-wrapper">
-      <div class="clamo-title">CLAMO</div>
+      <div class="clamo-title">CLA<span>MO</span></div>
       <div class="clamo-logo-sub">La plateforme qui vous aide à faire valoir vos droits</div>
     </div>
     <div class="clamo-tagline">La défense pour tous</div>
     <div class="clamo-headline">Votre premier droit est de mériter une défense sans compromis.</div>
     <div class="clamo-value">
       <div class="clamo-value-item">
-        <svg viewBox="0 0 48 48"><path d="M8 40 L8 12 L24 4 L40 12 L40 40"/><line x1="8" y1="40" x2="40" y2="40"/><rect x="18" y="24" width="12" height="16"/><line x1="24" y1="14" x2="24" y2="18"/></svg>
-        <div><h4>Mise en demeure</h4><p>Un courrier juridique prêt à envoyer avec les articles de loi applicables</p></div>
+        <div class="clamo-value-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div><h4>Mise en demeure</h4><p>Courrier juridique prêt avec les articles de loi</p></div>
       </div>
       <div class="clamo-value-item">
-        <svg viewBox="0 0 48 48"><rect x="6" y="8" width="36" height="32" rx="1"/><line x1="14" y1="18" x2="34" y2="18"/><line x1="14" y1="24" x2="34" y2="24"/><line x1="14" y1="30" x2="24" y2="30"/><path d="M28 28 L34 34 L38 30 L32 24 Z"/></svg>
-        <div><h4>Recours rédigé</h4><p>Votre dossier structuré pour saisir la bonne juridiction</p></div>
+        <div class="clamo-value-icon">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div><h4>Recours structuré</h4><p>Dossier argumenté pour la bonne juridiction</p></div>
       </div>
       <div class="clamo-value-item">
-        <svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><polyline points="16,24 21,30 32,18"/></svg>
-        <div><h4>Acte opérationnel</h4><p>Repartez avec un document prêt à faire valoir vos droits</p></div>
+        <div class="clamo-value-icon">
+          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div><h4>Acte opérationnel</h4><p>Document prêt à faire valoir vos droits</p></div>
       </div>
     </div>
   </div>
 
   <div class="sep"></div>
 
+  <!-- BLOC 2 -->
   <div id="bloc2">
     <div class="bloc2-intro">
-      <div class="intro-title">CLAMO analyse, structure et rédige — pour que vous ne soyez plus seul face à la complexité du droit.</div>
-      <div class="intro-body">Plateforme d'assistance juridique de <strong>haute exigence</strong> : vos pièces sont analysées avec méthode et précision. Transmettez <strong>l'ensemble des documents en votre possession</strong> dès le premier échange — contrats, courriers, bulletins de salaire, échanges écrits, jugements.</div>
-      <div class="intro-cta">→ Saisissez votre situation avec précision et joignez dès maintenant l'ensemble des pièces en votre possession.</div>
+      <div class="intro-title">CLAMO analyse, structure et rédige — pour que vous ne soyez plus seul face au droit.</div>
+      <div class="intro-body">Transmettez <strong>l'ensemble des documents en votre possession</strong> dès le premier échange — contrats, courriers, bulletins de salaire, échanges écrits, jugements.</div>
+      <div class="intro-cta">→ Décrivez votre situation et joignez vos pièces dès maintenant.</div>
     </div>
     <div class="clamo-chat-messages" id="chat-messages"></div>
+
+    <!-- Barre desktop intégrée -->
     <div class="clamo-chat-bar">
-      <textarea id="main-input" placeholder="Décrivez votre situation avec précision..." rows="2"></textarea>
+      <textarea id="main-input-desk" placeholder="Décrivez votre situation avec précision..." rows="2"></textarea>
       <div class="clamo-bar-actions">
         <button class="clamo-btn-add" onclick="document.getElementById('file-input').click()">📎 Joindre vos docs</button>
         <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFile(event)" multiple />
-        <button class="clamo-btn-send" onclick="sendMessage()">Envoyer</button>
+        <button class="clamo-btn-send" onclick="sendMessage('desk')">
+          Envoyer
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
       </div>
     </div>
   </div>
 
   <div class="sep"></div>
 
+  <!-- BLOC 3 -->
   <div id="bloc3">
     <div class="clamo-section-title">Choisissez votre situation</div>
     <div class="clamo-icons">
       <div class="clamo-icon-item" onclick="selectDomain('licenciement')"><svg viewBox="0 0 48 48"><rect x="14" y="4" width="20" height="12" rx="2"/><rect x="6" y="16" width="36" height="28" rx="2"/><line x1="24" y1="16" x2="24" y2="44"/><line x1="6" y1="28" x2="42" y2="28"/></svg><span>Licenciement</span></div>
       <div class="clamo-icon-item" onclick="selectDomain('loyer impayé ou dépôt de garantie non rendu')"><svg viewBox="0 0 48 48"><path d="M6 24 L24 8 L42 24"/><rect x="10" y="24" width="28" height="18" rx="1"/><rect x="20" y="30" width="8" height="12"/></svg><span>Loyer / Dépôt</span></div>
-      <div class="clamo-icon-item" onclick="selectDomain('vice caché sur un véhicule ou un bien')"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><line x1="24" y1="14" x2="24" y2="26"/><circle cx="24" cy="32" r="2" fill="#7a9a72" stroke="none"/></svg><span>Vice caché</span></div>
-      <div class="clamo-icon-item" onclick="selectDomain('arnaque ou fraude')"><svg viewBox="0 0 48 48"><path d="M24 5 L40 11 L40 27 C40 36 24 44 24 44 C24 44 8 36 8 27 L8 11 Z"/><line x1="24" y1="18" x2="24" y2="28"/><circle cx="24" cy="33" r="1.5" fill="#7a9a72" stroke="none"/></svg><span>Arnaque</span></div>
+      <div class="clamo-icon-item" onclick="selectDomain('vice caché sur un véhicule ou un bien')"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><line x1="24" y1="14" x2="24" y2="26"/><circle cx="24" cy="32" r="2" fill="#6b6b6b" stroke="none"/></svg><span>Vice caché</span></div>
+      <div class="clamo-icon-item" onclick="selectDomain('arnaque ou fraude')"><svg viewBox="0 0 48 48"><path d="M24 5 L40 11 L40 27 C40 36 24 44 24 44 C24 44 8 36 8 27 L8 11 Z"/><line x1="24" y1="18" x2="24" y2="28"/><circle cx="24" cy="33" r="1.5" fill="#6b6b6b" stroke="none"/></svg><span>Arnaque</span></div>
       <div class="clamo-icon-item" onclick="selectDomain('refus de prise en charge par mon assurance')"><svg viewBox="0 0 48 48"><rect x="6" y="12" width="36" height="26" rx="3"/><line x1="6" y1="20" x2="42" y2="20"/><line x1="14" y1="30" x2="22" y2="30"/></svg><span>Assurance</span></div>
       <div class="clamo-icon-item" onclick="selectDomain('accident de la route')"><svg viewBox="0 0 48 48"><path d="M8 30 L14 18 L34 18 L40 30 L40 36 L8 36 Z"/><circle cx="16" cy="36" r="4"/><circle cx="32" cy="36" r="4"/><line x1="20" y1="18" x2="20" y2="30"/></svg><span>Accident</span></div>
       <div class="clamo-icon-item" onclick="selectDomain('harcèlement moral ou sexuel')"><svg viewBox="0 0 48 48"><circle cx="24" cy="14" r="8"/><path d="M10 38 C10 28 38 28 38 38"/><line x1="16" y1="20" x2="32" y2="32"/><line x1="32" y1="20" x2="16" y2="32"/></svg><span>Harcèlement</span></div>
@@ -262,6 +575,20 @@ body { background: var(--navy); color: var(--text); font-family: 'Montserrat', s
       <span>·</span>
       <span>© 2025 CLAMO</span>
     </div>
+  </div>
+
+</div>
+
+<!-- BARRE FIXE MOBILE -->
+<div class="mobile-bar-fixed" id="mobile-bar">
+  <textarea id="main-input-mobile" placeholder="Décrivez votre situation..." rows="1"></textarea>
+  <div class="mobile-bar-actions">
+    <button class="mobile-btn-add" onclick="document.getElementById('file-input-mobile').click()">📎 Docs</button>
+    <input type="file" id="file-input-mobile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" onchange="handleFile(event)" multiple style="display:none" />
+    <button class="mobile-btn-send" onclick="sendMessage('mobile')">
+      Envoyer
+      <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+    </button>
   </div>
 </div>
 
@@ -289,12 +616,24 @@ function openModal(t){document.getElementById('modal-'+t).classList.add('open');
 function closeModal(t){document.getElementById('modal-'+t).classList.remove('open');}
 function parseMarkdown(t){return t.replace(/##\s(.+)/g,'<h3>$1</h3>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/^-\s(.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>').replace(/\n/g,'<br>');}
 
-function scrollBottom(){const msgs=document.getElementById('chat-messages');msgs.scrollTop=msgs.scrollHeight;}
+function scrollBottom(){
+  const msgs=document.getElementById('chat-messages');
+  msgs.scrollTop=msgs.scrollHeight;
+}
 
 function addMsg(text,type,isHTML){
   const box=document.createElement('div');
   box.className=type==='user'?'clamo-msg-user':'clamo-msg-bot';
   if(isHTML)box.innerHTML=text;else box.textContent=text;
+  document.getElementById('chat-messages').appendChild(box);
+  scrollBottom();
+  return box;
+}
+
+function addTyping(){
+  const box=document.createElement('div');
+  box.className='clamo-typing';
+  box.innerHTML='<span></span><span></span><span></span>';
   document.getElementById('chat-messages').appendChild(box);
   scrollBottom();
   return box;
@@ -313,31 +652,39 @@ function handleFile(event){
   event.target.value='';
 }
 
-async function sendMessage(){
-  const input=document.getElementById('main-input');
+async function sendMessage(source){
+  const inputId = source==='mobile' ? 'main-input-mobile' : 'main-input-desk';
+  const input=document.getElementById(inputId);
   const text=input.value.trim();
   if(!text)return;
+
+  // Scroll vers la zone de chat
+  document.getElementById('bloc2').scrollIntoView({behavior:'smooth'});
+
   addMsg(text,'user',false);
   input.value='';
   input.style.height='auto';
   scrollBottom();
-  const thinking=addMsg('⏳ Analyse en cours...','bot',false);
+
+  const typing=addTyping();
   try{
     const r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history})});
     const d=await r.json();
-    thinking.remove();
+    typing.remove();
     if(d.reply){
       addMsg(parseMarkdown(d.reply),'bot',true);
       scrollBottom();
       history.push({role:'user',content:text},{role:'assistant',content:d.reply});
       if(history.length>20)history=history.slice(-20);
     }
-  }catch(e){thinking.remove();addMsg('Erreur, veuillez réessayer.','bot',false);}
+  }catch(e){typing.remove();addMsg('Erreur, veuillez réessayer.','bot',false);}
 }
 
 function selectDomain(domain){
   const msg=DOMAIN_MESSAGES[domain]||domain;
-  const input=document.getElementById('main-input');
+  const isMobile=window.innerWidth<=600;
+  const inputId=isMobile?'main-input-mobile':'main-input-desk';
+  const input=document.getElementById(inputId);
   input.value=msg;
   autoResize(input);
   input.focus();
@@ -345,9 +692,20 @@ function selectDomain(domain){
 }
 
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
-const ta=document.getElementById('main-input');
-ta.addEventListener('input',()=>autoResize(ta));
-ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}});
+
+// Auto-resize desktop
+const taDesk=document.getElementById('main-input-desk');
+if(taDesk){
+  taDesk.addEventListener('input',()=>autoResize(taDesk));
+  taDesk.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage('desk');}});
+}
+// Auto-resize mobile
+const taMob=document.getElementById('main-input-mobile');
+if(taMob){
+  taMob.addEventListener('input',()=>autoResize(taMob));
+  taMob.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage('mobile');}});
+}
+
 if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
 </script>
 </body>
