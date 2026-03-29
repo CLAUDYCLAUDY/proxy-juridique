@@ -56,36 +56,56 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .sidebar-bottom-link:hover { background: var(--sidebar-hover); color: var(--text-2); }
 
 /* MAIN */
-#main { flex: 1; height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; min-width: 0; }
+#main {
+  flex: 1;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
 
-/* HOME */
+/* HOME — flux normal, pas de position absolute */
 #home {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0 24px 160px;
-  gap: 28px;
+  padding: 32px 24px 0;
+  gap: 20px;
   overflow: hidden;
+  min-height: 0;
 }
-.hero-title { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.6px; text-align: center; }
+
+.hero-title { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.6px; text-align: center; flex-shrink: 0; }
 .hero-title span { color: var(--green); }
 
 /* 3 CARDS */
-.home-cards { display: flex; gap: 10px; width: 100%; max-width: 640px; }
+.home-cards { display: flex; gap: 10px; width: 100%; max-width: 640px; flex-shrink: 0; }
 .home-card { flex: 1; background: var(--input-bg); border-radius: 14px; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; }
 .home-card-icon { width: 32px; height: 32px; background: var(--green-pale); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
 .home-card-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .home-card h4 { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
 .home-card p { font-size: 11px; color: var(--text-2); line-height: 1.5; }
 
-/* INPUT BAR — fixe en bas, remontée */
+/* PHRASE SOUS LES CARDS */
+.home-phrase {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-2);
+  text-align: center;
+  max-width: 520px;
+  line-height: 1.6;
+  flex-shrink: 0;
+}
+
+/* BARRE DE SAISIE — dans le flux, pas fixe */
 .input-bar {
-  position: absolute;
-  bottom: 0; left: 0; right: 0;
-  padding: 12px 20px 16px;
-  background: linear-gradient(to top, #fff 70%, transparent);
+  flex-shrink: 0;
+  padding: 16px 24px 14px;
+  background: var(--bg);
+  width: 100%;
 }
 .input-inner {
   max-width: 640px;
@@ -113,16 +133,15 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .btn-send:hover { background: var(--green-2); }
 .btn-send svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* SIGNATURE sous la barre */
+/* SIGNATURE */
 .home-signature {
+  flex-shrink: 0;
   text-align: center;
   font-size: 13px;
   font-weight: 700;
   color: var(--text);
   letter-spacing: -0.1px;
-  padding: 10px 0 0;
-  max-width: 640px;
-  margin: 0 auto;
+  padding: 6px 0 20px;
 }
 
 /* CHAT */
@@ -197,15 +216,14 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 @media (max-width: 700px) {
   #sidebar { display: none; }
   body { display: block; }
-  #main { width: 100%; height: 100vh; }
+  #main { width: 100%; height: 100vh; display: flex; flex-direction: column; }
   .mobile-header { display: flex; }
-  #home { padding: 72px 16px 170px; justify-content: center; }
+  #home { padding: 64px 16px 0; gap: 18px; }
   .hero-title { font-size: 24px; }
   .home-cards { flex-direction: column; gap: 8px; max-width: 100%; }
   .home-card { flex-direction: row; align-items: flex-start; gap: 12px; }
   .home-card-icon { flex-shrink: 0; }
-  .input-bar { padding: 10px 14px 14px; }
-  .input-inner { border-radius: 16px; }
+  .input-bar { padding: 12px 16px 10px; }
   .input-textarea { font-size: 16px; }
   .chat-messages { padding: 16px 14px; }
   .msg-bot, .msg-user { max-width: 94%; font-size: 13px; }
@@ -213,7 +231,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   .chat-textarea { font-size: 16px; }
   .rgpd-panel, .modal-panel { padding: 22px 18px 32px; }
 }
-
 @media (min-width: 701px) {
   #rgpd { align-items: center; padding: 20px; }
   .rgpd-panel { border-radius: 20px; }
@@ -323,6 +340,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   <!-- HOME -->
   <div id="home">
     <h1 class="hero-title">Faites valoir <span>vos droits.</span></h1>
+
     <div class="home-cards">
       <div class="home-card">
         <div class="home-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
@@ -340,7 +358,30 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
         <p>Contestation, réclamation ou recours pour faire valoir vos droits</p>
       </div>
     </div>
+
+    <div class="home-phrase">Votre premier droit est celui d'avoir accès à une défense sans compromis.</div>
   </div>
+
+  <!-- BARRE DE SAISIE — dans le flux normal entre #home et .home-signature -->
+  <div class="input-bar" id="input-bar">
+    <div class="input-inner">
+      <textarea class="input-textarea" id="home-input" placeholder="Décrivez votre situation…" rows="1"></textarea>
+      <div class="input-actions">
+        <div id="home-files-chips" class="files-chips"></div>
+        <button class="btn-attach" onclick="document.getElementById('file-input').click()">
+          <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Joindre vos documents
+        </button>
+        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileHome(event)"/>
+        <button class="btn-send" onclick="startChat()">
+          Envoyer
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-signature" id="home-sig">CLAMO — La défense pour tous.</div>
 
   <!-- CHAT -->
   <div id="chat">
@@ -362,26 +403,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- BARRE SAISIE + SIGNATURE -->
-  <div class="input-bar" id="input-bar">
-    <div class="input-inner">
-      <textarea class="input-textarea" id="home-input" placeholder="Décrivez votre situation…" rows="1"></textarea>
-      <div class="input-actions">
-        <div id="home-files-chips" class="files-chips"></div>
-        <button class="btn-attach" onclick="document.getElementById('file-input').click()">
-          <svg viewBox="0 0 24 24"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
-          Joindre vos documents
-        </button>
-        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileHome(event)"/>
-        <button class="btn-send" onclick="startChat()">
-          Envoyer
-          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        </button>
-      </div>
-    </div>
-    <div class="home-signature">CLAMO — La défense pour tous.</div>
   </div>
 </div>
 
@@ -413,6 +434,7 @@ function goHome(){
   document.getElementById('home').style.display='flex';
   document.getElementById('chat').style.display='none';
   document.getElementById('input-bar').style.display='block';
+  document.getElementById('home-sig').style.display='block';
   history=[];filesHome=[];filesChat=[];
   document.getElementById('home-files-chips').innerHTML='';
   document.getElementById('chat-files-preview').innerHTML='';
@@ -430,6 +452,7 @@ function showChat(){
   document.getElementById('home').style.display='none';
   document.getElementById('chat').style.display='flex';
   document.getElementById('input-bar').style.display='none';
+  document.getElementById('home-sig').style.display='none';
 }
 function selectChip(domain){
   const ta=document.getElementById('home-input');
