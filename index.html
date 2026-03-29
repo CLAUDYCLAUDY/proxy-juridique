@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CLAMO — La défense pour tous</title>
-<meta name="description" content="CLAMO analyse, structure et rédige pour vous aider à faire valoir vos droits.">
+<title>CLAMO</title>
+<meta name="description" content="Faites valoir vos droits. CLAMO rédige vos mises en demeure et actes de procédure.">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#ffffff">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -12,214 +12,685 @@
 <meta name="apple-mobile-web-app-title" content="CLAMO">
 <link rel="apple-touch-icon" href="/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #ffffff;
-  --bg2: #f7f7f5;
-  --bg3: #f0f0ee;
-  --border: #e8e8e6;
-  --border2: #d8d8d6;
-  --text: #111111;
-  --text-muted: #666666;
-  --text-light: #aaaaaa;
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --border: #ebebeb;
+  --text: #0f0f0f;
+  --text-2: #6e6e6e;
+  --text-3: #b0b0b0;
   --green: #1a4a2a;
-  --green-mid: #22603a;
-  --green-light: #2d7a42;
-  --green-pale: #edf5ef;
-  --green-glow: rgba(26,74,42,0.08);
+  --green-2: #2a6a3e;
+  --green-pale: #f0f7f2;
+  --green-border: rgba(26,74,42,0.15);
+  --radius: 16px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.04);
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; min-height: 100vh; width: 100%; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
 
-#home-page { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 40px 24px 100px; gap: 24px; }
+/* ─── ÉCRAN D'ACCUEIL ─── */
+#home {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
 
-.logo-block { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-.logo-icon { width: 52px; height: 52px; background: var(--green); border-radius: 14px; display: flex; align-items: center; justify-content: center; }
-.logo-icon svg { width: 26px; height: 26px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.logo-title { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.5px; }
-.logo-sub { font-size: 15px; color: var(--text-muted); max-width: 380px; line-height: 1.6; }
+/* Header minimaliste */
+.home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 32px;
+  position: sticky;
+  top: 0;
+  background: rgba(250,250,250,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+  border-bottom: 1px solid transparent;
+}
+.home-header-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.logo-dot {
+  width: 28px;
+  height: 28px;
+  background: var(--green);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.logo-dot svg { width: 14px; height: 14px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.logo-name { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+.header-notice {
+  font-size: 12px;
+  color: var(--text-3);
+  font-weight: 400;
+}
 
-.main-input-wrapper { width: 100%; max-width: 660px; }
-.main-input-box { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 14px; padding: 16px 20px; color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; resize: none; outline: none; min-height: 58px; max-height: 200px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s, box-shadow 0.2s; display: block; }
-.main-input-box:focus { border-color: var(--green); box-shadow: 0 0 0 3px var(--green-glow); background: var(--bg); }
-.main-input-box::placeholder { color: var(--text-light); }
-.input-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-.attach-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--text-muted); height: 38px; border-radius: 8px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; padding: 0 14px; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
-.attach-btn:hover { border-color: var(--green); color: var(--green); }
-.send-btn-main { background: var(--green); border: none; color: #fff; height: 38px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; padding: 0 20px; margin-left: auto; transition: background 0.2s; }
-.send-btn-main:hover { background: var(--green-mid); }
-.files-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; width: 100%; }
-.file-preview-tag { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px; }
-.file-preview-tag button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 14px; padding: 0; line-height: 1; }
+/* Zone centrale hero */
+.home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 180px;
+  gap: 32px;
+}
+.hero-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.8px;
+  line-height: 1.2;
+  max-width: 560px;
+}
+.hero-title span { color: var(--green); }
+.hero-sub {
+  text-align: center;
+  font-size: 16px;
+  color: var(--text-2);
+  max-width: 400px;
+  line-height: 1.6;
+  margin-top: -16px;
+}
 
-.chips-section { width: 100%; max-width: 660px; display: flex; flex-direction: column; gap: 10px; }
-.chips-label { font-size: 11px; font-weight: 500; color: var(--text-light); letter-spacing: 1.5px; text-transform: uppercase; }
-.chips-grid { display: flex; flex-wrap: wrap; gap: 7px; }
-.chip { background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 7px 14px; font-size: 13px; color: var(--text-muted); cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; white-space: nowrap; -webkit-tap-highlight-color: transparent; }
-.chip:hover, .chip:active { background: var(--green-pale); border-color: var(--green); color: var(--green); }
+/* Chips situations */
+.chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  max-width: 680px;
+}
+.chip {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.chip:hover { background: var(--green-pale); border-color: var(--green-border); color: var(--green); }
+.chip:active { transform: scale(0.97); }
 
-.values-row { display: flex; gap: 10px; width: 100%; max-width: 660px; }
-.value-card { flex: 1; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 8px; transition: border-color 0.2s; }
-.value-card:hover { border-color: var(--green); }
-.value-card-icon { width: 30px; height: 30px; background: var(--green-pale); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.value-card-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+/* Cards valeurs */
+.values-row {
+  display: flex;
+  gap: 10px;
+  max-width: 680px;
+  width: 100%;
+}
+.value-card {
+  flex: 1;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s;
+}
+.value-card:hover { border-color: var(--green-border); }
+.value-card-icon {
+  width: 28px; height: 28px;
+  background: var(--green-pale);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 2px;
+}
+.value-card-icon svg { width: 13px; height: 13px; stroke: var(--green); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .value-card h4 { font-size: 13px; font-weight: 600; color: var(--text); }
-.value-card p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.value-card p { font-size: 12px; color: var(--text-2); line-height: 1.5; }
 
-.clamo-about { width: 100%; max-width: 660px; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 18px; }
-.clamo-about-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-.clamo-about-badge { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 20px; padding: 5px 14px; font-size: 11px; font-weight: 600; color: var(--green); letter-spacing: 0.8px; text-transform: uppercase; }
-.clamo-about-title { font-size: 17px; font-weight: 600; color: var(--text); line-height: 1.45; letter-spacing: -0.2px; text-align: center; }
-.clamo-about-body { display: flex; flex-direction: column; gap: 12px; }
-.clamo-about-body p { font-size: 13px; color: var(--text-muted); line-height: 1.85; }
-.clamo-about-body p strong { color: var(--text); font-weight: 500; }
-.clamo-about-sources { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding-top: 4px; border-top: 1px solid var(--border); }
-.source-tag { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 12px; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 7px; justify-content: center; text-align: center; }
-.source-tag::before { content: ''; width: 6px; height: 6px; background: var(--green); border-radius: 50%; flex-shrink: 0; }
+/* Barre de saisie fixe en bas */
+.home-input-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  padding: 16px 24px 24px;
+  background: linear-gradient(to top, var(--bg) 70%, transparent);
+  z-index: 20;
+}
+.home-input-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.home-input-inner:focus-within {
+  border-color: rgba(26,74,42,0.3);
+  box-shadow: 0 0 0 3px rgba(26,74,42,0.06), var(--shadow);
+}
+.home-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 24px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+.home-textarea::placeholder { color: var(--text-3); }
+.home-input-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-attach {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s;
+}
+.btn-attach:hover { border-color: var(--green-border); color: var(--green); }
+.files-chips { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; }
+.file-chip {
+  background: var(--green-pale);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.file-chip button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 13px; line-height: 1; padding: 0; }
+.btn-send {
+  background: var(--green);
+  border: none;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-send:hover { background: var(--green-2); }
+.btn-send svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-.clamo-signature { text-align: center; font-size: 18px; font-weight: 700; color: var(--text); letter-spacing: -0.3px; padding: 8px 24px 80px; width: 100%; max-width: 660px; }
+/* ─── PAGE CHAT ─── */
+#chat {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.chat-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.chat-logo-dot {
+  width: 26px; height: 26px;
+  background: var(--green);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+}
+.chat-logo-dot svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.chat-logo span { font-size: 14px; font-weight: 600; color: var(--text); }
+.btn-new {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 13px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-new:hover { border-color: var(--green-border); color: var(--green); }
 
-#chat-page { display: none; flex-direction: column; height: 100vh; width: 100%; max-width: 760px; margin: 0 auto; }
-.chat-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0; background: var(--bg); }
-.chat-header-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-.chat-header-logo-icon { width: 30px; height: 30px; background: var(--green); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-.chat-header-logo-icon svg { width: 15px; height: 15px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-.chat-header-logo span { font-size: 15px; font-weight: 600; color: var(--text); }
-.new-chat-btn { background: var(--bg2); border: 1.5px solid var(--border); color: var(--text-muted); padding: 7px 14px; border-radius: 8px; font-size: 12px; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
-.new-chat-btn:hover { border-color: var(--green); color: var(--green); }
-
-.chat-messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 12px; }
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-behavior: smooth;
+}
 .chat-messages::-webkit-scrollbar { width: 3px; }
 .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.msg-bot { background: var(--bg2); border: 1px solid var(--border); color: var(--text); padding: 14px 18px; border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.8; max-width: 85%; }
-.msg-bot strong { color: var(--text); font-weight: 600; }
+
+.msg-bot {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 14px 18px;
+  border-radius: 4px 18px 18px 18px;
+  font-size: 14px;
+  line-height: 1.75;
+  max-width: 82%;
+}
+.msg-bot strong { font-weight: 600; }
 .msg-bot h3 { font-size: 14px; font-weight: 600; margin: 10px 0 4px; }
-.msg-bot ul { list-style: none; margin: 6px 0; padding: 0; }
-.msg-bot li { padding: 2px 0; color: var(--text-muted); font-size: 13px; }
+.msg-bot ul { list-style: none; padding: 0; margin: 6px 0; }
+.msg-bot li { padding: 2px 0; color: var(--text-2); font-size: 13px; }
 .msg-bot li::before { content: '›'; color: var(--green); margin-right: 8px; font-weight: 600; }
-.msg-user { background: var(--green); color: #fff; padding: 12px 18px; border-radius: 16px 4px 16px 16px; font-size: 14px; max-width: 75%; align-self: flex-end; line-height: 1.5; word-break: break-word; }
-.msg-file { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); color: var(--green); padding: 8px 14px; border-radius: 8px; font-size: 12px; align-self: flex-end; font-weight: 500; }
-.msg-typing { display: flex; gap: 5px; align-items: center; padding: 14px 18px; background: var(--bg2); border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; width: fit-content; }
-.msg-typing span { width: 7px; height: 7px; background: var(--text-light); border-radius: 50%; animation: blink 1.2s ease-in-out infinite; }
-.msg-typing span:nth-child(2){animation-delay:0.2s;}
-.msg-typing span:nth-child(3){animation-delay:0.4s;}
-@keyframes blink{0%,60%,100%{opacity:0.3;transform:scale(0.8);}30%{opacity:1;transform:scale(1.1);}}
+.msg-bot em { font-style: italic; color: var(--text-2); }
+.msg-user {
+  background: var(--green);
+  color: #fff;
+  padding: 11px 16px;
+  border-radius: 18px 4px 18px 18px;
+  font-size: 14px;
+  max-width: 72%;
+  align-self: flex-end;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.msg-file {
+  background: var(--green-pale);
+  border: 1px solid var(--green-border);
+  color: var(--green);
+  padding: 7px 13px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-end;
+}
+.msg-typing {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px 18px 18px 18px;
+  width: fit-content;
+}
+.msg-typing span {
+  width: 6px; height: 6px;
+  background: var(--text-3);
+  border-radius: 50%;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.msg-typing span:nth-child(2) { animation-delay: 0.2s; }
+.msg-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse { 0%,60%,100%{opacity:0.3;transform:scale(0.85);} 30%{opacity:1;transform:scale(1.1);} }
 
-.chat-input-area { flex-shrink: 0; padding: 12px 20px 20px; border-top: 1px solid var(--border); background: var(--bg); }
-.chat-files-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-.chat-file-tag { background: var(--green-pale); border: 1px solid rgba(26,74,42,0.2); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--green); display: flex; align-items: center; gap: 6px; }
-.chat-file-tag button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 14px; padding: 0; }
-.chat-textarea { width: 100%; background: var(--bg2); border: 1.5px solid var(--border); border-radius: 12px; padding: 13px 16px; color: var(--text); font-size: 15px; font-family: 'Inter', sans-serif; resize: none; outline: none; min-height: 52px; max-height: 160px; overflow-y: auto; line-height: 1.5; transition: border-color 0.2s; display: block; }
-.chat-textarea:focus { border-color: var(--green); background: var(--bg); }
-.chat-textarea::placeholder { color: var(--text-light); }
-.chat-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-.chat-attach-btn { background: var(--bg); border: 1.5px solid var(--border); color: var(--text-muted); height: 36px; border-radius: 7px; cursor: pointer; font-size: 12px; font-family: 'Inter', sans-serif; padding: 0 12px; display: flex; align-items: center; gap: 5px; transition: all 0.2s; }
-.chat-attach-btn:hover { border-color: var(--green); color: var(--green); }
-.chat-send-btn { background: var(--green); border: none; color: #fff; height: 36px; border-radius: 7px; cursor: pointer; font-size: 13px; font-weight: 500; font-family: 'Inter', sans-serif; padding: 0 18px; margin-left: auto; transition: background 0.2s; }
-.chat-send-btn:hover { background: var(--green-mid); }
-.chat-hint { font-size: 11px; color: var(--text-light); }
+.chat-input-area {
+  flex-shrink: 0;
+  padding: 12px 20px 20px;
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+.chat-input-inner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 11px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  transition: border-color 0.2s;
+  box-shadow: var(--shadow);
+}
+.chat-input-inner:focus-within { border-color: rgba(26,74,42,0.3); }
+.chat-textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 22px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+.chat-textarea::placeholder { color: var(--text-3); }
+.chat-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.chat-files-preview { display: flex; flex-wrap: wrap; gap: 5px; }
+.chat-file-chip {
+  background: var(--green-pale);
+  border: 1px solid var(--green-border);
+  border-radius: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--green);
+  display: flex; align-items: center; gap: 4px;
+}
+.chat-file-chip button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 13px; padding: 0; }
+.btn-chat-attach {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 5px 11px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--text-2);
+  cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.btn-chat-attach:hover { border-color: var(--green-border); color: var(--green); }
+.chat-hint { font-size: 11px; color: var(--text-3); }
+.btn-chat-send {
+  background: var(--green);
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  margin-left: auto;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-chat-send:hover { background: var(--green-2); }
 
-#rgpd-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
-#rgpd-box { background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 32px 28px; max-width: 400px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
-#rgpd-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
-#rgpd-box p { font-size: 13px; line-height: 1.8; color: var(--text-muted); margin-bottom: 16px; }
-#rgpd-box .rgpd-links { font-size: 12px; color: var(--text-muted); margin-bottom: 20px; line-height: 2; border-top: 1px solid var(--border); padding-top: 12px; }
-#rgpd-box .rgpd-links a { color: var(--green); text-decoration: none; cursor: pointer; }
-#rgpd-btn { width: 100%; background: var(--green); color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: 'Inter', sans-serif; }
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.96); z-index: 9998; display: none; align-items: flex-start; justify-content: center; padding: 40px 20px; overflow-y: auto; backdrop-filter: blur(8px); }
+/* ─── MODAL RGPD ─── */
+#rgpd {
+  position: fixed; inset: 0;
+  background: rgba(15,15,15,0.4);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 9999;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 0 0 0 0;
+}
+.rgpd-panel {
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 28px 36px;
+  max-width: 560px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+}
+.rgpd-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.rgpd-logo-dot {
+  width: 32px; height: 32px;
+  background: var(--green);
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+}
+.rgpd-logo-dot svg { width: 16px; height: 16px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.rgpd-logo span { font-size: 17px; font-weight: 600; }
+.rgpd-title { font-size: 20px; font-weight: 600; color: var(--text); letter-spacing: -0.3px; }
+.rgpd-text { font-size: 14px; color: var(--text-2); line-height: 1.7; }
+.rgpd-points {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: var(--bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.rgpd-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.rgpd-point-icon {
+  width: 20px; height: 20px;
+  background: var(--green-pale);
+  border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.rgpd-point-icon svg { width: 10px; height: 10px; stroke: var(--green); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.rgpd-legal {
+  font-size: 12px;
+  color: var(--text-3);
+  line-height: 1.6;
+}
+.rgpd-legal a { color: var(--green); text-decoration: none; }
+.btn-rgpd {
+  width: 100%;
+  background: var(--green);
+  border: none;
+  border-radius: 14px;
+  padding: 16px;
+  font-size: 15px;
+  font-weight: 500;
+  font-family: inherit;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-rgpd:hover { background: var(--green-2); }
+
+/* ─── MODALS ─── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(15,15,15,0.4);
+  backdrop-filter: blur(6px);
+  z-index: 9998;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
 .modal-overlay.open { display: flex; }
-.modal-box { background: var(--bg); border: 1.5px solid var(--border); border-radius: 20px; padding: 32px 28px; max-width: 520px; width: 100%; margin: auto; box-shadow: 0 8px 40px rgba(0,0,0,0.08); }
-.modal-box h2 { font-size: 18px; font-weight: 600; margin-bottom: 20px; color: var(--text); }
-.modal-box h3 { font-size: 11px; font-weight: 600; color: var(--green); margin: 18px 0 6px; text-transform: uppercase; letter-spacing: 1.5px; }
-.modal-box p { font-size: 13px; line-height: 1.8; color: var(--text-muted); }
-.modal-close { background: transparent; border: 1.5px solid var(--border); color: var(--text-muted); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px; margin-top: 24px; width: 100%; font-family: 'Inter', sans-serif; }
+.modal-panel {
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 28px 28px 40px;
+  max-width: 560px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+.modal-panel h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.modal-panel h3 { font-size: 11px; font-weight: 600; color: var(--green); text-transform: uppercase; letter-spacing: 1px; margin: 16px 0 5px; }
+.modal-panel p { font-size: 13px; color: var(--text-2); line-height: 1.7; }
+.btn-modal-close {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-2);
+  cursor: pointer;
+  margin-top: 24px;
+  transition: all 0.15s;
+}
+.btn-modal-close:hover { border-color: var(--green-border); color: var(--green); }
+
+/* Footer fixe discret */
+.home-footer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  pointer-events: none;
+}
 #file-input, #file-input-chat { display: none; }
 
-.page-footer { position: fixed; bottom: 0; left: 0; right: 0; display: flex; justify-content: center; gap: 20px; padding: 13px; background: var(--bg); border-top: 1px solid var(--border); z-index: 10; }
-.page-footer a { font-size: 12px; color: var(--text); font-weight: 600; text-decoration: none; cursor: pointer; transition: color 0.2s; }
-.page-footer a:hover { color: var(--green); }
-.page-footer span { font-size: 12px; color: var(--text); font-weight: 600; }
-
+/* ─── MOBILE ─── */
 @media (max-width: 600px) {
-  #home-page { padding: 28px 16px 90px; gap: 20px; justify-content: flex-start; padding-top: 40px; }
-  .logo-title { font-size: 26px; }
-  .logo-sub { font-size: 13px; max-width: 300px; }
-  .main-input-box { font-size: 16px; min-height: 60px; border-radius: 16px; padding: 16px 18px; border-width: 2px; }
-  .attach-btn { font-size: 12px; height: 44px; padding: 0 14px; border-radius: 10px; }
-  .send-btn-main { height: 44px; font-size: 14px; padding: 0 22px; border-radius: 10px; }
-  .chip { font-size: 12px; padding: 7px 13px; }
+  .home-header { padding: 16px 20px; }
+  .header-notice { display: none; }
+  .home-hero { padding: 32px 16px 160px; gap: 24px; }
+  .hero-title { font-size: 26px; letter-spacing: -0.5px; }
+  .hero-sub { font-size: 14px; }
   .values-row { flex-direction: column; gap: 8px; }
-  .value-card { flex-direction: row; align-items: flex-start; gap: 12px; padding: 14px; }
+  .value-card { flex-direction: row; align-items: flex-start; gap: 12px; }
   .value-card-icon { flex-shrink: 0; }
-  .clamo-about { padding: 20px 18px; gap: 14px; }
-  .clamo-about-title { font-size: 15px; }
-  .clamo-about-sources { grid-template-columns: repeat(2, 1fr); gap: 7px; }
-  .clamo-signature { font-size: 16px; padding-bottom: 80px; }
-  .chat-messages { padding: 14px 12px; }
+  .chip { font-size: 13px; padding: 8px 14px; }
+  .home-input-bar { padding: 12px 16px 20px; }
+  .home-input-inner { border-radius: 18px; }
+  .home-textarea { font-size: 16px; }
+  .chat-messages { padding: 16px 14px; }
   .msg-bot, .msg-user { max-width: 94%; font-size: 13px; }
   .chat-input-area { padding: 10px 14px 18px; }
-  .chat-textarea { font-size: 16px; min-height: 50px; }
-  .chat-attach-btn { height: 40px; }
-  .chat-send-btn { height: 40px; padding: 0 16px; }
+  .chat-textarea { font-size: 16px; }
+  .rgpd-panel { padding: 24px 20px 32px; border-radius: 20px 20px 0 0; }
+  .rgpd-title { font-size: 18px; }
+  .modal-panel { padding: 24px 20px 36px; border-radius: 20px 20px 0 0; }
+  .chat-header { padding: 12px 16px; }
+}
+
+@media (min-width: 601px) {
+  #rgpd { align-items: center; padding: 20px; }
+  .rgpd-panel { border-radius: 24px; }
+  .modal-overlay { align-items: center; padding: 20px; }
+  .modal-panel { border-radius: 24px; }
 }
 </style>
 </head>
 <body>
 
-<div id="rgpd-overlay">
-  <div id="rgpd-box">
-    <h2>Avant de commencer</h2>
-    <p>CLAMO est une plateforme d'assistance juridique par IA. Nos analyses ne constituent pas une consultation juridique au sens de la loi du 31 décembre 1971.</p>
-    <div class="rgpd-links">En continuant, vous acceptez nos <a onclick="openModal('cgu')">Mentions légales</a> et notre <a onclick="openModal('privacy')">Politique de confidentialité</a>.</div>
-    <button id="rgpd-btn" onclick="acceptRgpd()">Accéder à CLAMO →</button>
+<!-- RGPD -->
+<div id="rgpd">
+  <div class="rgpd-panel">
+    <div class="rgpd-logo">
+      <div class="rgpd-logo-dot"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span>CLAMO</span>
+    </div>
+    <div class="rgpd-title">Bienvenue sur CLAMO</div>
+    <div class="rgpd-text">Avant de commencer, voici comment nous utilisons vos données et ce que CLAMO peut faire pour vous.</div>
+    <div class="rgpd-points">
+      <div class="rgpd-point">
+        <div class="rgpd-point-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div>CLAMO rédige vos mises en demeure, courriers de contestation et actes de procédure. Ce n'est pas une consultation juridique au sens de la loi du 31 décembre 1971.</div>
+      </div>
+      <div class="rgpd-point">
+        <div class="rgpd-point-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div>Vos échanges transitent via l'API Anthropic et ne sont pas conservés sur nos serveurs au-delà de votre session.</div>
+      </div>
+      <div class="rgpd-point">
+        <div class="rgpd-point-icon"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+        <div>Aucune donnée personnelle identifiable n'est collectée ni revendue.</div>
+      </div>
+    </div>
+    <div class="rgpd-legal">En continuant, vous acceptez nos <a onclick="openModal('cgu')">Mentions légales</a> et notre <a onclick="openModal('privacy')">Politique de confidentialité</a>.</div>
+    <button class="btn-rgpd" onclick="acceptRgpd()">Commencer →</button>
   </div>
 </div>
 
+<!-- MODAL CGU -->
 <div class="modal-overlay" id="modal-cgu">
-  <div class="modal-box">
+  <div class="modal-panel">
     <h2>Mentions légales</h2>
     <h3>Éditeur</h3><p>CLAMO — contact@clamo.fr</p>
-    <h3>Nature du service</h3><p>CLAMO n'est pas un cabinet d'avocats et ne fournit pas de consultations juridiques au sens de la loi du 31 décembre 1971.</p>
-    <h3>Limitation de responsabilité</h3><p>Les documents générés sont fournis à titre indicatif. La consultation d'un avocat reste indispensable pour toute situation complexe.</p>
-    <h3>Hébergement</h3><p>Vercel Inc. Données traitées via l'API Anthropic PBC conformes au RGPD.</p>
-    <button class="modal-close" onclick="closeModal('cgu')">Fermer</button>
+    <h3>Nature du service</h3><p>CLAMO est un service d'assistance à la rédaction d'actes juridiques par IA. Il ne constitue pas une consultation juridique au sens de la loi du 31 décembre 1971. Pour toute situation à forts enjeux, consultez un avocat inscrit au barreau.</p>
+    <h3>Limitation de responsabilité</h3><p>Les actes générés par CLAMO sont rédigés sur la base des informations transmises par l'utilisateur. Leur validité et leur efficacité dépendent de l'exactitude de ces informations.</p>
+    <h3>Hébergement</h3><p>Vercel Inc. (USA). Données traitées via l'API Anthropic PBC dans le cadre de clauses contractuelles types conformes au RGPD.</p>
+    <button class="btn-modal-close" onclick="closeModal('cgu')">Fermer</button>
   </div>
 </div>
 
+<!-- MODAL CONFIDENTIALITÉ -->
 <div class="modal-overlay" id="modal-privacy">
-  <div class="modal-box">
+  <div class="modal-panel">
     <h2>Politique de confidentialité</h2>
-    <h3>Données collectées</h3><p>CLAMO ne collecte aucune donnée personnelle identifiable.</p>
-    <h3>Transfert</h3><p>Vos messages transitent via Anthropic PBC (États-Unis) conformes au RGPD.</p>
-    <h3>Conservation</h3><p>Aucune conversation conservée au-delà de la session.</p>
-    <h3>Vos droits</h3><p>contact@clamo.fr</p>
-    <h3>Cookies</h3><p>Un seul cookie technique. Aucun cookie publicitaire.</p>
-    <button class="modal-close" onclick="closeModal('privacy')">Fermer</button>
+    <h3>Données collectées</h3><p>CLAMO ne collecte aucune donnée personnelle identifiable. Vos messages sont transmis à l'API Anthropic pour générer les réponses et ne sont pas stockés sur nos serveurs.</p>
+    <h3>Finalité</h3><p>Le traitement de vos données a pour unique finalité la génération de réponses juridiques assistées par IA.</p>
+    <h3>Transfert</h3><p>Vos messages transitent via Anthropic PBC (États-Unis) dans le cadre de clauses contractuelles types conformes au RGPD.</p>
+    <h3>Conservation</h3><p>Aucune conversation n'est conservée au-delà de votre session de navigation.</p>
+    <h3>Vos droits</h3><p>Droit d'accès, de rectification et de suppression : contact@clamo.fr</p>
+    <h3>Cookies</h3><p>Un seul cookie technique pour mémoriser votre consentement. Aucun cookie publicitaire ou de traçage.</p>
+    <button class="btn-modal-close" onclick="closeModal('privacy')">Fermer</button>
   </div>
 </div>
 
-<div id="home-page">
-  <div class="logo-block">
-    <div class="logo-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-    <div class="logo-title">CLAMO</div>
-    <div class="logo-sub">Votre premier droit est de mériter une défense sans compromis.</div>
-  </div>
-
-  <div class="main-input-wrapper">
-    <textarea class="main-input-box" id="home-input" placeholder="Décrivez votre situation juridique..." rows="2"></textarea>
-    <div id="home-files-preview" class="files-preview"></div>
-    <div class="input-actions">
-      <button class="attach-btn" onclick="document.getElementById('file-input').click()">📎 Joindre des documents</button>
-      <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileHome(event)"/>
-      <button class="send-btn-main" onclick="startChat()">Envoyer</button>
+<!-- PAGE ACCUEIL -->
+<div id="home">
+  <header class="home-header">
+    <div class="home-header-logo">
+      <div class="logo-dot"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <span class="logo-name">CLAMO</span>
     </div>
-  </div>
+    <span class="header-notice">Assistance juridique contentieuse</span>
+  </header>
 
-  <div class="chips-section">
-    <div class="chips-label">Situations fréquentes</div>
-    <div class="chips-grid">
+  <main class="home-hero">
+    <h1 class="hero-title">Faites valoir<br><span>vos droits.</span></h1>
+    <p class="hero-sub">Mises en demeure, recours, actes de procédure — rédigés avec précision, fondés sur le droit en vigueur.</p>
+
+    <div class="chips-row">
       <div class="chip" onclick="selectChip('licenciement')">Licenciement</div>
       <div class="chip" onclick="selectChip('loyer impayé ou dépôt de garantie non rendu')">Loyer / Dépôt</div>
       <div class="chip" onclick="selectChip('vice caché sur un véhicule ou un bien')">Vice caché</div>
@@ -233,277 +704,270 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
       <div class="chip" onclick="selectChip('fraude bancaire ou litige avec ma banque')">Banque</div>
       <div class="chip" onclick="selectChip('données personnelles et RGPD')">Données personnelles</div>
     </div>
-  </div>
 
-  <div class="values-row">
-    <div class="value-card">
-      <div class="value-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <h4>Mise en demeure</h4>
-      <p>Courrier officiel avec les articles de loi applicables</p>
+    <div class="values-row">
+      <div class="value-card">
+        <div class="value-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <h4>Mise en demeure</h4>
+        <p>Fondée sur les textes en vigueur, prête à envoyer en recommandé</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+        <h4>Recours structuré</h4>
+        <p>Compétence, prescription et procédure vérifiées avant rédaction</p>
+      </div>
+      <div class="value-card">
+        <div class="value-card-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h4>Acte opérationnel</h4>
+        <p>Document immédiatement utilisable pour faire valoir vos droits</p>
+      </div>
     </div>
-    <div class="value-card">
-      <div class="value-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
-      <h4>Recours structuré</h4>
-      <p>Dossier argumenté pour la bonne juridiction</p>
-    </div>
-    <div class="value-card">
-      <div class="value-card-icon"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <h4>Acte opérationnel</h4>
-      <p>Document prêt à faire valoir vos droits</p>
-    </div>
-  </div>
+  </main>
 
-  <div class="clamo-about">
-    <div class="clamo-about-badges">
-      <div class="clamo-about-badge">Pas une IA généraliste</div>
-      <div class="clamo-about-badge">Une IA exigeante</div>
-    </div>
-    <div class="clamo-about-title">Une IA entraînée exclusivement sur le droit français et européen.</div>
-    <div class="clamo-about-body">
-      <p>CLAMO n'est pas un chatbot généraliste. C'est une intelligence artificielle <strong>spécialisée en droit</strong>, connectée en temps réel aux bases juridiques officielles françaises et européennes. Chaque réponse s'appuie sur des textes de loi en vigueur, des décisions de jurisprudence récentes et des procédures judiciaires actualisées.</p>
-      <p>Là où une IA généraliste vous donnera une réponse approximative, CLAMO <strong>cite les articles applicables, identifie les délais de prescription, détermine la juridiction compétente</strong> et rédige l'acte immédiatement utilisable — mise en demeure, courrier de recours, saisine de tribunal — calibré sur votre situation spécifique.</p>
-      <p>Vous repartez avec un document juridique solide, fondé sur les mêmes sources qu'un avocat consulterait — <strong>en quelques minutes, sans rendez-vous, sans honoraires.</strong></p>
-    </div>
-    <div class="clamo-about-sources">
-      <div class="source-tag">Légifrance</div>
-      <div class="source-tag">Cour de cassation</div>
-      <div class="source-tag">Conseil d'État</div>
-      <div class="source-tag">EUR-Lex</div>
-      <div class="source-tag">CNIL</div>
-      <div class="source-tag">Code civil</div>
-      <div class="source-tag">Code du travail</div>
-      <div class="source-tag">Code de la consommation</div>
+  <!-- Barre fixe en bas -->
+  <div class="home-input-bar">
+    <div class="home-input-inner">
+      <textarea class="home-textarea" id="home-input" placeholder="Décrivez votre situation…" rows="1"></textarea>
+      <div class="home-input-actions">
+        <div id="home-files-chips" class="files-chips"></div>
+        <button class="btn-attach" onclick="document.getElementById('file-input').click()">
+          <svg width="12" height="12" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Joindre
+        </button>
+        <input type="file" id="file-input" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileHome(event)"/>
+        <button class="btn-send" onclick="startChat()">
+          Envoyer
+          <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
     </div>
   </div>
-
-  <div class="clamo-signature">CLAMO — La défense pour tous.</div>
 </div>
 
-<div id="chat-page">
+<!-- PAGE CHAT -->
+<div id="chat">
   <div class="chat-header">
-    <div class="chat-header-logo" onclick="goHome()">
-      <div class="chat-header-logo-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+    <div class="chat-logo" onclick="goHome()">
+      <div class="chat-logo-dot"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
       <span>CLAMO</span>
     </div>
-    <button class="new-chat-btn" onclick="goHome()">+ Nouvelle situation</button>
+    <button class="btn-new" onclick="goHome()">+ Nouvelle situation</button>
   </div>
+
   <div class="chat-messages" id="chat-messages"></div>
+
   <div class="chat-input-area">
-    <div id="chat-files-preview" class="chat-files-preview"></div>
-    <textarea class="chat-textarea" id="chat-input" placeholder="Posez votre question ou ajoutez des détails..." rows="2"></textarea>
-    <div class="chat-actions">
-      <button class="chat-attach-btn" onclick="document.getElementById('file-input-chat').click()">📎 Joindre</button>
-      <input type="file" id="file-input-chat" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileChat(event)"/>
-      <span class="chat-hint">Shift+Entrée pour aller à la ligne</span>
-      <button class="chat-send-btn" onclick="sendChatMessage()">Envoyer</button>
+    <div class="chat-input-inner">
+      <div id="chat-files-preview" class="chat-files-preview"></div>
+      <textarea class="chat-textarea" id="chat-input" placeholder="Répondez ou ajoutez des détails…" rows="1"></textarea>
+      <div class="chat-actions">
+        <button class="btn-chat-attach" onclick="document.getElementById('file-input-chat').click()">
+          <svg width="11" height="11" viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          Joindre
+        </button>
+        <input type="file" id="file-input-chat" accept=".pdf,.jpg,.jpeg,.png,.docx,.doc,.txt" multiple onchange="handleFileChat(event)"/>
+        <span class="chat-hint">Shift+Entrée pour aller à la ligne</span>
+        <button class="btn-chat-send" onclick="sendChat()">Envoyer</button>
+      </div>
     </div>
   </div>
-</div>
-
-<div class="page-footer" id="footer">
-  <a onclick="openModal('cgu')">Mentions légales</a>
-  <span>·</span>
-  <a onclick="openModal('privacy')">Confidentialité</a>
-  <span>·</span>
-  <span>© 2025 CLAMO</span>
 </div>
 
 <script>
-const PROXY='https://proxy-juridique.vercel.app/api/chat';
-let history=[];
-let pendingFilesHome=[];
-let pendingFilesChat=[];
+const PROXY = 'https://proxy-juridique.vercel.app/api/chat';
+let history = [];
+let filesHome = [];
+let filesChat = [];
 
-const DOMAIN_MESSAGES={
-  'licenciement':`Je viens d'être licencié(e).\n\nDocuments en ma possession :\n- Lettre de licenciement : oui / non\n- Contrat de travail : oui / non\n- 12 derniers bulletins de salaire : oui / non\n- Convocation entretien préalable : oui / non\n- Solde de tout compte : oui / non\n\nAncienneté : ___\nDate : ___\nMotif invoqué : ___`,
-  'loyer impayé ou dépôt de garantie non rendu':`Litige locatif.\n\nSituation : dépôt non rendu / loyer impayé / autre : ___\n\nDocuments :\n- Bail : oui / non\n- États des lieux entrée ET sortie : oui / non\n- Quittances : oui / non\n- Photos : oui / non\n\nDate fin de bail : ___\nMontant : ___€`,
-  'vice caché sur un véhicule ou un bien':`Vice caché.\n\nBien : véhicule / immobilier / autre : ___\nDate achat : ___\nDate découverte : ___\nDéfaut : ___\n\nDocuments :\n- Facture / acte de vente : oui / non\n- Photos : oui / non\n- Devis réparation : oui / non`,
-  'arnaque ou fraude':`Arnaque.\n\nType : en ligne / faux prestataire / autre : ___\nDate : ___\nPréjudice : ___€\n\nDocuments :\n- Preuves paiement : oui / non\n- Échanges écrits : oui / non\n- Plainte déposée : oui / non`,
-  'refus de prise en charge par mon assurance':`Refus assurance.\n\nType : auto / habitation / santé / autre : ___\nDate sinistre : ___\nMotif refus : ___\n\nDocuments :\n- Contrat + conditions générales : oui / non\n- Déclaration sinistre : oui / non\n- Courrier de refus : oui / non`,
-  'accident de la route':`Accident de la route.\n\nSituation : victime / tiers\nDate : ___\nBlessures : oui / non\nPréjudice : ___€\n\nDocuments :\n- Constat amiable : oui / non\n- PV police : oui / non\n- Certificat médical : oui / non`,
-  'harcèlement moral ou sexuel':`Harcèlement.\n\nType : moral / sexuel\nCadre : pro / autre\nDurée : ___\n\nDocuments :\n- Journal des faits : oui / non\n- Échanges écrits : oui / non\n- Témoignages : oui / non\n- Arrêts maladie : oui / non`,
-  'divorce ou pension alimentaire':`Procédure familiale.\n\nSituation : divorce / pension impayée / garde contestée\n\nDocuments :\n- Acte de mariage : oui / non\n- Jugement existant : oui / non\n- Justificatifs revenus 12 mois : oui / non\n\nDate séparation : ___`,
-  'trouble de voisinage ou nuisances':`Troubles voisinage.\n\nType : bruit / travaux / autre : ___\nDurée : ___\n\nDocuments :\n- Journal des nuisances : oui / non\n- Témoignages : oui / non\n- Plaintes déposées : oui / non`,
-  'litige avec un prestataire ou une entreprise':`Litige prestataire.\n\nPrestataire : ___\nManquement : ___\nPréjudice : ___€\n\nDocuments :\n- Contrat signé : oui / non\n- Factures : oui / non\n- Preuves manquement : oui / non`,
-  'fraude bancaire ou litige avec ma banque':`Litige bancaire.\n\nSituation : fraude / frais / remboursement\nDate : ___\nMontant : ___€\n\nDocuments :\n- Relevés 6 mois : oui / non\n- Signalement banque : oui / non\n- Réponse banque : oui / non`,
-  'données personnelles et RGPD':`Données personnelles.\n\nSituation : utilisation abusive / suppression ignorée / fuite\nOrganisme : ___\n\nDocuments :\n- Demande envoyée : oui / non\n- Réponse reçue : oui / non`
+const DOMAIN = {
+  'licenciement': `Je viens d'être licencié(e).\n\nDocuments disponibles :\n- Lettre de licenciement : oui / non\n- Contrat de travail : oui / non\n- 12 derniers bulletins de salaire : oui / non\n- Convocation entretien préalable : oui / non\n- Solde de tout compte : oui / non\n\nAncienneté : ___\nDate : ___\nMotif invoqué : ___`,
+  'loyer impayé ou dépôt de garantie non rendu': `Litige locatif.\n\nSituation : dépôt non rendu / loyer impayé / autre : ___\n\nDocuments :\n- Bail : oui / non\n- États des lieux (entrée ET sortie) : oui / non\n- Quittances : oui / non\n- Photos : oui / non\n\nDate de fin de bail : ___\nMontant contesté : ___€`,
+  'vice caché sur un véhicule ou un bien': `Vice caché.\n\nBien concerné : véhicule / immobilier / autre : ___\nDate d'achat : ___\nDate de découverte du défaut : ___\nDescription du défaut : ___\n\nDocuments :\n- Facture / acte de vente : oui / non\n- Photos du défaut : oui / non\n- Devis de réparation : oui / non`,
+  'arnaque ou fraude': `Arnaque.\n\nType : en ligne / faux prestataire / autre : ___\nDate des faits : ___\nPréjudice subi : ___€\n\nDocuments :\n- Preuves de paiement : oui / non\n- Échanges écrits : oui / non\n- Plainte déposée : oui / non`,
+  'refus de prise en charge par mon assurance': `Refus d'assurance.\n\nType de contrat : auto / habitation / santé / autre : ___\nDate du sinistre : ___\nMotif du refus : ___\n\nDocuments :\n- Contrat + conditions générales : oui / non\n- Déclaration de sinistre : oui / non\n- Courrier de refus : oui / non`,
+  'accident de la route': `Accident de la route.\n\nQualité : victime / tiers\nDate : ___\nBlessures : oui / non\nPréjudice matériel estimé : ___€\n\nDocuments :\n- Constat amiable : oui / non\n- PV de police / gendarmerie : oui / non\n- Certificat médical : oui / non`,
+  'harcèlement moral ou sexuel': `Harcèlement.\n\nType : moral / sexuel\nCadre : professionnel / autre\nDurée des faits : ___\n\nDocuments :\n- Journal chronologique des faits : oui / non\n- Échanges écrits : oui / non\n- Témoignages : oui / non\n- Arrêts maladie / certificats médicaux : oui / non`,
+  'divorce ou pension alimentaire': `Procédure familiale.\n\nSituation : divorce / pension impayée / garde contestée\n\nDocuments :\n- Acte de mariage : oui / non\n- Jugement existant : oui / non\n- Justificatifs de revenus (12 mois) : oui / non\n\nDate de séparation effective : ___`,
+  'trouble de voisinage ou nuisances': `Troubles de voisinage.\n\nType : bruit / travaux / odeurs / autre : ___\nDurée : ___\n\nDocuments :\n- Journal des nuisances : oui / non\n- Témoignages de voisins : oui / non\n- Plaintes déposées : oui / non`,
+  'litige avec un prestataire ou une entreprise': `Litige prestataire.\n\nPrestataire concerné : ___\nManquement constaté : ___\nPréjudice estimé : ___€\n\nDocuments :\n- Contrat / devis signé : oui / non\n- Factures payées : oui / non\n- Preuves du manquement : oui / non`,
+  'fraude bancaire ou litige avec ma banque': `Litige bancaire.\n\nSituation : fraude / frais abusifs / refus de remboursement\nDate : ___\nMontant : ___€\n\nDocuments :\n- Relevés bancaires (6 mois) : oui / non\n- Signalement écrit à la banque : oui / non\n- Réponse de la banque : oui / non`,
+  'données personnelles et RGPD': `Données personnelles.\n\nSituation : utilisation sans consentement / suppression ignorée / fuite de données\nOrganisme concerné : ___\n\nDocuments :\n- Demande de suppression envoyée : oui / non\n- Réponse reçue : oui / non`
 };
 
-// Lit un fichier et retourne l'objet prêt pour l'API
+// RGPD
+function acceptRgpd() {
+  document.getElementById('rgpd').style.display = 'none';
+  try { localStorage.setItem('clamo_ok', '1'); } catch(e) {}
+}
+try { if (localStorage.getItem('clamo_ok') === '1') document.getElementById('rgpd').style.display = 'none'; } catch(e) {}
+
+function openModal(t) { document.getElementById('modal-' + t).classList.add('open'); }
+function closeModal(t) { document.getElementById('modal-' + t).classList.remove('open'); }
+
+// Navigation
+function goHome() {
+  document.getElementById('home').style.display = 'flex';
+  document.getElementById('chat').style.display = 'none';
+  history = []; filesHome = []; filesChat = [];
+  document.getElementById('home-files-chips').innerHTML = '';
+  document.getElementById('chat-files-preview').innerHTML = '';
+  document.getElementById('chat-messages').innerHTML = '';
+}
+function showChat() {
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('chat').style.display = 'flex';
+}
+
+// Chips
+function selectChip(domain) {
+  const msg = DOMAIN[domain] || domain;
+  const ta = document.getElementById('home-input');
+  ta.value = msg;
+  autoResize(ta);
+  ta.focus();
+}
+
+// Fichiers
 function readFile(file) {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     const reader = new FileReader();
     const type = file.type;
-    const name = file.name;
-
     if (type === 'application/pdf') {
-      reader.onload = (e) => {
-        const base64 = e.target.result.split(',')[1];
-        resolve({ name, type, mediaType: 'application/pdf', data: base64 });
-      };
+      reader.onload = e => resolve({ name: file.name, mediaType: 'application/pdf', data: e.target.result.split(',')[1] });
       reader.readAsDataURL(file);
     } else if (type.startsWith('image/')) {
-      reader.onload = (e) => {
-        const base64 = e.target.result.split(',')[1];
-        resolve({ name, type, mediaType: type, data: base64 });
-      };
+      reader.onload = e => resolve({ name: file.name, mediaType: type, data: e.target.result.split(',')[1] });
       reader.readAsDataURL(file);
     } else {
-      // txt, docx, doc — lecture texte brut
-      reader.onload = (e) => {
-        resolve({ name, type, textContent: e.target.result });
-      };
+      reader.onload = e => resolve({ name: file.name, type, textContent: e.target.result });
       reader.readAsText(file);
     }
   });
 }
 
-function addFileTag(container, name, index, isHome) {
-  const tag = document.createElement('div');
-  tag.className = isHome ? 'file-preview-tag' : 'chat-file-tag';
-  tag.id = `tag-${isHome?'home':'chat'}-${index}`;
-  tag.innerHTML = `📎 ${name} <button onclick="removeFile(${index}, ${isHome})">×</button>`;
-  document.getElementById(container).appendChild(tag);
+function addFileChip(containerId, name, index, isHome) {
+  const chip = document.createElement('div');
+  chip.className = isHome ? 'file-chip' : 'chat-file-chip';
+  chip.id = `fchip-${isHome?'h':'c'}-${index}`;
+  chip.innerHTML = `📎 ${name} <button onclick="removeFile(${index},${isHome})">×</button>`;
+  document.getElementById(containerId).appendChild(chip);
 }
 
-function removeFile(index, isHome) {
-  if (isHome) {
-    pendingFilesHome.splice(index, 1);
-    refreshFileTags('home-files-preview', pendingFilesHome, true);
-  } else {
-    pendingFilesChat.splice(index, 1);
-    refreshFileTags('chat-files-preview', pendingFilesChat, false);
+function removeFile(idx, isHome) {
+  if (isHome) { filesHome.splice(idx, 1); refreshChips('home-files-chips', filesHome, true); }
+  else { filesChat.splice(idx, 1); refreshChips('chat-files-preview', filesChat, false); }
+}
+function refreshChips(cid, arr, isHome) {
+  document.getElementById(cid).innerHTML = '';
+  arr.forEach((f, i) => addFileChip(cid, f.name, i, isHome));
+}
+
+async function handleFileHome(e) {
+  for (const f of Array.from(e.target.files)) {
+    const p = await readFile(f);
+    filesHome.push(p);
+    addFileChip('home-files-chips', f.name, filesHome.length - 1, true);
   }
+  e.target.value = '';
 }
-
-function refreshFileTags(containerId, files, isHome) {
-  const container = document.getElementById(containerId);
-  container.innerHTML = '';
-  files.forEach((f, i) => addFileTag(containerId, f.name, i, isHome));
-}
-
-async function handleFileHome(event) {
-  const files = Array.from(event.target.files);
-  for (const file of files) {
-    const processed = await readFile(file);
-    pendingFilesHome.push(processed);
-    addFileTag('home-files-preview', file.name, pendingFilesHome.length - 1, true);
+async function handleFileChat(e) {
+  for (const f of Array.from(e.target.files)) {
+    const p = await readFile(f);
+    filesChat.push(p);
+    addFileChip('chat-files-preview', f.name, filesChat.length - 1, false);
   }
-  event.target.value = '';
+  e.target.value = '';
 }
 
-async function handleFileChat(event) {
-  const files = Array.from(event.target.files);
-  for (const file of files) {
-    const processed = await readFile(file);
-    pendingFilesChat.push(processed);
-    addFileTag('chat-files-preview', file.name, pendingFilesChat.length - 1, false);
-  }
-  event.target.value = '';
-}
-
-function acceptRgpd(){document.getElementById('rgpd-overlay').style.display='none';try{localStorage.setItem('clamo_rgpd','1');}catch(e){}}
-try{if(localStorage.getItem('clamo_rgpd')==='1')document.getElementById('rgpd-overlay').style.display='none';}catch(e){}
-function openModal(t){document.getElementById('modal-'+t).classList.add('open');}
-function closeModal(t){document.getElementById('modal-'+t).classList.remove('open');}
-
-function goHome(){
-  document.getElementById('home-page').style.display='flex';
-  document.getElementById('chat-page').style.display='none';
-  document.getElementById('footer').style.display='flex';
-  history=[];pendingFilesHome=[];pendingFilesChat=[];
-  document.getElementById('home-files-preview').innerHTML='';
-  document.getElementById('chat-files-preview').innerHTML='';
-}
-function showChat(){
-  document.getElementById('home-page').style.display='none';
-  document.getElementById('chat-page').style.display='flex';
-  document.getElementById('footer').style.display='none';
-}
-function selectChip(domain){
-  const msg=DOMAIN_MESSAGES[domain]||domain;
-  document.getElementById('home-input').value=msg;
-  autoResize(document.getElementById('home-input'));
-  document.getElementById('home-input').focus();
-}
-
-async function startChat(){
-  const input=document.getElementById('home-input');
-  const text=input.value.trim();
-  if(!text && pendingFilesHome.length===0)return;
-  const files=[...pendingFilesHome];
-  pendingFilesHome=[];
-  document.getElementById('home-files-preview').innerHTML='';
+// Chat
+async function startChat() {
+  const ta = document.getElementById('home-input');
+  const text = ta.value.trim();
+  const files = [...filesHome];
+  if (!text && files.length === 0) return;
+  filesHome = [];
+  document.getElementById('home-files-chips').innerHTML = '';
   showChat();
-  input.value='';
-  await processMessage(text||'Veuillez analyser les documents joints.', files);
+  ta.value = '';
+  await send(text || 'Veuillez analyser les documents joints.', files);
 }
 
-async function sendChatMessage(){
-  const input=document.getElementById('chat-input');
-  const text=input.value.trim();
-  if(!text && pendingFilesChat.length===0)return;
-  const files=[...pendingFilesChat];
-  pendingFilesChat=[];
-  document.getElementById('chat-files-preview').innerHTML='';
-  input.value='';
-  input.style.height='auto';
-  await processMessage(text||'Veuillez analyser les documents joints.', files);
+async function sendChat() {
+  const ta = document.getElementById('chat-input');
+  const text = ta.value.trim();
+  const files = [...filesChat];
+  if (!text && files.length === 0) return;
+  filesChat = [];
+  document.getElementById('chat-files-preview').innerHTML = '';
+  ta.value = '';
+  ta.style.height = 'auto';
+  await send(text || 'Veuillez analyser les documents joints.', files);
 }
 
-async function processMessage(text, files=[]){
-  // Affiche les fichiers joints
-  if(files.length>0){
-    files.forEach(f=>{
-      const box=document.createElement('div');
-      box.className='msg-file';
-      box.innerHTML='📎 '+f.name;
-      document.getElementById('chat-messages').appendChild(box);
+async function send(text, files = []) {
+  if (files.length > 0) {
+    files.forEach(f => {
+      const b = document.createElement('div');
+      b.className = 'msg-file';
+      b.textContent = '📎 ' + f.name;
+      document.getElementById('chat-messages').appendChild(b);
     });
   }
-  // Affiche le message
-  if(text) addMsg(text,'user',false);
+  if (text) addMsg(text, 'user');
   scrollBottom();
-  const typing=addTyping();
-  scrollBottom();
+  const typing = addTyping();
 
-  try{
-    const payload={message:text, history};
-    if(files.length>0) payload.files=files;
-
-    const r=await fetch(PROXY,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    const d=await r.json();
+  try {
+    const payload = { message: text, history };
+    if (files.length > 0) payload.files = files;
+    const r = await fetch(PROXY, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    const d = await r.json();
     typing.remove();
-    if(d.reply){
-      const replyBox=addMsg(parseMarkdown(d.reply),'bot',true);
-      setTimeout(()=>{replyBox.scrollIntoView({behavior:'smooth',block:'start'});},50);
-      history.push({role:'user',content:text||'[Documents joints]'},{role:'assistant',content:d.reply});
-      if(history.length>20)history=history.slice(-20);
+    if (d.reply) {
+      const box = addMsg(parseMarkdown(d.reply), 'bot', true);
+      setTimeout(() => box.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      history.push({ role: 'user', content: text || '[Documents]' }, { role: 'assistant', content: d.reply });
+      if (history.length > 20) history = history.slice(-20);
     }
-  }catch(e){typing.remove();addMsg('Erreur de connexion. Veuillez réessayer.','bot',false);}
+  } catch(e) {
+    typing.remove();
+    addMsg('Erreur de connexion. Veuillez réessayer.', 'bot');
+  }
 }
 
-function parseMarkdown(t){return t.replace(/##\s(.+)/g,'<h3>$1</h3>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/^-\s(.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>').replace(/\n/g,'<br>');}
-function addMsg(text,type,isHTML){
-  const box=document.createElement('div');
-  box.className=type==='user'?'msg-user':'msg-bot';
-  if(isHTML)box.innerHTML=text;else box.textContent=text;
-  document.getElementById('chat-messages').appendChild(box);
-  return box;
+function addMsg(text, type, isHTML) {
+  const b = document.createElement('div');
+  b.className = type === 'user' ? 'msg-user' : 'msg-bot';
+  if (isHTML) b.innerHTML = text; else b.textContent = text;
+  document.getElementById('chat-messages').appendChild(b);
+  return b;
 }
-function addTyping(){
-  const box=document.createElement('div');box.className='msg-typing';
-  box.innerHTML='<span></span><span></span><span></span>';
-  document.getElementById('chat-messages').appendChild(box);
-  return box;
+function addTyping() {
+  const b = document.createElement('div');
+  b.className = 'msg-typing';
+  b.innerHTML = '<span></span><span></span><span></span>';
+  document.getElementById('chat-messages').appendChild(b);
+  scrollBottom();
+  return b;
 }
-function scrollBottom(){const msgs=document.getElementById('chat-messages');msgs.scrollTop=msgs.scrollHeight;}
-function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,200)+'px';}
-document.getElementById('home-input').addEventListener('input',function(){autoResize(this);});
-document.getElementById('home-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();startChat();}});
-document.getElementById('chat-input').addEventListener('input',function(){autoResize(this);});
-document.getElementById('chat-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatMessage();}});
-if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js');}
+function scrollBottom() { const m = document.getElementById('chat-messages'); m.scrollTop = m.scrollHeight; }
+function parseMarkdown(t) {
+  return t
+    .replace(/##\s(.+)/g, '<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^-\s(.+)/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/\n/g, '<br>');
+}
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 180) + 'px'; }
+
+document.getElementById('home-input').addEventListener('input', function() { autoResize(this); });
+document.getElementById('home-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); startChat(); } });
+document.getElementById('chat-input').addEventListener('input', function() { autoResize(this); });
+document.getElementById('chat-input').addEventListener('keydown', function(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } });
+
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
 </script>
 </body>
 </html>
