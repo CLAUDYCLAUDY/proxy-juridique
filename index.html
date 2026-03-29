@@ -59,39 +59,71 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 #main { flex: 1; height: 100vh; overflow: hidden; display: flex; flex-direction: column; position: relative; min-width: 0; }
 
 /* HOME */
-#home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 24px 120px; gap: 24px; overflow: hidden; }
-
+#home {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px 160px;
+  gap: 28px;
+  overflow: hidden;
+}
 .hero-title { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.6px; text-align: center; }
 .hero-title span { color: var(--green); }
 
 /* 3 CARDS */
-.home-cards { display: flex; gap: 10px; width: 100%; max-width: 620px; }
-.home-card { flex: 1; background: var(--input-bg); border-radius: 14px; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; transition: background 0.15s; cursor: default; }
-.home-card:hover { background: #eeeeee; }
-.home-card-icon { width: 32px; height: 32px; background: var(--green-pale); border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.home-cards { display: flex; gap: 10px; width: 100%; max-width: 640px; }
+.home-card { flex: 1; background: var(--input-bg); border-radius: 14px; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; }
+.home-card-icon { width: 32px; height: 32px; background: var(--green-pale); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
 .home-card-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .home-card h4 { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
 .home-card p { font-size: 11px; color: var(--text-2); line-height: 1.5; }
 
-/* SIGNATURE */
-.home-signature { font-size: 14px; font-weight: 700; color: var(--text); letter-spacing: -0.2px; text-align: center; }
-
-/* INPUT BAR */
-.input-bar { position: absolute; bottom: 0; left: 0; right: 0; padding: 0 20px 20px; background: linear-gradient(to top, #fff 60%, transparent); }
-.input-inner { max-width: 680px; margin: 0 auto; background: var(--input-bg); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); transition: box-shadow 0.2s; }
+/* INPUT BAR — fixe en bas, remontée */
+.input-bar {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px 20px 16px;
+  background: linear-gradient(to top, #fff 70%, transparent);
+}
+.input-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  background: var(--input-bg);
+  border-radius: 18px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
 .input-inner:focus-within { box-shadow: 0 0 0 2px rgba(26,74,42,0.2), 0 1px 8px rgba(0,0,0,0.06); }
 .input-textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-size: 15px; font-family: inherit; color: var(--text); line-height: 1.5; min-height: 24px; max-height: 140px; overflow-y: auto; }
 .input-textarea::placeholder { color: var(--text-3); }
 .input-actions { display: flex; align-items: center; gap: 8px; }
 .files-chips { display: flex; flex-wrap: wrap; gap: 5px; flex: 1; min-width: 0; }
 .file-chip { background: var(--green-pale); border: 1px solid var(--green-border); border-radius: 6px; padding: 3px 8px; font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 4px; }
-.file-chip button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 13px; padding: 0; flex-shrink: 0; }
+.file-chip button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 13px; padding: 0; }
 .btn-attach { background: transparent; border: none; padding: 6px 8px; font-size: 12px; font-family: inherit; color: var(--text-3); cursor: pointer; display: flex; align-items: center; gap: 5px; transition: color 0.12s; flex-shrink: 0; white-space: nowrap; }
 .btn-attach:hover { color: var(--text-2); }
 .btn-attach svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .btn-send { background: var(--green); border: none; border-radius: 10px; height: 34px; padding: 0 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; font-family: inherit; color: #fff; cursor: pointer; margin-left: auto; flex-shrink: 0; transition: background 0.12s; white-space: nowrap; }
 .btn-send:hover { background: var(--green-2); }
 .btn-send svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* SIGNATURE sous la barre */
+.home-signature {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.1px;
+  padding: 10px 0 0;
+  max-width: 640px;
+  margin: 0 auto;
+}
 
 /* CHAT */
 #chat { display: none; flex: 1; flex-direction: column; height: 100vh; overflow: hidden; }
@@ -111,7 +143,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .msg-typing span:nth-child(2){animation-delay:0.2s;}
 .msg-typing span:nth-child(3){animation-delay:0.4s;}
 @keyframes pulse{0%,60%,100%{opacity:0.3;transform:scale(0.85);}30%{opacity:1;transform:scale(1.1);}}
-
 .chat-input-wrap { flex-shrink: 0; padding: 10px 20px 18px; background: var(--bg); max-width: 760px; width: 100%; margin: 0 auto; align-self: stretch; }
 .chat-input-inner { background: var(--input-bg); border-radius: 16px; padding: 11px 13px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); transition: box-shadow 0.2s; }
 .chat-input-inner:focus-within { box-shadow: 0 0 0 2px rgba(26,74,42,0.18), 0 1px 6px rgba(0,0,0,0.05); }
@@ -121,7 +152,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .chat-files-preview { display: flex; flex-wrap: wrap; gap: 5px; }
 .chat-file-chip { background: var(--green-pale); border: 1px solid var(--green-border); border-radius: 6px; padding: 3px 8px; font-size: 11px; color: var(--green); display: flex; align-items: center; gap: 4px; }
 .chat-file-chip button { background: none; border: none; cursor: pointer; color: var(--green); font-size: 13px; padding: 0; }
-.btn-chat-attach { background: transparent; border: none; padding: 5px; color: var(--text-3); cursor: pointer; display: flex; align-items: center; transition: color 0.12s; flex-shrink: 0; }
+.btn-chat-attach { background: transparent; border: none; padding: 5px; color: var(--text-3); cursor: pointer; display: flex; align-items: center; transition: color 0.12s; }
 .btn-chat-attach:hover { color: var(--text-2); }
 .btn-chat-attach svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .chat-hint { font-size: 11px; color: var(--text-3); }
@@ -145,8 +176,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .rgpd-legal a { color: var(--green); text-decoration: none; cursor: pointer; }
 .btn-rgpd { background: var(--green); border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 500; font-family: inherit; color: #fff; cursor: pointer; width: 100%; transition: background 0.12s; }
 .btn-rgpd:hover { background: var(--green-2); }
-
-/* MODALS */
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 9998; display: none; align-items: flex-end; justify-content: center; }
 .modal-overlay.open { display: flex; }
 .modal-panel { background: #fff; border-radius: 20px 20px 0 0; padding: 24px 24px 40px; max-width: 520px; width: 100%; max-height: 80vh; overflow-y: auto; }
@@ -158,30 +187,32 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 #file-input, #file-input-chat { display: none; }
 
 /* MOBILE */
-@media (max-width: 700px) {
-  #sidebar { display: none; }
-  body { display: block; }
-  #main { width: 100%; height: 100vh; }
-  .mobile-header { display: flex !important; }
-  #home { padding: 0 16px 130px; justify-content: flex-start; padding-top: 72px; }
-  .hero-title { font-size: 24px; }
-  .home-cards { flex-direction: column; gap: 8px; }
-  .home-card { flex-direction: row; align-items: flex-start; gap: 12px; }
-  .home-card-icon { flex-shrink: 0; }
-  .input-bar { padding: 0 14px 18px; }
-  .chat-messages { padding: 16px 14px; }
-  .msg-bot, .msg-user { max-width: 94%; font-size: 13px; }
-  .chat-input-wrap { padding: 10px 14px 16px; }
-  .chat-textarea { font-size: 16px; }
-  .input-textarea { font-size: 16px; }
-  .rgpd-panel, .modal-panel { padding: 22px 18px 32px; }
-}
 .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; padding: 0 16px; z-index: 100; }
 .mobile-logo { display: flex; align-items: center; gap: 7px; }
 .mobile-logo-dot { width: 26px; height: 26px; background: var(--green); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
 .mobile-logo-dot svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .mobile-logo span { font-size: 14px; font-weight: 600; }
 .btn-mobile-new { background: transparent; border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 12px; font-family: inherit; color: var(--text-2); cursor: pointer; }
+
+@media (max-width: 700px) {
+  #sidebar { display: none; }
+  body { display: block; }
+  #main { width: 100%; height: 100vh; }
+  .mobile-header { display: flex; }
+  #home { padding: 72px 16px 170px; justify-content: center; }
+  .hero-title { font-size: 24px; }
+  .home-cards { flex-direction: column; gap: 8px; max-width: 100%; }
+  .home-card { flex-direction: row; align-items: flex-start; gap: 12px; }
+  .home-card-icon { flex-shrink: 0; }
+  .input-bar { padding: 10px 14px 14px; }
+  .input-inner { border-radius: 16px; }
+  .input-textarea { font-size: 16px; }
+  .chat-messages { padding: 16px 14px; }
+  .msg-bot, .msg-user { max-width: 94%; font-size: 13px; }
+  .chat-input-wrap { padding: 10px 14px 16px; }
+  .chat-textarea { font-size: 16px; }
+  .rgpd-panel, .modal-panel { padding: 22px 18px 32px; }
+}
 
 @media (min-width: 701px) {
   #rgpd { align-items: center; padding: 20px; }
@@ -237,7 +268,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
     <h3>Conservation</h3><p>Aucune conversation conservée au-delà de votre session de navigation.</p>
     <h3>Transfert</h3><p>API Anthropic PBC (États-Unis) — clauses contractuelles types conformes au RGPD.</p>
     <h3>Vos droits</h3><p>contact@clamo.fr</p>
-    <h3>Cookies</h3><p>Un seul cookie technique pour mémoriser votre consentement. Aucun cookie publicitaire.</p>
+    <h3>Cookies</h3><p>Un seul cookie technique. Aucun cookie publicitaire.</p>
     <button class="btn-close-modal" onclick="closeModal('privacy')">Fermer</button>
   </div>
 </div>
@@ -275,7 +306,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   <div class="sidebar-bottom">
     <a class="sidebar-bottom-link" onclick="openModal('cgu')">Mentions légales</a>
     <a class="sidebar-bottom-link" onclick="openModal('privacy')">Confidentialité</a>
-    <div class="sidebar-bottom-link" style="cursor:default;margin-top:2px;color:var(--text-3)">© 2025 CLAMO</div>
+    <div class="sidebar-bottom-link" style="cursor:default;color:var(--text-3)">© 2025 CLAMO</div>
   </div>
 </div>
 
@@ -292,39 +323,23 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   <!-- HOME -->
   <div id="home">
     <h1 class="hero-title">Faites valoir <span>vos droits.</span></h1>
-
-    <!-- 3 CARDS -->
     <div class="home-cards">
       <div class="home-card">
-        <div class="home-card-icon">
-          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        </div>
-        <div>
-          <h4>Mise en demeure</h4>
-          <p>Courrier officiel fondé sur les textes en vigueur, prêt à envoyer en recommandé</p>
-        </div>
+        <div class="home-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+        <h4>Mise en demeure</h4>
+        <p>Courrier officiel fondé sur les textes en vigueur, prêt à envoyer en recommandé</p>
       </div>
       <div class="home-card">
-        <div class="home-card-icon">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-        <div>
-          <h4>Acte introductif de procédure</h4>
-          <p>Assignation, requête ou saisine — juridiction et prescription vérifiées</p>
-        </div>
+        <div class="home-card-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+        <h4>Acte introductif de procédure</h4>
+        <p>Assignation, requête ou saisine — juridiction et prescription vérifiées</p>
       </div>
       <div class="home-card">
-        <div class="home-card-icon">
-          <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        </div>
-        <div>
-          <h4>Courrier de défense</h4>
-          <p>Contestation, réclamation ou recours pour faire valoir vos droits</p>
-        </div>
+        <div class="home-card-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h4>Courrier de défense</h4>
+        <p>Contestation, réclamation ou recours pour faire valoir vos droits</p>
       </div>
     </div>
-
-    <div class="home-signature">CLAMO — La défense pour tous.</div>
   </div>
 
   <!-- CHAT -->
@@ -349,7 +364,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
     </div>
   </div>
 
-  <!-- BARRE SAISIE ACCUEIL -->
+  <!-- BARRE SAISIE + SIGNATURE -->
   <div class="input-bar" id="input-bar">
     <div class="input-inner">
       <textarea class="input-textarea" id="home-input" placeholder="Décrivez votre situation…" rows="1"></textarea>
@@ -366,6 +381,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
         </button>
       </div>
     </div>
+    <div class="home-signature">CLAMO — La défense pour tous.</div>
   </div>
 </div>
 
@@ -419,8 +435,8 @@ function selectChip(domain){
   const ta=document.getElementById('home-input');
   ta.value=DOMAIN[domain]||domain;
   autoResize(ta);
+  if(document.getElementById('chat').style.display==='flex') goHome();
   ta.focus();
-  goHome();
 }
 
 function readFile(file){
