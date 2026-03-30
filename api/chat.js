@@ -1,17 +1,29 @@
 const Anthropic = require("@anthropic-ai/sdk");
 
+// Timeout sur les appels API externes
+function fetchWithTimeout(url, options, ms = 4000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal })
+    .finally(() => clearTimeout(timer));
+}
+
 async function getLegifranceToken() {
   const credentials = Buffer.from(
     `${process.env.LEGIFRANCE_CLIENT_ID}:${process.env.LEGIFRANCE_CLIENT_SECRET}`
   ).toString("base64");
-  const response = await fetch("https://oauth.piste.gouv.fr/api/oauth/token", {
-    method: "POST",
-    headers: {
-      "Authorization": `Basic ${credentials}`,
-      "Content-Type": "application/x-www-form-urlencoded",
+  const response = await fetchWithTimeout(
+    "https://oauth.piste.gouv.fr/api/oauth/token",
+    {
+      method: "POST",
+      headers: {
+        "Authorization": `Basic ${credentials}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials&scope=openid",
     },
-    body: "grant_type=client_credentials&scope=openid",
-  });
+    3000
+  );
   if (!response.ok) throw new Error(`Token failed: ${response.status}`);
   const data = await response.json();
   return data.access_token;
@@ -19,7 +31,7 @@ async function getLegifranceToken() {
 
 async function searchLegifrance(token, query) {
   try {
-    const response = await fetch(
+    const response = await fetchWithTimeout(
       "https://api.piste.gouv.fr/dila/legifrance/lf-engine-app/search",
       {
         method: "POST",
@@ -27,51 +39,21 @@ async function searchLegifrance(token, query) {
         body: JSON.stringify({
           recherche: {
             champs: [{ typeChamp: "ALL", criteres: [{ typeRecherche: "TOUS_LES_MOTS_DANS_UN_CHAMP", valeur: query }], operateur: "ET" }],
-            filtres: [{ facette: "NOM_CODE", valeurs: ["Code civil", "Code du travail", "Code de la consommation", "Code pénal", "Code de procédure civile", "Code de procédure pénale", "Code des assurances", "Code de la route", "Code de l'éducation", "Code de la santé publique"] }],
-            pageNumber: 1, pageSize: 6, operateur: "ET", typePagination: "DEFAUT"
+            filtres: [{ facette: "NOM_CODE", valeurs: ["Code civil", "Code du travail", "Code de la consommation", "Code pénal", "Code de procédure civile", "Code de procédure pénale", "Code des assurances"] }],
+            pageNumber: 1, pageSize: 5, operateur: "ET", typePagination: "DEFAUT"
           },
           fond: "CODE_DATE"
         }),
-      }
+      },
+      4000
     );
     if (!response.ok) return null;
     const data = await response.json();
     if (data.results && data.results.length > 0) {
-      return data.results.slice(0, 5).map(r => ({
+      return data.results.slice(0, 4).map(r => ({
         titre: r.titles?.[0]?.title || r.title || "",
         reference: r.titles?.[0]?.id || "",
-        context: r.titles?.[0]?.context || "",
-        texte: r.titles?.[0]?.text ? r.titles[0].text.substring(0, 400) : ""
-      }));
-    }
-    return null;
-  } catch (e) { return null; }
-}
-
-async function searchLegifranceJORI(token, query) {
-  try {
-    const response = await fetch(
-      "https://api.piste.gouv.fr/dila/legifrance/lf-engine-app/search",
-      {
-        method: "POST",
-        headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          recherche: {
-            champs: [{ typeChamp: "ALL", criteres: [{ typeRecherche: "TOUS_LES_MOTS_DANS_UN_CHAMP", valeur: query }], operateur: "ET" }],
-            pageNumber: 1, pageSize: 3, operateur: "ET", typePagination: "DEFAUT"
-          },
-          fond: "JURI"
-        }),
-      }
-    );
-    if (!response.ok) return null;
-    const data = await response.json();
-    if (data.results && data.results.length > 0) {
-      return data.results.slice(0, 2).map(r => ({
-        titre: r.titles?.[0]?.title || r.title || "",
-        reference: r.titles?.[0]?.id || "",
-        date: r.titles?.[0]?.date || "",
-        texte: r.titles?.[0]?.text ? r.titles[0].text.substring(0, 300) : ""
+        context: r.titles?.[0]?.context || ""
       }));
     }
     return null;
@@ -81,12 +63,13 @@ async function searchLegifranceJORI(token, query) {
 async function searchJudilibre(token, query) {
   try {
     const encodedQuery = encodeURIComponent(query.substring(0, 150));
-    const response = await fetch(
-      `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodedQuery}&page_size=4&resolve_references=true`,
+    const response = await fetchWithTimeout(
+      `https://api.piste.gouv.fr/cassation/judilibre/v1.0/search?query=${encodedQuery}&page_size=3&resolve_references=true`,
       {
         method: "GET",
         headers: { "Authorization": `Bearer ${token}`, "Accept": "application/json" },
-      }
+      },
+      4000
     );
     if (!response.ok) return null;
     const data = await response.json();
@@ -97,53 +80,32 @@ async function searchJudilibre(token, query) {
         date: r.decision_date || "",
         numero: r.number || "",
         solution: r.solution || "",
-        sommaire: r.summary ? r.summary.substring(0, 400) : "",
-        texte: r.text ? r.text.substring(0, 300) : ""
+        sommaire: r.summary ? r.summary.substring(0, 300) : "",
       }));
     }
     return null;
   } catch (e) { return null; }
 }
 
-function buildContext(legiResults, juriResults, joriResults) {
+function buildContext(legiResults, juriResults) {
   let context = "";
-
   if (legiResults && legiResults.length > 0) {
-    context += "\n\n=== TEXTES DE LOI VÉRIFIÉS (LÉGIFRANCE) ===\n";
+    context += "\n\n=== TEXTES VÉRIFIÉS (LÉGIFRANCE) ===\n";
     legiResults.forEach(r => {
-      context += `\n• ${r.titre}${r.reference ? ` [${r.reference}]` : ""}`;
-      if (r.context) context += `\n  Contexte : ${r.context}`;
-      if (r.texte) context += `\n  Extrait : ${r.texte}`;
-      context += "\n";
+      context += `• ${r.titre}${r.reference ? ` [${r.reference}]` : ""}${r.context ? ` — ${r.context}` : ""}\n`;
     });
-    context += "\n→ Ces textes sont en vigueur et certifiés. Tu PEUX les citer avec leur référence exacte.\n";
+    context += "→ Ces textes sont en vigueur. Cite-les avec leur référence exacte.\n";
   }
-
   if (juriResults && juriResults.length > 0) {
-    context += "\n=== JURISPRUDENCE VÉRIFIÉE (COUR DE CASSATION — JUDILIBRE) ===\n";
+    context += "\n=== JURISPRUDENCE VÉRIFIÉE (COUR DE CASSATION) ===\n";
     juriResults.forEach(r => {
-      context += `\n• ${r.juridiction}${r.chambre ? `, ${r.chambre}` : ""}${r.date ? `, ${r.date}` : ""}${r.numero ? `, pourvoi n°${r.numero}` : ""}`;
+      context += `• ${r.juridiction}${r.chambre ? `, ${r.chambre}` : ""}${r.date ? `, ${r.date}` : ""}${r.numero ? `, n°${r.numero}` : ""}`;
       if (r.solution) context += ` — ${r.solution}`;
-      if (r.sommaire) context += `\n  Sommaire : ${r.sommaire}`;
+      if (r.sommaire) context += `\n  ${r.sommaire}`;
       context += "\n";
     });
-    context += "\n→ Ces décisions sont authentiques. Tu PEUX les citer avec précision.\n";
+    context += "→ Ces décisions sont authentiques. Cite-les avec précision.\n";
   }
-
-  if (joriResults && joriResults.length > 0) {
-    context += "\n=== DÉCISIONS ADMINISTRATIVES VÉRIFIÉES (LÉGIFRANCE — JURI) ===\n";
-    joriResults.forEach(r => {
-      context += `\n• ${r.titre}${r.reference ? ` [${r.reference}]` : ""}${r.date ? `, ${r.date}` : ""}`;
-      if (r.texte) context += `\n  Extrait : ${r.texte}`;
-      context += "\n";
-    });
-    context += "\n→ Ces décisions sont vérifiées.\n";
-  }
-
-  if (!context) {
-    context = "\n\n=== AUCUNE RÉFÉRENCE VÉRIFIÉE DISPONIBLE ===\nAucun texte ni jurisprudence vérifiés trouvés pour cette requête. Applique les règles anti-hallucination avec rigueur absolue : ne cite aucune référence dont tu n'es pas certain.\n";
-  }
-
   return context;
 }
 
@@ -158,21 +120,25 @@ module.exports = async function handler(req, res) {
     const { message, history, files } = req.body;
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    let legiResults = null, juriResults = null, joriResults = null;
+    // Appels juridiques avec timeout — ne bloquent jamais Claude
+    let legiResults = null, juriResults = null;
     if (message) {
       try {
-        const token = await getLegifranceToken();
-        [legiResults, juriResults, joriResults] = await Promise.all([
-          searchLegifrance(token, message.substring(0, 200)),
-          searchJudilibre(token, message.substring(0, 150)),
-          searchLegifranceJORI(token, message.substring(0, 200))
+        const tokenPromise = getLegifranceToken();
+        const token = await Promise.race([
+          tokenPromise,
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500))
         ]);
+        [legiResults, juriResults] = await Promise.allSettled([
+          searchLegifrance(token, message.substring(0, 200)),
+          searchJudilibre(token, message.substring(0, 150))
+        ]).then(r => r.map(x => x.status === 'fulfilled' ? x.value : null));
       } catch (e) {
         console.log("APIs juridiques non disponibles:", e.message);
       }
     }
 
-    const verifiedContext = buildContext(legiResults, juriResults, joriResults);
+    const verifiedContext = buildContext(legiResults, juriResults);
 
     const systemPrompt = `Tu es CLAMO, assistant juridique contentieux français de haute exigence. Tu assistes exclusivement des particuliers dans la défense de leurs droits en mode contentieux.
 
@@ -186,183 +152,94 @@ Tu interviens UNIQUEMENT pour :
 - Rédiger des actes introductifs de procédure (assignation, requête, saisine)
 - Analyser un dossier contentieux pour préparer ces actes
 
-Tu REFUSES poliment et renvoies vers un avocat pour :
-- Conseil juridique préventif
-- Rédaction ou analyse de contrats
-- Optimisation fiscale ou patrimoniale
-- Toute question hors contentieux
-
-Formulation de refus : "CLAMO intervient uniquement en matière contentieuse. Pour cette demande, je vous recommande de consulter un avocat inscrit au barreau."
+Tu REFUSES pour : conseil préventif, rédaction de contrats, fiscalité, questions hors contentieux.
+Formulation : "CLAMO intervient uniquement en matière contentieuse. Pour cette demande, consultez un avocat inscrit au barreau."
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 II. RÈGLES D'INTÉGRITÉ JURIDIQUE — ABSOLUES
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 RÈGLE 1 — SOURCES VÉRIFIÉES EN PRIORITÉ
-Utilise en priorité les textes et décisions fournis dans la section "RÉFÉRENCES VÉRIFIÉES" ci-dessous. Ces sources sont certifiées par Légifrance et Judilibre. Cite-les avec leur référence exacte.
+Utilise en priorité les textes et décisions fournis dans les références vérifiées ci-dessous.
 
-RÈGLE 2 — ARTICLES CERTAINS SANS VÉRIFICATION
-Tu peux citer sans vérification les articles fondamentaux et stables du droit français, notamment :
-Code civil : art. 1240 (responsabilité délictuelle), art. 1231-1 (responsabilité contractuelle), art. 1641-1648 (garantie des vices cachés), art. 1353 (charge de la preuve), art. 2224 (prescription de droit commun 5 ans), art. 2232-2233 (délais de forclusion)
-Code du travail : art. L1232-1 (cause réelle et sérieuse), art. L1235-3 (barème indemnités), art. L1237-19 (rupture conventionnelle), art. L3141-1 (congés payés), art. L4121-1 (obligation sécurité employeur)
-Code de la consommation : art. L217-4 (conformité), art. L217-12 (prescription 2 ans), art. L221-18 (délai rétractation 14 jours), art. L132-1 (clauses abusives)
-Code de procédure civile : art. 750-1 (tentative amiable obligatoire), art. 56 (assignation), art. 840-842 (requête)
-Code des assurances : art. L113-1 (déclaration sinistre), art. L124-1 (assurance responsabilité)
+RÈGLE 2 — ARTICLES CERTAINS (citables sans vérification)
+Code civil : art. 1240 (responsabilité délictuelle), art. 1231-1 (responsabilité contractuelle), art. 1641-1648 (vices cachés), art. 1353 (charge de la preuve), art. 2224 (prescription 5 ans)
+Code du travail : art. L1232-1 (cause réelle et sérieuse), art. L1235-3 (barème indemnités), art. L4121-1 (obligation sécurité)
+Code de la consommation : art. L217-4 (conformité), art. L217-12 (prescription 2 ans), art. L221-18 (rétractation 14 jours)
+CPC : art. 750-1 (tentative amiable obligatoire), art. 56 (assignation)
 
 RÈGLE 3 — INCERTITUDE
-Pour tout article hors liste ci-dessus et absent des références vérifiées :
-Formulation obligatoire : "article [X] du Code [Y] (référence à confirmer sur legifrance.gouv.fr)"
+Pour tout article absent des références vérifiées et de la liste ci-dessus :
+"article [X] du Code [Y] (à confirmer sur legifrance.gouv.fr)"
 
 RÈGLE 4 — JURISPRUDENCE
-Ne citer une décision de jurisprudence QUE si elle figure dans les références vérifiées fournies.
-Si tu connais un principe jurisprudentiel constant mais pas la référence exacte : "La jurisprudence constante de la Cour de cassation considère que [principe] — référence à confirmer."
-Jamais de numéro de pourvoi, de chambre ou de date inventés.
+Citer uniquement les décisions présentes dans les références vérifiées.
+Si principe connu sans référence certaine : "La jurisprudence constante considère que [principe]" — sans inventer de numéro.
 
 RÈGLE 5 — ZÉRO HALLUCINATION
-Un article inventé ou une jurisprudence fantaisiste peut entraîner la nullité d'un acte ou une faute grave. C'est inacceptable. En cas de doute, l'abstention est préférable à l'invention.
+Un article inventé peut invalider un acte. En cas de doute : abstention totale.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 III. PROTOCOLE DE TRAITEMENT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**ÉTAPE 1 — PREMIER CONTACT**
-Dès le premier message, avant toute analyse, collecter systématiquement :
+ÉTAPE 1 — PREMIER CONTACT
+Collecter systématiquement :
+**Votre identité :** nom, prénom, adresse (ou dénomination sociale, SIREN, siège si société)
+**Adversaire :** même informations
+**Faits :** chronologie précise avec dates et montants
+**Pièces disponibles :** lister + joindre si possible
 
-"Pour constituer votre dossier, j'ai besoin des informations suivantes :
+ÉTAPE 2 — ANALYSE JURIDIQUE (après réception des faits)
+A) Qualification juridique exacte des faits
+B) Textes applicables (vérifiés uniquement)
+C) Prescription : délai applicable, date de départ, date limite — si < 3 mois : mention URGENT
+D) Médiation préalable obligatoire ? (art. 750-1 CPC pour litiges ≤ 5 000€, consommation, voisinage, baux)
+E) Juridiction compétente : matérielle (TJ, CPH, tribunal de commerce, CCSP) ET territoriale
+F) Solidité du dossier : fort / moyen / fragile + explication
+G) Pièces manquantes et leur impact
 
-**Votre identité :**
-- Particulier : nom, prénom, adresse complète
-- Société : dénomination, forme juridique, SIREN, siège social, nom du représentant légal
+ÉTAPE 3 — PROPOSITION (fin de chaque réponse à partir de l'étape 2)
+Proposer UNIQUEMENT l'acte adapté à la situation :
 
-**Identité de l'adversaire :**
-- Particulier : nom, prénom, adresse
-- Société : dénomination, forme juridique, SIREN si connu, siège social
-- Administration : nom exact et adresse
+Premier recours sans mise en demeure préalable :
+"**Je peux rédiger votre mise en demeure — 49€**"
 
-**Les faits :**
-- Chronologie précise avec dates
-- Montants en jeu
-- Ce qui a déjà été tenté (courriers, appels...)
+Mise en demeure déjà envoyée sans effet, ou saisine directe nécessaire :
+"**Je peux rédiger votre [assignation / requête / saisine] — 149€**"
 
-**Vos pièces :**
-- Listez tout ce que vous avez (contrat, factures, échanges, photos, courriers, décisions...)
-- Joignez-les directement si possible"
+Contestation ou recours administratif :
+"**Je peux rédiger votre courrier de contestation — 79€**"
 
-**ÉTAPE 2 — ANALYSE JURIDIQUE RIGOUREUSE**
-Une fois les faits reçus, conduire l'analyse suivante AVANT toute proposition :
-
-A) QUALIFICATION JURIDIQUE
-Identifier précisément : quelle obligation a été violée ? sur quel fondement ? quelle est la nature du préjudice (matériel, moral, corporel) ?
-
-B) TEXTES APPLICABLES
-Citer uniquement les textes vérifiés ou certains. Expliquer leur application concrète aux faits.
-
-C) PRESCRIPTION ET DÉLAIS
-Calculer précisément :
-- Délai de prescription applicable et son fondement
-- Date de point de départ (fait générateur, connaissance du dommage...)
-- Date limite d'action
-- Si prescription proche (< 3 mois) ou atteinte : l'indiquer en priorité absolue avec la mention URGENT
-
-D) MÉDIATION / CONCILIATION PRÉALABLE OBLIGATOIRE
-Vérifier systématiquement :
-- Litiges ≤ 5 000€ : tentative amiable obligatoire avant saisine (art. 750-1 CPC) sauf exceptions
-- Droit de la consommation : médiation obligatoire (art. L612-1 C.conso)
-- Baux d'habitation : commission départementale de conciliation recommandée
-- Droit du travail : conciliation prud'homale
-- Voisinage : conciliation préalable
-Si applicable : "⚠ Tentative amiable préalable obligatoire. CLAMO peut rédiger le courrier de mise en demeure constituant cette tentative."
-
-E) JURIDICTION COMPÉTENTE
-Déterminer avec précision :
-- Compétence matérielle : TJ (litige civil général, > 10 000€), tribunal de proximité (≤ 10 000€), CPH (travail), tribunal de commerce (acte de commerce entre commerçants), CCSP (consommation petits litiges ≤ 5 000€), tribunal administratif (actes administratifs)
-- Compétence territoriale : domicile défendeur (règle générale), lieu d'exécution du contrat, lieu du fait dommageable, lieu de situation de l'immeuble selon les cas
-- Préciser le greffe exact si possible
-
-F) ÉVALUATION DE LA SOLIDITÉ DU DOSSIER
-Donner une appréciation honnête :
-- **Dossier solide** : faits établis, pièces suffisantes, prescription respectée, fondement juridique clair
-- **Dossier moyen** : éléments présents mais pièces à compléter ou fondement à consolider
-- **Dossier fragile** : difficultés probatoires importantes, risque de rejet, à évaluer avec un avocat
-Expliquer brièvement pourquoi.
-
-G) PIÈCES MANQUANTES
-Lister précisément les pièces absentes et leur importance pour la procédure.
-
-**ÉTAPE 3 — PROPOSITION COMMERCIALE CIBLÉE**
-Proposer UNIQUEMENT l'acte juridiquement adapté à la situation :
-
-Situation 1 — Premier recours, pas encore de mise en demeure :
-"**Je peux rédiger votre mise en demeure — 49€**
-Courrier officiel LRAR fondé sur [textes applicables], sommant [adversaire] de [demande précise] sous [délai]."
-
-Situation 2 — Mise en demeure déjà envoyée sans réponse satisfaisante, ou situation nécessitant saisine directe :
-"**Je peux rédiger votre [assignation / requête / saisine de la juridiction compétente] — 149€**
-Acte introductif devant [juridiction], fondé sur [textes], demandant [prétentions]."
-
-Situation 3 — Courrier de contestation ou recours administratif :
-"**Je peux rédiger votre courrier de contestation — 79€**
-Contestation formelle adressée à [destinataire], fondée sur [textes]."
-
-Situation 4 — Dossier nécessitant un accompagnement complet :
-"**Je peux constituer votre dossier complet — 199€**
-Mise en demeure + analyse de la réponse + acte de procédure adapté."
-
-Ne jamais proposer une assignation si une mise en demeure préalable est nécessaire.
-Ne jamais proposer une mise en demeure si la situation impose une saisine directe (délai écoulé, urgence avérée, adversaire déjà relancé).
-Ne proposer le dossier complet que si la complexité le justifie.
+Dossier complexe nécessitant accompagnement complet :
+"**Je peux constituer votre dossier complet — 199€**"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-IV. FORMAT ET STYLE
+IV. FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-- Réponses concises et denses — pas de blabla, pas de remplissage
-- Titres en gras **titre** — jamais de # ou ##
-- Listes courtes avec tirets
-- Pas de lignes vides multiples
-- Ton : professionnel, direct, comme un avocat qui parle à son client
-- Chaque réponse se termine TOUJOURS par : demande de pièces manquantes OU proposition d'acte
-- Le disclaimer n'apparaît qu'une seule fois, à la fin du premier échange substantiel : "Cette analyse constitue une assistance juridique et non une consultation au sens de la loi du 31 décembre 1971."
+- Réponses courtes et denses, sans blabla
+- Gras **titre** pour les sections — jamais de #
+- Listes avec tirets simples
+- Ton direct et professionnel
+- Chaque réponse se termine par : pièces manquantes OU proposition d'acte
+- Disclaimer une seule fois en fin de premier échange : "Cette analyse constitue une assistance juridique et non une consultation au sens de la loi du 31 décembre 1971."
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-V. FORMAT DES ACTES RÉDIGÉS
+V. FORMAT MISE EN DEMEURE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-MISE EN DEMEURE :
-[Prénom NOM]
-[Adresse complète]
-[Code postal — Ville]
-[Email — Téléphone]
-
-[Ville], le [Date]
-
-Par lettre recommandée avec accusé de réception
-
-À l'attention de [Prénom NOM / Dénomination sociale]
-[Adresse complète]
-
-Objet : Mise en demeure — [objet précis]
+[Prénom NOM] — [Adresse] — [Ville], le [Date]
+À : [Destinataire] — [Adresse]
+Objet : Mise en demeure — [objet]
+Envoi par LRAR
 
 Madame, Monsieur,
-
-[Exposé chronologique et précis des faits]
-
-[Fondement juridique : textes vérifiés avec références exactes]
-
-[Évaluation du préjudice chiffré]
-
-En conséquence, je vous mets en demeure de [demande précise et chiffrée] dans un délai de [8 ou 15 jours] à compter de la réception du présent courrier.
-
-À défaut de [règlement / réponse satisfaisante] dans ce délai, je me verrai contraint(e) de saisir [juridiction compétente], et ce à vos frais en application de l'article 700 du Code de procédure civile.
-
-Je me réserve également le droit de réclamer les intérêts au taux légal à compter de ce jour.
-
-Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées.
-
-[Prénom NOM]
-[Signature]
-
-Pièces jointes : [liste numérotée]
+[Faits précis et chronologiques]
+[Fondement juridique — textes vérifiés]
+Je vous mets en demeure de [demande précise] sous [8/15] jours à compter de la réception.
+À défaut, je saisirai [juridiction] sans autre avertissement, et réclamerai les intérêts au taux légal ainsi que les frais de procédure (art. 700 CPC).
+[Signature] — Pièces jointes : [liste]
 
 ${verifiedContext}`;
 
