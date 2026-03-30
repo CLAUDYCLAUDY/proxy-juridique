@@ -1,6 +1,5 @@
 const Anthropic = require("@anthropic-ai/sdk");
 
-// Timeout sur les appels API externes
 function fetchWithTimeout(url, options, ms = 4000) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), ms);
@@ -109,6 +108,67 @@ function buildContext(legiResults, juriResults) {
   return context;
 }
 
+// ═══════════════════════════════════════
+// PASSE 1 — RÉDACTION
+// ═══════════════════════════════════════
+async function firstPass(client, systemPrompt, messages) {
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 4096,
+    system: systemPrompt,
+    messages,
+  });
+  return response.content[0].text;
+}
+
+// ═══════════════════════════════════════
+// PASSE 2 — VÉRIFICATION JURIDIQUE
+// ═══════════════════════════════════════
+async function secondPass(client, draft, verifiedContext) {
+  const verificationPrompt = `Tu es un avocat senior français chargé de relire et corriger une réponse juridique avant envoi à un client.
+
+Ta mission est UNIQUEMENT de vérifier et corriger — pas de réécrire, pas d'ajouter du contenu.
+
+VÉRIFICATIONS À EFFECTUER :
+
+1. ARTICLES DE LOI
+Pour chaque article cité, vérifie s'il figure dans les références vérifiées ci-dessous.
+- S'il y figure : laisse la référence telle quelle
+- S'il n'y figure pas ET que c'est un article très connu et stable (art. 1240 C.civ, art. L1232-1 C.trav, art. 1641 C.civ, art. 2224 C.civ, art. L217-4 C.conso, art. 750-1 CPC, art. 700 CPC...) : laisse-le
+- S'il n'y figure pas ET que tu n'en es pas certain : remplace par "article [X] du Code [Y] (à confirmer sur legifrance.gouv.fr)"
+
+2. JURISPRUDENCE
+Pour chaque décision citée (numéro de pourvoi, chambre, date) :
+- Si elle figure dans les références vérifiées : laisse-la
+- Si elle n'y figure pas : supprime le numéro de pourvoi et remplace par "jurisprudence constante de la Cour de cassation" ou supprime la référence tout en conservant le principe juridique énoncé
+
+3. COHÉRENCE JURIDIQUE
+- Le délai de prescription est-il correct pour la matière traitée ?
+- La juridiction compétente est-elle correctement identifiée ?
+- La médiation préalable est-elle mentionnée si elle est obligatoire ?
+
+4. FORMAT
+- Vérifie que la réponse ne commence pas par # ou ##
+- Vérifie qu'il n'y a pas de lignes vides multiples excessives
+- La proposition commerciale finale est-elle adaptée à la situation ?
+
+INSTRUCTION FINALE :
+Retourne la réponse corrigée, en français, directement sans commentaire ni explication de tes corrections. Si la réponse est déjà correcte, retourne-la telle quelle.
+
+${verifiedContext}
+
+RÉPONSE À VÉRIFIER :
+${draft}`;
+
+  const response = await client.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 4096,
+    system: verificationPrompt,
+    messages: [{ role: "user", content: "Vérifie et corrige cette réponse juridique." }],
+  });
+  return response.content[0].text;
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
@@ -120,13 +180,12 @@ module.exports = async function handler(req, res) {
     const { message, history, files } = req.body;
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-    // Appels juridiques avec timeout — ne bloquent jamais Claude
+    // Appels juridiques avec timeout
     let legiResults = null, juriResults = null;
     if (message) {
       try {
-        const tokenPromise = getLegifranceToken();
         const token = await Promise.race([
-          tokenPromise,
+          getLegifranceToken(),
           new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3500))
         ]);
         [legiResults, juriResults] = await Promise.allSettled([
@@ -166,7 +225,7 @@ RÈGLE 2 — ARTICLES CERTAINS (citables sans vérification)
 Code civil : art. 1240 (responsabilité délictuelle), art. 1231-1 (responsabilité contractuelle), art. 1641-1648 (vices cachés), art. 1353 (charge de la preuve), art. 2224 (prescription 5 ans)
 Code du travail : art. L1232-1 (cause réelle et sérieuse), art. L1235-3 (barème indemnités), art. L4121-1 (obligation sécurité)
 Code de la consommation : art. L217-4 (conformité), art. L217-12 (prescription 2 ans), art. L221-18 (rétractation 14 jours)
-CPC : art. 750-1 (tentative amiable obligatoire), art. 56 (assignation)
+CPC : art. 750-1 (tentative amiable obligatoire), art. 56 (assignation), art. 700 (frais de procédure)
 
 RÈGLE 3 — INCERTITUDE
 Pour tout article absent des références vérifiées et de la liste ci-dessus :
@@ -186,7 +245,7 @@ III. PROTOCOLE DE TRAITEMENT
 ÉTAPE 1 — PREMIER CONTACT
 Collecter systématiquement :
 **Votre identité :** nom, prénom, adresse (ou dénomination sociale, SIREN, siège si société)
-**Adversaire :** même informations
+**Adversaire :** mêmes informations
 **Faits :** chronologie précise avec dates et montants
 **Pièces disponibles :** lister + joindre si possible
 
@@ -200,7 +259,7 @@ F) Solidité du dossier : fort / moyen / fragile + explication
 G) Pièces manquantes et leur impact
 
 ÉTAPE 3 — PROPOSITION (fin de chaque réponse à partir de l'étape 2)
-Proposer UNIQUEMENT l'acte adapté à la situation :
+Proposer UNIQUEMENT l'acte adapté :
 
 Premier recours sans mise en demeure préalable :
 "**Je peux rédiger votre mise en demeure — 49€**"
@@ -263,14 +322,30 @@ ${verifiedContext}`;
     }
     messages.push({ role: "user", content: userContent });
 
-    const response = await client.messages.create({
-      model: "claude-sonnet-4-5",
-      max_tokens: 4096,
-      system: systemPrompt,
-      messages,
-    });
+    // PASSE 1 — Rédaction
+    const draft = await firstPass(client, systemPrompt, messages);
 
-    res.status(200).json({ reply: response.content[0].text });
+    // PASSE 2 — Vérification juridique (uniquement si réponse substantielle)
+    let finalReply = draft;
+    const isSubstantial = draft.length > 300 && (
+      draft.includes('art.') ||
+      draft.includes('Code') ||
+      draft.includes('prescription') ||
+      draft.includes('juridiction') ||
+      draft.includes('mise en demeure') ||
+      draft.includes('assignation')
+    );
+
+    if (isSubstantial) {
+      try {
+        finalReply = await secondPass(client, draft, verifiedContext);
+      } catch (e) {
+        console.log("Vérification échouée, envoi draft:", e.message);
+        finalReply = draft;
+      }
+    }
+
+    res.status(200).json({ reply: finalReply });
 
   } catch (error) {
     console.error("Error:", error);
