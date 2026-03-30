@@ -33,7 +33,6 @@
 html, body { height: 100%; overflow: hidden; }
 body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, sans-serif; -webkit-font-smoothing: antialiased; display: flex; }
 
-/* SIDEBAR */
 #sidebar { width: var(--sidebar-w); height: 100vh; background: var(--sidebar); border-right: 1px solid var(--sidebar-border); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
 .sidebar-top { padding: 16px 14px 12px; border-bottom: 1px solid var(--sidebar-border); }
 .sidebar-logo { display: flex; align-items: center; gap: 9px; padding: 6px 8px; border-radius: 9px; cursor: pointer; transition: background 0.15s; -webkit-tap-highlight-color: transparent; }
@@ -55,70 +54,21 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .sidebar-bottom-link { font-size: 11px; color: var(--text-3); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.12s; display: block; }
 .sidebar-bottom-link:hover { background: var(--sidebar-hover); color: var(--text-2); }
 
-/* MAIN */
-#main {
-  flex: 1;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
+#main { flex: 1; height: 100vh; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 
-/* HOME — flux normal, pas de position absolute */
-#home {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 32px 24px 0;
-  gap: 20px;
-  overflow: hidden;
-  min-height: 0;
-}
-
+#home { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px 0; gap: 20px; overflow: hidden; min-height: 0; }
 .hero-title { font-size: 30px; font-weight: 600; color: var(--text); letter-spacing: -0.6px; text-align: center; flex-shrink: 0; }
 .hero-title span { color: var(--green); }
-
-/* 3 CARDS */
 .home-cards { display: flex; gap: 10px; width: 100%; max-width: 640px; flex-shrink: 0; }
 .home-card { flex: 1; background: var(--input-bg); border-radius: 14px; padding: 16px 14px; display: flex; flex-direction: column; gap: 10px; }
 .home-card-icon { width: 32px; height: 32px; background: var(--green-pale); border-radius: 9px; display: flex; align-items: center; justify-content: center; }
 .home-card-icon svg { width: 15px; height: 15px; stroke: var(--green); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .home-card h4 { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.4; }
 .home-card p { font-size: 11px; color: var(--text-2); line-height: 1.5; }
+.home-phrase { font-size: 14px; font-weight: 400; color: var(--text-2); text-align: center; max-width: 520px; line-height: 1.6; flex-shrink: 0; }
 
-/* PHRASE SOUS LES CARDS */
-.home-phrase {
-  font-size: 14px;
-  font-weight: 400;
-  color: var(--text-2);
-  text-align: center;
-  max-width: 520px;
-  line-height: 1.6;
-  flex-shrink: 0;
-}
-
-/* BARRE DE SAISIE — dans le flux, pas fixe */
-.input-bar {
-  flex-shrink: 0;
-  padding: 16px 24px 14px;
-  background: var(--bg);
-  width: 100%;
-}
-.input-inner {
-  max-width: 640px;
-  margin: 0 auto;
-  background: var(--input-bg);
-  border-radius: 18px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-  transition: box-shadow 0.2s;
-}
+.input-bar { flex-shrink: 0; padding: 16px 24px 14px; background: var(--bg); width: 100%; }
+.input-inner { max-width: 640px; margin: 0 auto; background: var(--input-bg); border-radius: 18px; padding: 12px 14px; display: flex; flex-direction: column; gap: 9px; box-shadow: 0 1px 8px rgba(0,0,0,0.06); transition: box-shadow 0.2s; }
 .input-inner:focus-within { box-shadow: 0 0 0 2px rgba(26,74,42,0.2), 0 1px 8px rgba(0,0,0,0.06); }
 .input-textarea { width: 100%; background: transparent; border: none; outline: none; resize: none; font-size: 15px; font-family: inherit; color: var(--text); line-height: 1.5; min-height: 24px; max-height: 140px; overflow-y: auto; }
 .input-textarea::placeholder { color: var(--text-3); }
@@ -132,36 +82,27 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .btn-send { background: var(--green); border: none; border-radius: 10px; height: 34px; padding: 0 14px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; font-family: inherit; color: #fff; cursor: pointer; margin-left: auto; flex-shrink: 0; transition: background 0.12s; white-space: nowrap; }
 .btn-send:hover { background: var(--green-2); }
 .btn-send svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.home-signature { flex-shrink: 0; text-align: center; font-size: 13px; font-weight: 700; color: var(--text); letter-spacing: -0.1px; padding: 6px 0 20px; }
 
-/* SIGNATURE */
-.home-signature {
-  flex-shrink: 0;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.1px;
-  padding: 6px 0 20px;
-}
-
-/* CHAT */
 #chat { display: none; flex: 1; flex-direction: column; height: 100vh; overflow: hidden; }
-.chat-messages { flex: 1; overflow-y: auto; padding: 28px 20px; display: flex; flex-direction: column; gap: 14px; max-width: 760px; width: 100%; margin: 0 auto; align-self: stretch; }
+.chat-messages { flex: 1; overflow-y: auto; padding: 24px 20px; display: flex; flex-direction: column; gap: 10px; max-width: 760px; width: 100%; margin: 0 auto; align-self: stretch; }
 .chat-messages::-webkit-scrollbar { width: 3px; }
 .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.msg-bot { background: var(--input-bg); color: var(--text); padding: 13px 17px; border-radius: 4px 16px 16px 16px; font-size: 14px; line-height: 1.75; max-width: 84%; }
-.msg-bot strong { font-weight: 600; }
-.msg-bot h3 { font-size: 14px; font-weight: 600; margin: 10px 0 4px; }
-.msg-bot ul { list-style: none; padding: 0; margin: 6px 0; }
-.msg-bot li { padding: 2px 0; color: var(--text-2); font-size: 13px; }
-.msg-bot li::before { content: '›'; color: var(--green); margin-right: 8px; font-weight: 600; }
+.msg-bot { background: var(--input-bg); color: var(--text); padding: 12px 16px; border-radius: 4px 16px 16px 16px; font-size: 13.5px; line-height: 1.65; max-width: 84%; }
+.msg-bot strong { font-weight: 600; color: var(--text); }
+.msg-bot em { font-style: italic; color: var(--text-2); }
+.msg-bot ul { list-style: none; padding: 0; margin: 4px 0; }
+.msg-bot li { padding: 1px 0; color: var(--text-2); font-size: 13px; line-height: 1.5; }
+.msg-bot li::before { content: '–'; color: var(--green); margin-right: 7px; font-weight: 500; }
+.msg-bot .msg-sep { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
 .msg-user { background: var(--green); color: #fff; padding: 10px 15px; border-radius: 16px 4px 16px 16px; font-size: 14px; max-width: 72%; align-self: flex-end; line-height: 1.5; word-break: break-word; }
 .msg-file { background: var(--green-pale); border: 1px solid var(--green-border); color: var(--green); padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; align-self: flex-end; }
-.msg-typing { display: flex; gap: 5px; align-items: center; padding: 13px 17px; background: var(--input-bg); border-radius: 4px 16px 16px 16px; width: fit-content; }
+.msg-typing { display: flex; gap: 5px; align-items: center; padding: 12px 16px; background: var(--input-bg); border-radius: 4px 16px 16px 16px; width: fit-content; }
 .msg-typing span { width: 6px; height: 6px; background: var(--text-3); border-radius: 50%; animation: pulse 1.2s ease-in-out infinite; }
 .msg-typing span:nth-child(2){animation-delay:0.2s;}
 .msg-typing span:nth-child(3){animation-delay:0.4s;}
 @keyframes pulse{0%,60%,100%{opacity:0.3;transform:scale(0.85);}30%{opacity:1;transform:scale(1.1);}}
+
 .chat-input-wrap { flex-shrink: 0; padding: 10px 20px 18px; background: var(--bg); max-width: 760px; width: 100%; margin: 0 auto; align-self: stretch; }
 .chat-input-inner { background: var(--input-bg); border-radius: 16px; padding: 11px 13px; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.05); transition: box-shadow 0.2s; }
 .chat-input-inner:focus-within { box-shadow: 0 0 0 2px rgba(26,74,42,0.18), 0 1px 6px rgba(0,0,0,0.05); }
@@ -179,7 +120,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .btn-chat-send:hover { background: var(--green-2); }
 .btn-chat-send svg { width: 13px; height: 13px; stroke: #fff; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 
-/* RGPD */
 #rgpd { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 9999; display: flex; align-items: flex-end; justify-content: center; }
 .rgpd-panel { background: #fff; border-radius: 20px 20px 0 0; padding: 26px 24px 36px; max-width: 520px; width: 100%; display: flex; flex-direction: column; gap: 14px; }
 .rgpd-header { display: flex; align-items: center; gap: 8px; }
@@ -205,7 +145,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 .btn-close-modal:hover { border-color: var(--green-border); color: var(--green); }
 #file-input, #file-input-chat { display: none; }
 
-/* MOBILE */
 .mobile-header { display: none; position: fixed; top: 0; left: 0; right: 0; height: 52px; background: rgba(255,255,255,0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); align-items: center; justify-content: space-between; padding: 0 16px; z-index: 100; }
 .mobile-logo { display: flex; align-items: center; gap: 7px; }
 .mobile-logo-dot { width: 26px; height: 26px; background: var(--green); border-radius: 7px; display: flex; align-items: center; justify-content: center; }
@@ -241,7 +180,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 </head>
 <body>
 
-<!-- RGPD -->
 <div id="rgpd">
   <div class="rgpd-panel">
     <div class="rgpd-header">
@@ -290,15 +228,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   </div>
 </div>
 
-<!-- SIDEBAR -->
 <div id="sidebar">
   <div class="sidebar-top">
     <div class="sidebar-logo" onclick="newSituation()">
       <div class="logo-dot"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div>
-        <div class="logo-name">CLAMO</div>
-        <div class="logo-sub">Défense contentieuse</div>
-      </div>
+      <div><div class="logo-name">CLAMO</div><div class="logo-sub">Défense contentieuse</div></div>
     </div>
   </div>
   <button class="sidebar-new" onclick="newSituation()">
@@ -327,7 +261,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
   </div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
   <div class="mobile-header">
     <div class="mobile-logo">
@@ -337,10 +270,8 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
     <button class="btn-mobile-new" onclick="newSituation()">+ Nouveau</button>
   </div>
 
-  <!-- HOME -->
   <div id="home">
     <h1 class="hero-title">Faites valoir <span>vos droits.</span></h1>
-
     <div class="home-cards">
       <div class="home-card">
         <div class="home-card-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
@@ -358,11 +289,9 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
         <p>Contestation, réclamation ou recours pour faire valoir vos droits</p>
       </div>
     </div>
-
     <div class="home-phrase">Votre premier droit est celui d'avoir accès à une défense sans compromis.</div>
   </div>
 
-  <!-- BARRE DE SAISIE — dans le flux normal entre #home et .home-signature -->
   <div class="input-bar" id="input-bar">
     <div class="input-inner">
       <textarea class="input-textarea" id="home-input" placeholder="Décrivez votre situation…" rows="1"></textarea>
@@ -383,7 +312,6 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-s
 
   <div class="home-signature" id="home-sig">CLAMO — La défense pour tous.</div>
 
-  <!-- CHAT -->
   <div id="chat">
     <div class="chat-messages" id="chat-messages"></div>
     <div class="chat-input-wrap">
@@ -458,7 +386,7 @@ function selectChip(domain){
   const ta=document.getElementById('home-input');
   ta.value=DOMAIN[domain]||domain;
   autoResize(ta);
-  if(document.getElementById('chat').style.display==='flex') goHome();
+  if(document.getElementById('chat').style.display==='flex')goHome();
   ta.focus();
 }
 
@@ -530,7 +458,22 @@ function addTyping(){
   document.getElementById('chat-messages').appendChild(b);return b;
 }
 function scrollBottom(){const m=document.getElementById('chat-messages');m.scrollTop=m.scrollHeight;}
-function parseMarkdown(t){return t.replace(/##\s(.+)/g,'<h3>$1</h3>').replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*(.+?)\*/g,'<em>$1</em>').replace(/^-\s(.+)/gm,'<li>$1</li>').replace(/(<li>.*<\/li>)/gs,'<ul>$1</ul>').replace(/\n/g,'<br>');}
+
+function parseMarkdown(t){
+  return t
+    .replace(/^#{1,3}\s+(.+)$/gm,'<strong>$1</strong>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    .replace(/^[-–]\s(.+)/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]*?<\/li>)/g,'<ul>$1</ul>')
+    .replace(/---+/g,'<hr class="msg-sep">')
+    .replace(/\n{3,}/g,'\n\n')
+    .replace(/\n\n/g,'<br><br>')
+    .replace(/\n/g,'<br>')
+    .replace(/<br><br>(<ul>)/g,'<br>$1')
+    .replace(/<\/ul><br><br>/g,'</ul><br>');
+}
+
 function autoResize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
 document.getElementById('home-input').addEventListener('input',function(){autoResize(this);});
 document.getElementById('home-input').addEventListener('keydown',function(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();startChat();}});
