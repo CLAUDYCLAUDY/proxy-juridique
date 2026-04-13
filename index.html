@@ -1,51 +1,1186 @@
-<div class="clamo-grid">
-  <button class="clamo-pill" onclick="injectPrompt('Vice caché après achat VO')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2.5 2.5"/></svg>
-    Vice caché VO
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Défaut de conformité véhicule neuf')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-    Non-conformité VN
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Sinistre antérieur dissimulé par le vendeur')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    Sinistre caché
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Vendeur qui refuse de répondre à ma réclamation')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-    Vendeur silencieux
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Kilométrage trafiqué sur mon véhicule')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-    Kilométrage falsifié
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Panne répétitive non résolue sous garantie')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
-    Panne récurrente
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('J\'ai une protection juridique, mon assurance peut couvrir les frais')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-    Protection juridique
-  </button>
-  <button class="clamo-pill" onclick="injectPrompt('Je souhaite une expertise automobile agréée pour mon dossier')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    Expertise auto
-  </button>
-</div>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CLAMO Auto — Assistant automobile</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
 
-<div class="clamo-bar">
-  <input id="clamoInput" type="text"
-    placeholder="Décrivez votre litige auto — on s'assure de faire valoir vos droits">
-  <div class="clamo-bar-btns">
-    <button class="btn-joindre" onclick="document.getElementById('clamoFile').click()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
-      <span>Joindre</span>
-    </button>
-    <input type="file" id="clamoFile" multiple style="display:none"
-      accept=".pdf,.jpg,.jpeg,.png,.docx,.doc">
-    <button class="btn-envoyer" onclick="clamoSend()">
-      Envoyer
-      <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+/* ── VARIABLES ── */
+:root {
+  --bg: #f7f7f5;
+  --white: #ffffff;
+  --border: #e4e4e0;
+  --border2: #d4d4ce;
+  --ink: #141414;
+  --ink2: #3a3a38;
+  --muted: #888880;
+  --hint: #c0bfb8;
+  --green: #1e5c38;
+  --green2: #267045;
+  --green3: #163f28;
+  --green-pale: #edf5f0;
+  --green-border: #b8d9c5;
+  --amber: #7a4e00;
+  --amber-pale: #fdf6e8;
+  --amber-border: #e8d090;
+  --blue: #1a4a8a;
+  --blue-pale: #eef3fc;
+  --blue-border: #b0c8f0;
+  --red: #a02020;
+  --red-pale: #fdf0f0;
+  --red-border: #f0b8b8;
+  --stripe: #635bff;
+}
+
+/* ── BASE ── */
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── HEADER ── */
+.hdr {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 19px;
+  color: var(--ink);
+  letter-spacing: -0.2px;
+}
+.logo em { color: var(--green); font-style: normal; }
+.hdr-right { display: flex; align-items: center; gap: 10px; }
+.hdr-tag { font-size: 11px; color: var(--muted); letter-spacing: 0.3px; }
+.btn-espace {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 9px;
+  border: 1px solid var(--border2);
+  background: var(--white);
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.btn-espace svg { width: 13px; height: 13px; }
+.btn-espace:hover { border-color: var(--green-border); color: var(--green); background: var(--green-pale); }
+.btn-espace.connected { background: var(--green-pale); border-color: var(--green-border); color: var(--green); }
+
+/* ── VUES ── */
+.view { display: none; flex: 1; flex-direction: column; }
+.view.active { display: flex; }
+
+/* ══════════════════════════════════════
+   VUE PRINCIPALE
+══════════════════════════════════════ */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px 80px;
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* HERO */
+.hero { text-align: center; margin-bottom: 32px; }
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(26px, 4.5vw, 42px);
+  line-height: 1.12;
+  color: var(--ink);
+  margin-bottom: 12px;
+  letter-spacing: -0.8px;
+}
+.hero h1 em { color: var(--green); font-style: normal; }
+.hero p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 420px; margin: 0 auto; }
+
+/* STATS */
+.stats {
+  display: flex;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  width: 100%;
+  margin-bottom: 32px;
+}
+.stat { flex: 1; padding: 14px 8px; text-align: center; border-right: 1px solid var(--border); }
+.stat:last-child { border-right: none; }
+.stat-n { font-family: 'DM Serif Display', serif; font-size: 21px; color: var(--green); line-height: 1; }
+.stat-l { font-size: 10px; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+
+/* ICÔNES DOMAINES */
+.trust { margin-bottom: 28px; text-align: center; width: 100%; }
+.trust-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--hint); margin-bottom: 14px; }
+.trust-logos { display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; }
+.tl { display: flex; flex-direction: column; align-items: center; gap: 5px; opacity: 0.55; transition: opacity 0.15s; }
+.tl:hover { opacity: 0.9; }
+.tl-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.tl-name { font-size: 9px; font-weight: 500; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* OFFRES */
+.tarif-row { display: flex; justify-content: center; gap: 14px; margin-bottom: 22px; }
+.tarif {
+  text-align: center;
+  cursor: pointer;
+  padding: 10px 18px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  background: var(--white);
+  transition: all 0.15s;
+}
+.tarif:hover { border-color: var(--green-border); }
+.tarif.active { border-color: var(--green); background: var(--green-pale); }
+.tarif-price { font-family: 'DM Serif Display', serif; font-size: 21px; color: var(--ink); }
+.tarif.active .tarif-price { color: var(--green); }
+.tarif-label { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+.tarif.active .tarif-label { color: var(--green2); }
+
+/* PJ */
+.pj-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 24px; }
+.pj-chk {
+  width: 16px; height: 16px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px; cursor: pointer;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+  background: var(--white);
+}
+.pj-chk.on { background: var(--green); border-color: var(--green); }
+.pj-label { font-size: 12px; color: var(--muted); cursor: pointer; }
+.pj-label span { color: var(--green); font-weight: 500; }
+
+/* ── PILLS GRILLE 4×2 ── */
+.pills-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 12px;
+}
+.pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--white);
+  color: var(--ink2);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  padding: 0 8px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  width: 100%;
+  overflow: hidden;
+}
+.pill svg { width: 14px; height: 14px; flex-shrink: 0; color: var(--green); transition: color 0.15s; }
+.pill:hover { background: var(--green); color: #fff; border-color: var(--green); }
+.pill:hover svg { color: #fff; }
+.pill:active { transform: scale(0.97); }
+
+/* ── BARRE UNIQUE ── */
+.bar {
+  background: var(--white);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+.bar:focus-within { border-color: var(--green); }
+.bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  color: var(--ink);
+  min-width: 0;
+}
+.bar input::placeholder { color: var(--hint); }
+.bar-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.btn-attach {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 13px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+.btn-attach svg { width: 13px; height: 13px; flex-shrink: 0; }
+.btn-attach:hover { background: var(--green-pale); color: var(--green); border-color: var(--green-border); }
+
+.btn-send {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: none;
+  background: var(--green);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+.btn-send svg { width: 13px; height: 13px; flex-shrink: 0; }
+.btn-send:hover { background: var(--green2); }
+.btn-send:active { transform: scale(0.97); }
+
+/* FILES */
+.files { width: 100%; margin-top: 6px; display: flex; flex-direction: column; gap: 3px; }
+.f-item {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 8px; padding: 6px 12px; font-size: 12px;
+}
+.f-ext { font-size: 10px; font-weight: 600; color: var(--green); background: var(--green-pale); padding: 2px 7px; border-radius: 4px; }
+.f-name { flex: 1; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.f-rm { background: none; border: none; color: var(--hint); font-size: 16px; line-height: 1; cursor: pointer; }
+.f-rm:hover { color: var(--ink); }
+
+/* ── CHAT ── */
+.chat { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+.msg { display: flex; gap: 10px; align-items: flex-start; }
+.msg.user { flex-direction: row-reverse; }
+.av {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  font-size: 10px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+}
+.av.b { background: var(--green); color: #fff; }
+.av.u { background: var(--border); color: var(--muted); }
+.bbl {
+  max-width: 82%;
+  padding: 11px 15px;
+  border-radius: 16px;
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.msg.bot .bbl { background: var(--white); border: 1px solid var(--border); border-radius: 4px 16px 16px 16px; color: var(--ink2); }
+.msg.user .bbl { background: var(--green-pale); border: 1px solid var(--green-border); border-radius: 16px 4px 16px 16px; color: var(--ink); }
+.bbl strong { color: var(--green); font-weight: 500; }
+.bbl p + p { margin-top: 8px; }
+
+/* TYPING */
+.dots { display: flex; gap: 4px; padding: 2px 0; }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: var(--border2); animation: bp 1.2s infinite; }
+.dot:nth-child(2) { animation-delay: .2s; }
+.dot:nth-child(3) { animation-delay: .4s; }
+@keyframes bp { 0%,60%,100% { transform: none; } 30% { transform: translateY(-4px); } }
+.fade { animation: fd .2s ease; }
+@keyframes fd { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+/* CTA PAIEMENT */
+.pay-cta {
+  background: var(--white);
+  border: 1.5px solid var(--green-border);
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 4px 0;
+}
+.pay-cta-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.pay-cta-sub { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.55; }
+.pay-cta-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-p {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 34px; padding: 0 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 500;
+  transition: all 0.15s;
+}
+.btn-p.p39 { background: var(--bg); color: var(--ink2); border: 1px solid var(--border2); }
+.btn-p.p39:hover { border-color: var(--green); color: var(--green); background: var(--green-pale); }
+.btn-p.p599 { background: var(--green); color: #fff; border: none; }
+.btn-p.p599:hover { background: var(--green2); }
+.btn-p svg { width: 12px; height: 12px; }
+
+/* ══════════════════════════════════════
+   VUE AUTH
+══════════════════════════════════════ */
+.auth-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.auth-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 32px;
+  width: 100%;
+  max-width: 400px;
+}
+.auth-logo { font-family: 'DM Serif Display', serif; font-size: 22px; color: var(--ink); text-align: center; margin-bottom: 6px; }
+.auth-logo em { color: var(--green); font-style: normal; }
+.auth-sub { font-size: 12px; color: var(--muted); text-align: center; margin-bottom: 28px; }
+.auth-tabs { display: flex; background: var(--bg); border-radius: 10px; padding: 3px; margin-bottom: 24px; }
+.auth-tab {
+  flex: 1; text-align: center; font-size: 12px; font-weight: 500;
+  padding: 7px; border-radius: 8px; cursor: pointer;
+  color: var(--muted); transition: all 0.15s;
+}
+.auth-tab.active { background: var(--white); color: var(--ink); border: 1px solid var(--border); }
+.form-group { margin-bottom: 14px; }
+.form-label { font-size: 11px; font-weight: 500; color: var(--muted); letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 5px; display: block; }
+.form-input {
+  width: 100%; background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+  color: var(--ink); outline: none; transition: border-color 0.15s;
+}
+.form-input:focus { border-color: var(--green); background: var(--white); }
+.btn-primary {
+  width: 100%; background: var(--green); color: #fff;
+  border: none; border-radius: 10px; padding: 11px;
+  font-size: 13px; font-weight: 500; transition: background 0.15s; margin-top: 4px;
+}
+.btn-primary:hover { background: var(--green2); }
+.auth-note { font-size: 11px; color: var(--hint); text-align: center; margin-top: 16px; line-height: 1.6; }
+.auth-err {
+  font-size: 12px; color: var(--red); background: var(--red-pale);
+  border: 1px solid var(--red-border); border-radius: 8px;
+  padding: 8px 12px; margin-bottom: 14px; display: none;
+}
+
+/* ══════════════════════════════════════
+   VUE PAIEMENT
+══════════════════════════════════════ */
+.pay-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px 20px; }
+.pay-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 20px; width: 100%; max-width: 440px; overflow: hidden;
+}
+.pay-header { padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.pay-back {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 12px; color: var(--muted); border: none; background: none;
+  margin-bottom: 16px; padding: 0; transition: color 0.15s;
+}
+.pay-back:hover { color: var(--green); }
+.pay-back svg { width: 13px; height: 13px; }
+.pay-offre { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.pay-offre-title { font-family: 'DM Serif Display', serif; font-size: 19px; color: var(--ink); }
+.pay-offre-price { font-family: 'DM Serif Display', serif; font-size: 26px; color: var(--green); flex-shrink: 0; }
+.pay-offre-desc { font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.5; }
+.pay-body { padding: 22px 24px; }
+.pay-section { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: var(--hint); margin-bottom: 12px; }
+.pay-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink2); padding: 4px 0; }
+.pay-item svg { width: 13px; height: 13px; flex-shrink: 0; color: var(--green); }
+.pay-divider { height: 1px; background: var(--border); margin: 18px 0; }
+.stripe-field {
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: 10px; padding: 10px 14px; font-size: 13.5px;
+  color: var(--ink); outline: none; width: 100%; margin-bottom: 10px;
+  transition: border-color 0.15s; font-family: 'DM Sans', sans-serif;
+}
+.stripe-field:focus { border-color: var(--stripe); background: var(--white); }
+.stripe-field::placeholder { color: var(--hint); }
+.stripe-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+.stripe-row .stripe-field { margin-bottom: 0; }
+.stripe-badge { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 11px; color: var(--hint); margin-bottom: 16px; }
+.stripe-badge svg { width: 12px; height: 12px; }
+.btn-stripe {
+  width: 100%; background: var(--stripe); color: #fff;
+  border: none; border-radius: 10px; padding: 12px;
+  font-size: 13px; font-weight: 500; font-family: 'DM Sans', sans-serif;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity 0.15s;
+}
+.btn-stripe:hover { opacity: 0.88; }
+.btn-stripe svg { width: 14px; height: 14px; }
+.pay-loading { text-align: center; padding: 40px 20px; }
+.spinner {
+  width: 28px; height: 28px; border: 2.5px solid var(--border);
+  border-top-color: var(--green); border-radius: 50%;
+  animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pay-loading p { font-size: 13px; color: var(--muted); }
+
+/* ══════════════════════════════════════
+   VUE SUCCÈS
+══════════════════════════════════════ */
+.success-wrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+.success-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 20px; padding: 40px 32px;
+  width: 100%; max-width: 420px; text-align: center;
+}
+.success-icon {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--green-pale); border: 2px solid var(--green-border);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+}
+.success-title { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--ink); margin-bottom: 10px; }
+.success-sub { font-size: 13px; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+.success-ref {
+  font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+  color: var(--green); background: var(--green-pale);
+  padding: 8px 18px; border-radius: 8px; display: inline-block; margin-bottom: 24px;
+}
+.btn-success {
+  display: inline-flex; align-items: center; gap: 7px;
+  height: 38px; padding: 0 20px; border-radius: 9px;
+  background: var(--green); color: #fff; border: none;
+  font-size: 12px; font-weight: 500; transition: background 0.15s;
+}
+.btn-success:hover { background: var(--green2); }
+.btn-success svg { width: 13px; height: 13px; }
+
+/* ══════════════════════════════════════
+   VUE ESPACE CLIENT
+══════════════════════════════════════ */
+.client-wrap {
+  flex: 1; max-width: 720px; margin: 0 auto;
+  width: 100%; padding: 32px 20px 60px;
+}
+.client-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; gap: 12px; }
+.client-greeting { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--ink); }
+.client-greeting span { color: var(--green); }
+.btn-new {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 16px; border-radius: 9px;
+  background: var(--green); color: #fff; border: none;
+  font-size: 12px; font-weight: 500; flex-shrink: 0;
+  transition: background 0.15s;
+}
+.btn-new:hover { background: var(--green2); }
+.btn-new svg { width: 13px; height: 13px; }
+.sec-label { font-size: 10px; font-weight: 500; letter-spacing: 2px; text-transform: uppercase; color: var(--hint); margin-bottom: 14px; }
+.dossiers { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+.dossier-card {
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 20px; cursor: pointer;
+  transition: border-color 0.15s;
+}
+.dossier-card:hover { border-color: var(--green-border); }
+.dc-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.dc-ref { font-size: 10px; font-weight: 600; letter-spacing: 1px; color: var(--hint); text-transform: uppercase; }
+.dc-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-top: 3px; }
+.dc-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.dc-status { font-size: 11px; font-weight: 500; padding: 3px 11px; border-radius: 20px; flex-shrink: 0; }
+.dc-status.analyse { background: var(--bg); color: var(--muted); border: 1px solid var(--border); }
+.dc-status.payé { background: var(--blue-pale); color: var(--blue); border: 1px solid var(--blue-border); }
+.dc-status.expertise { background: var(--amber-pale); color: var(--amber); border: 1px solid var(--amber-border); }
+.dc-status.resolu { background: var(--green-pale); color: var(--green); border: 1px solid var(--green-border); }
+.dc-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 10px; border-top: 1px solid var(--border);
+}
+.dc-last { font-size: 11px; color: var(--hint); }
+.empty-state { text-align: center; padding: 48px 20px; }
+.empty-icon {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--green-pale); display: flex;
+  align-items: center; justify-content: center; margin: 0 auto 16px;
+}
+.empty-title { font-size: 15px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.empty-sub { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+/* VUE DÉTAIL */
+.detail-back {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; color: var(--muted); border: none; background: none;
+  margin-bottom: 22px; padding: 0; transition: color 0.15s;
+}
+.detail-back:hover { color: var(--green); }
+.detail-back svg { width: 14px; height: 14px; }
+.detail-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; margin-bottom: 14px;
+}
+.detail-label { font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--hint); margin-bottom: 4px; }
+.detail-val { font-size: 13.5px; color: var(--ink2); }
+.chat-history {
+  display: flex; flex-direction: column; gap: 12px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px 20px;
+}
+.btn-logout {
+  background: none; border: none;
+  font-size: 12px; color: var(--hint); cursor: pointer;
+  padding: 4px 0; transition: color 0.15s;
+}
+.btn-logout:hover { color: var(--red); }
+
+/* ── FOOTER ── */
+.footer {
+  padding: 18px 32px; text-align: center;
+  font-size: 11px; color: var(--hint);
+  border-top: 1px solid var(--border);
+  background: var(--white);
+}
+
+/* ══════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════ */
+@media (max-width: 600px) {
+  .pills-grid { grid-template-columns: repeat(2, 1fr); }
+  .stats { flex-wrap: wrap; }
+  .stat { flex: 0 0 50%; border-bottom: 1px solid var(--border); }
+  .hdr { padding: 0 16px; }
+  .main { padding: 28px 16px 60px; }
+  .trust-logos { gap: 12px; }
+  .tarif-row { gap: 10px; }
+  .detail-grid { grid-template-columns: 1fr; }
+  .auth-card { padding: 26px 20px; }
+  .pay-body { padding: 18px 18px; }
+  .stripe-row { grid-template-columns: 1fr; }
+}
+@media (max-width: 420px) {
+  .btn-attach span { display: none; }
+  .bar input { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="logo">clamo<em>.</em>auto</div>
+  <div class="hdr-right">
+    <span class="hdr-tag">Assistant automobile</span>
+    <button class="btn-espace" id="btnEspace" onclick="goAuth()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      <span id="btnLabel">Mon espace</span>
     </button>
   </div>
+</header>
+
+<!-- ══ VUE PRINCIPALE ══ -->
+<div class="view active" id="vMain">
+  <main class="main">
+
+    <!-- CHAT -->
+    <div class="chat" id="chatZone" style="display:none"></div>
+
+    <!-- HERO -->
+    <div id="heroBlock">
+      <div class="hero">
+        <h1>Votre voiture vous a coûté<br><em>plus que prévu.</em></h1>
+        <p>Vice caché · non-conformité · kilométrage trafiqué — analysez votre litige en 2 minutes.</p>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="stat-n">1/3</div><div class="stat-l">achats auto qui tournent mal</div></div>
+        <div class="stat"><div class="stat-n">4 500€</div><div class="stat-l">préjudice moyen constaté</div></div>
+        <div class="stat"><div class="stat-n">89%</div><div class="stat-l">des acheteurs ne font rien</div></div>
+        <div class="stat"><div class="stat-n">2 ans</div><div class="stat-l">pour agir (vice caché)</div></div>
+      </div>
+
+      <div class="trust">
+        <div class="trust-label">Nos domaines d'action</div>
+        <div class="trust-logos">
+          <div class="tl"><div class="tl-icon" style="background:#edf5f0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1e5c38" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 3"/></svg></div><div class="tl-name">Vice caché</div></div>
+          <div class="tl"><div class="tl-icon" style="background:#f0f5ff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1a4fa8" stroke-width="1.8" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/><circle cx="12" cy="12" r="9"/></svg></div><div class="tl-name">Conformité</div></div>
+          <div class="tl"><div class="tl-icon" style="background:#fff8f0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c45c00" stroke-width="1.8" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/></svg></div><div class="tl-name">Dol / Tromperie</div></div>
+          <div class="tl"><div class="tl-icon" style="background:#f5edf5"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7a3fa8" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg></div><div class="tl-name">Expertise auto</div></div>
+          <div class="tl"><div class="tl-icon" style="background:#f0f8ff"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0a6e9e" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><div class="tl-name">Protection PJ</div></div>
+          <div class="tl"><div class="tl-icon" style="background:#fdf0f0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#a82a2a" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><div class="tl-name">Avocat partenaire</div></div>
+        </div>
+      </div>
+
+      <!-- GRILLE 4×2 -->
+      <div class="pills-grid">
+        <button class="pill" onclick="inject('Vice caché après achat véhicule occasion')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l2.5 2.5"/></svg>
+          Vice caché VO
+        </button>
+        <button class="pill" onclick="inject('Défaut de conformité véhicule neuf')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Non-conformité VN
+        </button>
+        <button class="pill" onclick="inject('Sinistre antérieur dissimulé par le vendeur')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Sinistre caché
+        </button>
+        <button class="pill" onclick="inject('Vendeur qui refuse de répondre à ma réclamation')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          Vendeur silencieux
+        </button>
+        <button class="pill" onclick="inject('Kilométrage trafiqué sur mon véhicule')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          Kilométrage falsifié
+        </button>
+        <button class="pill" onclick="inject('Panne répétitive non résolue sous garantie')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/><line x1="12" y1="12" x2="12" y2="16"/></svg>
+          Panne récurrente
+        </button>
+        <button class="pill" onclick="inject('J\'ai une protection juridique, mon assurance peut couvrir les frais')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Protection juridique
+        </button>
+        <button class="pill" onclick="inject('Je souhaite une expertise automobile agréée pour mon dossier')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Expertise auto
+        </button>
+      </div>
+
+      <!-- OFFRES -->
+      <div class="tarif-row">
+        <div class="tarif" id="t39" onclick="setT('39')">
+          <div class="tarif-price">39 €</div>
+          <div class="tarif-label">Mise en demeure</div>
+        </div>
+        <div class="tarif active" id="t599" onclick="setT('599')">
+          <div class="tarif-price">599 €</div>
+          <div class="tarif-label">Procédure + expertise</div>
+        </div>
+      </div>
+
+      <!-- PJ -->
+      <div class="pj-row">
+        <div class="pj-chk" id="pjC" onclick="tPJ()"></div>
+        <span class="pj-label" onclick="tPJ()">J'ai une <span>protection juridique</span> — mon assurance peut couvrir les frais</span>
+      </div>
+    </div>
+
+    <!-- BARRE UNIQUE -->
+    <div class="bar">
+      <input type="text" id="inp" placeholder="Décrivez votre litige auto — on s'assure de faire valoir vos droits" onkeydown="oK(event)">
+      <div class="bar-btns">
+        <button class="btn-attach" onclick="document.getElementById('fi').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/>
+          </svg>
+          <span>Joindre</span>
+        </button>
+        <input type="file" id="fi" multiple accept=".pdf,.jpg,.jpeg,.png,.docx,.doc" style="display:none" onchange="addF(this.files)">
+        <button class="btn-send" onclick="send()">
+          Envoyer
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="files" id="fList"></div>
+
+  </main>
+  <footer class="footer">clamo.auto — information juridique uniquement · pas une consultation d'avocat · litige ≥ 10 000 € → avocat partenaire</footer>
 </div>
+
+<!-- ══ VUE AUTH ══ -->
+<div class="view" id="vAuth">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">clamo<em>.</em>auto</div>
+      <div class="auth-sub">Accédez à votre espace et suivez vos dossiers</div>
+      <div class="auth-tabs">
+        <div class="auth-tab active" id="tabL" onclick="switchTab('login')">Connexion</div>
+        <div class="auth-tab" id="tabR" onclick="switchTab('register')">Créer un compte</div>
+      </div>
+      <div id="authErr" class="auth-err"></div>
+      <div id="fLogin">
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="lEmail" placeholder="vous@email.com"></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" type="password" id="lPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <button class="btn-primary" onclick="doLogin()">Se connecter</button>
+      </div>
+      <div id="fReg" style="display:none">
+        <div class="form-group"><label class="form-label">Prénom</label><input class="form-input" type="text" id="rPrenom" placeholder="Votre prénom"></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" id="rEmail" placeholder="vous@email.com"></div>
+        <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" type="password" id="rPass" placeholder="Minimum 6 caractères" onkeydown="if(event.key==='Enter')doRegister()"></div>
+        <button class="btn-primary" onclick="doRegister()">Créer mon compte</button>
+      </div>
+      <div class="auth-note">Données confidentielles · aucun partage tiers</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VUE PAIEMENT ══ -->
+<div class="view" id="vPay">
+  <div class="pay-wrap">
+    <div class="pay-card">
+      <div class="pay-header">
+        <button class="pay-back" onclick="cancelPay()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+          Retour
+        </button>
+        <div class="pay-offre">
+          <div>
+            <div class="pay-offre-title" id="payTitle">—</div>
+            <div class="pay-offre-desc" id="payDesc">—</div>
+          </div>
+          <div class="pay-offre-price" id="payPrice">—</div>
+        </div>
+      </div>
+      <div class="pay-body" id="payBody">
+        <div class="pay-section">Ce qui est inclus</div>
+        <div id="payItems"></div>
+        <div class="pay-divider"></div>
+        <div class="pay-section">Paiement sécurisé</div>
+        <input class="stripe-field" type="text" id="cardName" placeholder="Titulaire de la carte">
+        <input class="stripe-field" type="text" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="fmtCard(this)">
+        <div class="stripe-row">
+          <input class="stripe-field" type="text" id="cardExp" placeholder="MM / AA" maxlength="7" oninput="fmtExp(this)">
+          <input class="stripe-field" type="text" id="cardCvv" placeholder="CVV" maxlength="4">
+        </div>
+        <div class="stripe-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Paiement sécurisé SSL · Stripe
+        </div>
+        <button class="btn-stripe" onclick="doPay()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          <span id="payBtnLabel">Payer</span>
+        </button>
+      </div>
+      <div id="payLoading" style="display:none">
+        <div class="pay-loading">
+          <div class="spinner"></div>
+          <p>Traitement en cours…</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VUE SUCCÈS ══ -->
+<div class="view" id="vSuccess">
+  <div class="success-wrap">
+    <div class="success-card">
+      <div class="success-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#1e5c38" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+      </div>
+      <div class="success-title">Paiement confirmé</div>
+      <div class="success-sub" id="successSub">—</div>
+      <div class="success-ref" id="successRef">—</div>
+      <button class="btn-success" onclick="goClient()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Voir mon espace client
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VUE ESPACE CLIENT ══ -->
+<div class="view" id="vClient">
+  <div class="client-wrap">
+    <div class="client-header">
+      <div class="client-greeting">Bonjour, <span id="clientName">—</span></div>
+      <button class="btn-new" onclick="goMain()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nouveau dossier
+      </button>
+    </div>
+    <div class="sec-label">Mes dossiers</div>
+    <div class="dossiers" id="dossiersList"></div>
+    <button class="btn-logout" onclick="doLogout()">Se déconnecter</button>
+  </div>
+</div>
+
+<!-- ══ VUE DÉTAIL ══ -->
+<div class="view" id="vDetail">
+  <div class="client-wrap">
+    <button class="detail-back" onclick="goClient()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Mes dossiers
+    </button>
+    <div id="detailContent"></div>
+  </div>
+</div>
+
+<!-- ══ SCRIPT ══ -->
+<script>
+const SYS = `Tu es CLAMO Auto, assistant juridique spécialisé EXCLUSIVEMENT dans les litiges automobiles en droit français.
+
+FONDEMENTS :
+1. Vice caché art. 1641-1648 C. civ. — antérieur, occulte, grave — rédhibitoire ou estimatoire — délai 2 ans depuis découverte — vendeur pro de mauvaise foi présumé → D&I.
+2. Défaut conformité art. L217-1 C. conso — vendeur pro→consommateur — VN 2 ans/présomption 12 mois — VO 1 an/présomption 6 mois.
+3. Dol art. 1137 C. civ. — kilométrage trafiqué (art. L321-1-1 C. route + escroquerie art. 313-1 C. pén.), sinistre dissimulé — nullité + D&I art. 1178 — prescription 5 ans.
+4. Erreur qualités essentielles art. 1132 — motorisation, année, homologation — nullité relative 5 ans.
+5. Résolution inexécution art. 1224 — refus de garantir — mise en demeure préalable impérative.
+6. Protection juridique — libre choix avocat Dir. 2009/138/CE art. 201 — délai déclaration 30-90 j — plafond usuel 10-15 000 €.
+
+COMPÉTENCES : ≤5 000 € tribunal de proximité · 5-10 000 € TJ juge protection · >10 000 € TJ chambre civile → AVOCAT PARTENAIRE obligatoire.
+PROCÉDURE : mise en demeure LRAR → expertise contradictoire ou référé art. 145 CPC → médiation si pro <5 000 € → assignation.
+
+RÈGLES : citer les articles · mentionner IMPÉRATIVEMENT le délai de prescription · estimer le préjudice · proposer 39 € (mise en demeure) ou 599 € (procédure + expertise) · ne jamais inventer de jurisprudence · hors automobile refuser · ton direct et rassurant.`;
+
+const OFFRES = {
+  '39': {
+    title: 'Mise en demeure',
+    price: '39 €',
+    desc: 'Courrier officiel LRAR avec fondements juridiques',
+    items: ['Analyse complète du dossier', 'Mise en demeure rédigée et personnalisée', 'Fondements juridiques (articles applicables)', 'Délai de prescription identifié', 'Livraison PDF sous 24h ouvrées']
+  },
+  '599': {
+    title: 'Procédure complète + expertise',
+    price: '599 €',
+    desc: 'Expertise agréée + procédure prête pour le tribunal',
+    items: ['Tout le contenu de la mise en demeure', 'Expertise automobile agréée (rapport judiciaire)', 'Rapport contradictoire horodaté et photographié', 'Procédure complète rédigée', 'Avocat partenaire si préjudice ≥ 10 000 €', 'Suivi dossier dans votre espace client']
+  }
+};
+
+let hist = [], pj = false, tarif = '599', files = [], busy = false;
+let currentUser = null, activeDossier = null, pendingPayOffre = null;
+let msgCount = 0;
+
+// ── UTILITAIRES ──
+function oK(e) { if (e.key === 'Enter') send(); }
+function setT(t) {
+  tarif = t;
+  ['39', '599'].forEach(x => document.getElementById('t' + x).classList.toggle('active', x === t));
+}
+function tPJ() {
+  pj = !pj;
+  const c = document.getElementById('pjC');
+  c.classList.toggle('on', pj);
+  c.innerHTML = pj ? `<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>` : '';
+}
+function inject(t) {
+  document.getElementById('inp').value = t;
+  document.getElementById('inp').focus();
+}
+function addF(fl) {
+  Array.from(fl).forEach(f => {
+    if (files.find(x => x.name === f.name)) return;
+    files.push(f);
+    const ext = f.name.split('.').pop().toUpperCase();
+    const d = document.createElement('div');
+    d.className = 'f-item';
+    d.id = 'f_' + f.name.replace(/\W/g, '');
+    d.innerHTML = `<span class="f-ext">${ext}</span><span class="f-name">${f.name}</span><button class="f-rm" onclick="rmF('${f.name}')">×</button>`;
+    document.getElementById('fList').appendChild(d);
+  });
+}
+function rmF(n) {
+  files = files.filter(f => f.name !== n);
+  const e = document.getElementById('f_' + n.replace(/\W/g, ''));
+  if (e) e.remove();
+}
+function fmtCard(el) { let v = el.value.replace(/\D/g, '').slice(0, 16); el.value = v.replace(/(.{4})/g, '$1 ').trim(); }
+function fmtExp(el) { let v = el.value.replace(/\D/g, '').slice(0, 4); if (v.length >= 3) v = v.slice(0, 2) + ' / ' + v.slice(2); el.value = v; }
+
+// ── VUES ──
+function showView(id) { document.querySelectorAll('.view').forEach(v => v.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+function goMain() { showView('vMain'); }
+function goAuth() { showView('vAuth'); }
+function cancelPay() { showView('vMain'); }
+function goClient() {
+  if (!currentUser) { goAuth(); return; }
+  renderDossiers();
+  showView('vClient');
+}
+
+// ── AUTH ──
+function switchTab(t) {
+  document.getElementById('tabL').classList.toggle('active', t === 'login');
+  document.getElementById('tabR').classList.toggle('active', t === 'register');
+  document.getElementById('fLogin').style.display = t === 'login' ? 'block' : 'none';
+  document.getElementById('fReg').style.display = t === 'register' ? 'block' : 'none';
+  document.getElementById('authErr').style.display = 'none';
+}
+function showErr(m) { const e = document.getElementById('authErr'); e.textContent = m; e.style.display = 'block'; }
+
+async function getUsers() {
+  try { const r = await window.storage.get('users_clamoauto'); return r ? JSON.parse(r.value) : {}; } catch (e) { return {}; }
+}
+async function saveUsers(u) {
+  try { await window.storage.set('users_clamoauto', JSON.stringify(u)); } catch (e) {}
+}
+async function getDossiers() {
+  if (!currentUser) return [];
+  try { const r = await window.storage.get('dos_' + currentUser.email); return r ? JSON.parse(r.value) : []; } catch (e) { return []; }
+}
+async function saveDossiers(list) {
+  if (!currentUser) return;
+  try { await window.storage.set('dos_' + currentUser.email, JSON.stringify(list)); } catch (e) {}
+}
+async function upsertDossier(d) {
+  const list = await getDossiers();
+  const i = list.findIndex(x => x.id === d.id);
+  if (i >= 0) list[i] = d; else list.unshift(d);
+  await saveDossiers(list);
+}
+
+async function doLogin() {
+  const email = document.getElementById('lEmail').value.trim();
+  const pass = document.getElementById('lPass').value;
+  if (!email || !pass) { showErr('Veuillez remplir tous les champs.'); return; }
+  const users = await getUsers();
+  if (!users[email] || users[email].pass !== btoa(pass)) { showErr('Email ou mot de passe incorrect.'); return; }
+  currentUser = { email, prenom: users[email].prenom };
+  onLogin();
+}
+async function doRegister() {
+  const prenom = document.getElementById('rPrenom').value.trim();
+  const email = document.getElementById('rEmail').value.trim();
+  const pass = document.getElementById('rPass').value;
+  if (!prenom || !email || !pass) { showErr('Veuillez remplir tous les champs.'); return; }
+  if (pass.length < 6) { showErr('Mot de passe trop court (6 caractères min).'); return; }
+  const users = await getUsers();
+  if (users[email]) { showErr('Cet email est déjà utilisé.'); return; }
+  users[email] = { prenom, pass: btoa(pass) };
+  await saveUsers(users);
+  currentUser = { email, prenom };
+  onLogin();
+}
+function onLogin() {
+  document.getElementById('clientName').textContent = currentUser.prenom;
+  document.getElementById('btnLabel').textContent = currentUser.prenom;
+  const btn = document.getElementById('btnEspace');
+  btn.classList.add('connected');
+  btn.onclick = goClient;
+  if (pendingPayOffre) { openPay(pendingPayOffre); pendingPayOffre = null; }
+  else { renderDossiers(); showView('vClient'); }
+}
+function doLogout() {
+  currentUser = null;
+  document.getElementById('btnLabel').textContent = 'Mon espace';
+  document.getElementById('btnEspace').classList.remove('connected');
+  document.getElementById('btnEspace').onclick = goAuth;
+  showView('vMain');
+}
+
+// ── PAIEMENT ──
+function openPay(offre) {
+  const o = OFFRES[offre];
+  document.getElementById('payTitle').textContent = o.title;
+  document.getElementById('payDesc').textContent = o.desc;
+  document.getElementById('payPrice').textContent = o.price;
+  document.getElementById('payBtnLabel').textContent = 'Payer ' + o.price;
+  document.getElementById('payItems').innerHTML = o.items.map(i =>
+    `<div class="pay-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>${i}</div>`
+  ).join('');
+  document.getElementById('payBody').style.display = 'block';
+  document.getElementById('payLoading').style.display = 'none';
+  ['cardName', 'cardNum', 'cardExp', 'cardCvv'].forEach(id => document.getElementById(id).value = '');
+  window._payOffre = offre;
+  showView('vPay');
+}
+function startPay(offre) {
+  if (!currentUser) { pendingPayOffre = offre; goAuth(); return; }
+  openPay(offre);
+}
+async function doPay() {
+  const name = document.getElementById('cardName').value.trim();
+  const num = document.getElementById('cardNum').value.replace(/\s/g, '');
+  const exp = document.getElementById('cardExp').value;
+  const cvv = document.getElementById('cardCvv').value;
+  if (!name || num.length < 16 || exp.length < 4 || cvv.length < 3) { alert('Veuillez compléter tous les champs.'); return; }
+  document.getElementById('payBody').style.display = 'none';
+  document.getElementById('payLoading').style.display = 'block';
+  await new Promise(r => setTimeout(r, 2200));
+  const offre = window._payOffre;
+  const ref = 'CLM-' + Date.now().toString(36).toUpperCase().slice(-6);
+  if (currentUser) {
+    if (!activeDossier) {
+      activeDossier = {
+        id: Date.now().toString(), ref,
+        titre: 'Litige automobile',
+        offre: OFFRES[offre].title + ' ' + OFFRES[offre].price,
+        statut: 'payé',
+        date: new Date().toLocaleDateString('fr-FR'),
+        pj, messages: hist.map(m => ({ role: m.role === 'user' ? 'user' : 'bot', content: m.content }))
+      };
+    } else {
+      activeDossier.statut = 'payé';
+      activeDossier.offre = OFFRES[offre].title + ' ' + OFFRES[offre].price;
+    }
+    await upsertDossier(activeDossier);
+  }
+  document.getElementById('successRef').textContent = 'Référence dossier · ' + ref;
+  document.getElementById('successSub').textContent = offre === '599'
+    ? 'Votre dossier est ouvert. Notre expert automobile prend contact sous 48h ouvrées pour planifier l\'expertise.'
+    : 'Votre mise en demeure est en cours de rédaction. Vous la recevrez par email sous 24h ouvrées.';
+  showView('vSuccess');
+}
+
+// ── ESPACE CLIENT ──
+async function renderDossiers() {
+  const list = await getDossiers();
+  const el = document.getElementById('dossiersList');
+  if (list.length === 0) {
+    el.innerHTML = `<div class="empty-state"><div class="empty-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1e5c38" stroke-width="1.8" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><div class="empty-title">Aucun dossier pour l'instant</div><div class="empty-sub">Commencez par décrire votre litige<br>pour créer votre premier dossier.</div></div>`;
+    return;
+  }
+  const labels = { analyse: 'Analyse', 'payé': 'Payé', expertise: 'Expertise', resolu: 'Résolu' };
+  el.innerHTML = list.map(d => `
+    <div class="dossier-card" onclick="openDossier('${d.id}')">
+      <div class="dc-top">
+        <div>
+          <div class="dc-ref">${d.ref}</div>
+          <div class="dc-title">${d.titre}</div>
+          <div class="dc-meta">${d.offre}</div>
+        </div>
+        <span class="dc-status ${d.statut}">${labels[d.statut] || d.statut}</span>
+      </div>
+      <div class="dc-bottom">
+        <span class="dc-last">Ouvert le ${d.date}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--hint)" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+      </div>
+    </div>`).join('');
+}
+
+async function openDossier(id) {
+  const list = await getDossiers();
+  const d = list.find(x => x.id === id);
+  if (!d) return;
+  const labels = { analyse: 'Analyse', 'payé': 'Payé', expertise: 'Expertise', resolu: 'Résolu' };
+  document.getElementById('detailContent').innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:22px">
+      <div>
+        <div style="font-size:10px;color:var(--hint);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${d.ref}</div>
+        <div style="font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink)">${d.titre}</div>
+      </div>
+      <span class="dc-status ${d.statut}">${labels[d.statut] || d.statut}</span>
+    </div>
+    <div class="detail-grid">
+      <div><div class="detail-label">Offre</div><div class="detail-val">${d.offre}</div></div>
+      <div><div class="detail-label">Date d'ouverture</div><div class="detail-val">${d.date}</div></div>
+      <div><div class="detail-label">Protection juridique</div><div class="detail-val">${d.pj ? 'Oui — à déclarer' : 'Non'}</div></div>
+      <div><div class="detail-label">Statut</div><div class="detail-val">${labels[d.statut] || d.statut}</div></div>
+    </div>
+    ${(d.messages && d.messages.length) ? `
+      <div class="sec-label" style="margin-bottom:10px">Historique de la conversation</div>
+      <div class="chat-history">
+        ${d.messages.map(m => `
+          <div class="msg ${m.role === 'bot' ? 'bot' : 'user'}">
+            <div class="av ${m.role === 'bot' ? 'b' : 'u'}">${m.role === 'bot' ? 'CA' : 'V'}</div>
+            <div class="bbl">${m.role === 'bot' ? fmt(m.content) : esc(m.content)}</div>
+          </div>`).join('')}
+      </div>` : ''}`;
+  showView('vDetail');
+}
+
+// ── CHAT ──
+function esc(t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+function fmt(t) {
+  return '<p>' + t
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p style="margin-top:8px;">')
+    .replace(/\n/g, '<br>') + '</p>';
+}
+function hideHero() {
+  const h = document.getElementById('heroBlock');
+  if (h && h.style.display !== 'none') h.style.display = 'none';
+  document.getElementById('chatZone').style.display = 'flex';
+}
+function addMsg(role, html) {
+  hideHero();
+  const c = document.getElementById('chatZone');
+  const d = document.createElement('div');
+  d.className = `msg ${role} fade`;
+  d.innerHTML = `<div class="av ${role === 'bot' ? 'b' : 'u'}">${role === 'bot' ? 'CA' : 'V'}</div><div class="bbl">${html}</div>`;
+  c.appendChild(d);
+  c.scrollTop = c.scrollHeight;
+}
+function showTyping() {
+  hideHero();
+  const c = document.getElementById('chatZone');
+  const d = document.createElement('div');
+  d.id = 'typ'; d.className = 'msg bot';
+  d.innerHTML = `<div class="av b">CA</div><div class="bbl"><div class="dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  c.appendChild(d);
+}
+function rmTyping() { const e = document.getElementById('typ'); if (e) e.remove(); }
+
+function addPayCTA() {
+  const wrap = document.createElement('div');
+  wrap.className = 'msg bot fade';
+  wrap.innerHTML = `<div class="av b">CA</div><div style="flex:1"><div class="pay-cta"><div class="pay-cta-title">Passer à l'action</div><div class="pay-cta-sub">Votre dossier est analysé. Choisissez votre procédure pour obtenir votre acte officiel.</div><div class="pay-cta-btns"><button class="btn-p p39" onclick="startPay('39')">Mise en demeure · 39 €</button><button class="btn-p p599" onclick="startPay('599')">Procédure complète · 599 €</button></div></div></div>`;
+  document.getElementById('chatZone').appendChild(wrap);
+  document.getElementById('chatZone').scrollTop = 99999;
+}
+
+async function send() {
+  const el = document.getElementById('inp');
+  const txt = el.value.trim();
+  if ((!txt && files.length === 0) || busy) return;
+  busy = true;
+  msgCount++;
+  let disp = txt || '';
+  if (files.length) disp += (disp ? '<br>' : '') + `<span style="opacity:.5;font-size:11px">${files.map(f => f.name).join(' · ')}</span>`;
+  addMsg('user', disp || 'Documents joints');
+  let c = txt || '';
+  if (pj) c += ' [Protection juridique déclarée.]';
+  if (files.length) c += ` [Documents : ${files.map(f => f.name).join(', ')}]`;
+  c += ` [Offre sélectionnée : ${tarif}€]`;
+  hist.push({ role: 'user', content: c });
+  el.value = '';
+  showTyping();
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ model: 'claude-sonnet-4-20250514', max_tokens: 1000, system: SYS, messages: hist })
+    });
+    const dat = await r.json();
+    rmTyping();
+    const rep = dat.content?.[0]?.text || 'Une erreur est survenue.';
+    hist.push({ role: 'assistant', content: rep });
+    addMsg('bot', fmt(rep));
+    if (msgCount >= 3 && msgCount % 3 === 0) addPayCTA();
+    if (currentUser) {
+      if (!activeDossier) {
+        const ref = 'CLM-' + Date.now().toString(36).toUpperCase().slice(-6);
+        const tm = txt.match(/(vice caché|conformité|kilométrage|sinistre|panne|vendeur)/i);
+        activeDossier = {
+          id: Date.now().toString(), ref,
+          titre: tm ? (tm[0].charAt(0).toUpperCase() + tm[0].slice(1) + ' — litige automobile') : 'Litige automobile',
+          offre: OFFRES[tarif].title,
+          statut: 'analyse',
+          date: new Date().toLocaleDateString('fr-FR'),
+          pj
+        };
+      }
+      activeDossier.messages = hist.map(m => ({ role: m.role === 'user' ? 'user' : 'bot', content: m.content }));
+      await upsertDossier(activeDossier);
+    }
+  } catch (e) { rmTyping(); addMsg('bot', 'Erreur de connexion.'); }
+  busy = false;
+}
+
+// ── INIT ──
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    addMsg('bot', 'Bonjour — je suis <strong>CLAMO Auto</strong>. Décrivez votre litige, joignez vos documents et j\'analyse vos droits immédiatement. Créez un compte pour sauvegarder et suivre vos dossiers.');
+  }, 400);
+});
+</script>
+</body>
+</html>
