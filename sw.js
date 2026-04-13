@@ -1,16 +1,11 @@
-const CACHE_NAME = 'clamo-v1';
-const urlsToCache = ['/'];
+function injectPrompt(text) {
+  document.getElementById('clamoInput').value = text;
+  document.getElementById('clamoInput').focus();
+}
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
-  );
-});
-
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
-});
+function clamoSend() {
+  const val = document.getElementById('clamoInput').value.trim();
+  if (!val) return;
+  // → branchez ici votre fonction d'envoi existante
+  // ex : sendMessage(val);
+}
