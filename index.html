@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CLAMO Banque — Votre banque vous doit une réponse.</title>
+<title>CLAMO Banque — Votre acte juridique en quelques minutes.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -376,33 +376,33 @@ body{
 /* BARRE CENTRALE */
 .bar{
   background:var(--white);
-  border:2px solid var(--border2);
-  border-radius:16px;
+  border:2.5px solid var(--forest);
+  border-radius:18px;
   overflow:hidden;
   transition:border-color .2s,box-shadow .2s;
-  box-shadow:0 4px 24px rgba(0,0,0,.06);
+  box-shadow:0 6px 32px rgba(28,70,50,.12);
 }
 .bar:focus-within{
-  border-color:var(--forest);
-  box-shadow:0 0 0 4px rgba(28,70,50,.07),0 4px 24px rgba(0,0,0,.06);
+  border-color:var(--forest2);
+  box-shadow:0 0 0 5px rgba(28,70,50,.09),0 6px 32px rgba(28,70,50,.12);
 }
 .bar-row{
   display:flex;align-items:center;
-  padding:0 20px;gap:12px;min-height:58px;
+  padding:0 20px;gap:12px;min-height:64px;
 }
-.bar-icon-left{color:var(--slate3);flex-shrink:0}
-.bar-icon-left svg{width:17px;height:17px}
+.bar-icon-left{color:var(--forest);flex-shrink:0;opacity:.6}
+.bar-icon-left svg{width:18px;height:18px}
 .bar input{
   flex:1;background:none;outline:none;
-  font-size:15px;color:var(--ink);min-width:0;
-  padding:18px 0;
+  font-size:15.5px;color:var(--ink);min-width:0;
+  padding:20px 0;font-weight:400;
 }
 .bar input::placeholder{color:var(--slate3)}
 .bar-sep{width:1px;background:var(--border);align-self:stretch;flex-shrink:0}
-.bar-actions{display:flex;align-items:center;gap:8px;padding:10px 12px;flex-shrink:0}
+.bar-actions{display:flex;align-items:center;gap:8px;padding:12px 12px;flex-shrink:0}
 .btn-attach{
   display:inline-flex;align-items:center;gap:6px;
-  height:38px;padding:0 14px;border-radius:9px;
+  height:40px;padding:0 14px;border-radius:9px;
   border:1.5px solid var(--border);background:var(--cream);
   color:var(--slate);font-size:12px;font-weight:500;
   transition:all .14s;white-space:nowrap;
@@ -411,9 +411,9 @@ body{
 .btn-attach:hover{background:var(--forest-pale);color:var(--forest);border-color:var(--forest-border)}
 .btn-send{
   display:inline-flex;align-items:center;gap:7px;
-  height:38px;padding:0 22px;border-radius:9px;
+  height:40px;padding:0 24px;border-radius:9px;
   background:var(--forest);color:#fff;
-  font-size:13px;font-weight:600;
+  font-size:13.5px;font-weight:600;
   transition:background .14s,transform .1s;white-space:nowrap;
 }
 .btn-send svg{width:13px;height:13px}
@@ -749,7 +749,7 @@ body{
   .footer{padding:28px 20px}
   .footer-inner{flex-direction:column;gap:12px;text-align:center}
   .cas-grid{grid-template-columns:repeat(2,1fr)}
-  .offres-grid{grid-template-columns:1fr}
+  .offres-grid{grid-template-columns:1fr!important}
   .how-steps{grid-template-columns:1fr}
   .s-stats{flex-wrap:wrap}
   .stat-item{flex:0 0 50%;border-bottom:1px solid rgba(255,255,255,.08)}
@@ -757,12 +757,17 @@ body{
   .stat-item:last-child,.stat-item:nth-last-child(-n+2):nth-child(odd){border-bottom:none}
   .quick-pills{grid-template-columns:repeat(2,1fr)}
 }
+@media(max-width:900px){
+  .offres-grid[style*="repeat(3"]{grid-template-columns:repeat(2,1fr)!important}
+}
 @media(max-width:480px){
   .hero h1{letter-spacing:-1px}
   .btn-attach span{display:none}
   .det-grid{grid-template-columns:1fr}
   .bar-row{padding:0 14px;gap:8px}
-  .bar-actions{padding:8px}
+  .bar-actions{padding:8px 8px;gap:6px}
+  .btn-send{padding:0 16px;font-size:13px}
+  .offres-grid[style*="repeat(3"]{grid-template-columns:1fr!important}
 }
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -799,15 +804,15 @@ body{
   <!-- HERO -->
   <section class="s-hero" id="heroTop">
     <div class="hero-wrap">
-      <div class="hero-pill"><div class="hero-pill-dot"></div>Spécialiste fraude & contentieux bancaire</div>
-      <h1>Votre banque vous doit<br>une <em>réponse.</em></h1>
-      <p class="hero-sub">Fraude non remboursée, virement capturé, phishing refusé —<br><strong>analysez votre dossier gratuitement</strong> et obtenez l'acte juridique qui force votre banque à agir.</p>
+      <div class="hero-pill"><div class="hero-pill-dot"></div>IA entraînée sur le droit bancaire français · Sources officielles CMF</div>
+      <h1>Votre acte juridique<br>prêt en <em>quelques minutes.</em></h1>
+      <p class="hero-sub">Décrivez votre litige. Joignez vos documents. Notre IA analyse, qualifie et génère <strong>immédiatement</strong> votre mise en demeure, saisine du médiateur ou acte de procédure — prêt à envoyer.</p>
       <div class="hero-cta-row">
         <button class="btn-hero-primary" onclick="scrollToBar()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/>
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
           </svg>
-          Analyser mon litige
+          Analyser mon litige — gratuit
         </button>
         <button class="btn-hero-ghost" onclick="scrollToHow()">
           Comment ça marche
@@ -882,31 +887,42 @@ body{
   <section class="s-offres">
     <div class="s-inner">
       <div class="s-eyebrow">Nos offres</div>
-      <h2 class="s-title">Un prix. Un résultat.</h2>
-      <p class="s-sub">Choisissez votre procédure. Tout est inclus — pas de surprise, pas de frais cachés.</p>
-      <div class="offres-grid">
+      <h2 class="s-title">Analysé. Rédigé. Livré.<br>Immédiatement.</h2>
+      <p class="s-sub">Dès le paiement validé, votre document juridique est généré par notre IA et disponible en téléchargement instantané — PDF prêt à l'emploi, sans attente.</p>
+      <div class="offres-grid" style="grid-template-columns:repeat(3,1fr)">
         <div class="offre-card" id="o39" onclick="setO('39')">
-          <div class="offre-badge basic">Rapide</div>
-          <div class="offre-price">39 €</div>
-          <div class="offre-name">Mise en demeure bancaire</div>
+          <div class="offre-badge basic">Instantané</div>
+          <div class="offre-price">49 €</div>
+          <div class="offre-name">Mise en demeure</div>
           <ul class="offre-feats">
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Analyse juridique complète du dossier</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Courrier LRAR à la banque</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Articles CMF, C.conso applicables</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Livraison PDF sous 24h ouvrées</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>IA entraînée sur le droit bancaire</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Courrier fondé sur le CMF</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>PDF prêt à envoyer en LRAR</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Téléchargement immédiat</li>
+          </ul>
+        </div>
+        <div class="offre-card" id="o49m" onclick="setO('49m')">
+          <div class="offre-badge basic">Instantané</div>
+          <div class="offre-price">49 €</div>
+          <div class="offre-name">Saisine médiateur bancaire</div>
+          <ul class="offre-feats">
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Saisine conforme art. L316-1 CMF</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Exposé des faits structuré</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>PDF prêt à déposer en ligne</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Téléchargement immédiat</li>
           </ul>
         </div>
         <div class="offre-card sel" id="o599" onclick="setO('599')">
           <div class="offre-badge premium">Complet</div>
           <div class="offre-price">599 €</div>
-          <div class="offre-name">Procédure complète + expertise</div>
+          <div class="offre-name">Procédure judiciaire complète</div>
           <ul class="offre-feats">
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Tout le contenu de la mise en demeure</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Rapport expert bancaire certifié</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Saisine médiateur / ACPR rédigée</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Assignation ou requête prête</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Acte complet juridiquement correct</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Prêt à remettre à un huissier</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Transmissible directement au tribunal</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Canva dédié personnalisé à votre dossier</li>
             <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Avocat partenaire si ≥ 10 000 €</li>
-            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Suivi en temps réel — espace client</li>
+            <li><div class="feat-dot"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 6l2.5 2.5 5.5-5"/></svg></div>Suivi dossier — espace client</li>
           </ul>
         </div>
       </div>
@@ -931,9 +947,9 @@ body{
   <section class="s-chat" id="chatSection">
     <div class="chat-inner">
       <div style="text-align:center;margin-bottom:36px" id="barIntro">
-        <div class="s-eyebrow" style="justify-content:center;display:flex">Analyse gratuite & immédiate</div>
-        <h2 class="s-title" style="max-width:460px;margin:8px auto 10px">Décrivez votre litige.<br>On s'occupe du reste.</h2>
-        <p style="font-size:14px;color:var(--slate2);max-width:400px;margin:0 auto">Notre IA juridique qualifie votre dossier selon le Code monétaire et financier et vous indique vos droits exacts face à votre banque.</p>
+        <div class="s-eyebrow" style="justify-content:center;display:flex">IA entraînée · Sources officielles CMF · Livraison instantanée</div>
+        <h2 class="s-title" style="max-width:520px;margin:8px auto 10px">Décrivez votre litige.<br>Votre document est prêt <em style="color:var(--forest);font-style:italic">en quelques minutes.</em></h2>
+        <p style="font-size:14px;color:var(--slate2);max-width:460px;margin:0 auto">Notre IA est entraînée sur le Code monétaire et financier et connectée aux sources officielles. Elle qualifie votre dossier, évalue vos chances de succès et génère immédiatement l'acte adapté à votre situation.</p>
       </div>
 
       <!-- MESSAGES CHAT -->
@@ -1004,9 +1020,9 @@ body{
         </div>
       </div>
       <div class="bar-hints">
-        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Analyse gratuite</span>
-        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>Sans inscription</span>
-        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Réponse immédiate</span>
+        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Document généré instantanément</span>
+        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>PDF prêt à l'emploi</span>
+        <span class="bh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>Analyse gratuite · Sans inscription</span>
       </div>
       <div class="files-list" id="fList"></div>
     </div>
@@ -1016,25 +1032,25 @@ body{
   <section class="s-how" id="howSection">
     <div class="s-inner">
       <div class="s-eyebrow">Processus</div>
-      <h2 class="s-title">De l'analyse à l'acte<br>en quelques minutes.</h2>
+      <h2 class="s-title">De la description<br>à l'acte livré — en minutes.</h2>
       <div class="how-steps">
         <div class="step-card">
           <div class="step-num">01</div>
           <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4-4"/></svg></div>
-          <div class="step-title">Décrivez votre litige</div>
-          <div class="step-desc">Racontez-nous ce qui s'est passé. Joignez vos relevés, courriers ou captures d'écran. Notre IA analyse votre situation au regard du Code monétaire et financier.</div>
+          <div class="step-title">Décrivez, joignez vos docs</div>
+          <div class="step-desc">Racontez votre litige en quelques lignes. Joignez vos relevés, courriers de refus ou captures d'écran. Notre IA entraînée sur le CMF analyse votre situation en temps réel et identifie les articles applicables.</div>
         </div>
         <div class="step-card">
           <div class="step-num">02</div>
-          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
-          <div class="step-title">Recevez votre acte</div>
-          <div class="step-desc">Mise en demeure LRAR ou procédure complète avec rapport d'expert. Tout est rédigé selon les articles applicables, prêt à envoyer ou à déposer au tribunal.</div>
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <div class="step-title">Choisissez votre acte</div>
+          <div class="step-desc">Mise en demeure (49 €), saisine médiateur bancaire (49 €) ou procédure judiciaire complète (599 €). Dès le paiement validé, votre document est généré <strong>immédiatement</strong> et disponible en téléchargement PDF.</div>
         </div>
         <div class="step-card">
           <div class="step-num">03</div>
-          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
-          <div class="step-title">Suivez votre dossier</div>
-          <div class="step-desc">Votre espace client retrace chaque étape. Si le préjudice dépasse 10 000 €, un avocat partenaire prend le relais directement.</div>
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><polyline points="17 9 13 9 13 5"/></svg></div>
+          <div class="step-title">Envoyez ou déposez</div>
+          <div class="step-desc">Votre PDF est prêt à envoyer en recommandé, à déposer au médiateur en ligne, ou à remettre directement à un huissier pour la procédure judiciaire. Espace client pour suivre l'évolution de votre dossier.</div>
         </div>
       </div>
     </div>
@@ -1177,18 +1193,19 @@ FONDEMENTS JURIDIQUES :
 7. COMPÉTENCES : ≤5 000 € tribunal proximité · 5-10 000 € TJ · >10 000 € TJ chambre civile → AVOCAT PARTENAIRE.
 8. PROTECTION JURIDIQUE — libre choix avocat (Dir. 2009/138/CE art. 201) — délai déclaration 30-90 j.
 
-RÈGLES : citer articles CMF / C.conso / C.civ. · mentionner délais contestation et prescription · préciser si charge de preuve pèse sur banque · évaluer chances succès · proposer 39 € (mise en demeure) ou 599 € (procédure + expert) · si ≥ 10 000 € ou fraude pénale → avocat partenaire · ne jamais inventer jurisprudence · hors bancaire refuser · ton direct, précis, rassurant.`;
+RÈGLES : citer articles CMF / C.conso / C.civ. · mentionner délais contestation et prescription · préciser si charge de preuve pèse sur banque · évaluer chances succès · proposer 49 € mise en demeure / 49 € saisine médiateur / 599 € procédure judiciaire complète avec acte prêt huissier-tribunal · les documents sont livrés immédiatement en PDF après paiement · si ≥ 10 000 € ou fraude pénale → avocat partenaire · ne jamais inventer jurisprudence · hors bancaire refuser · ton direct, précis, rassurant.`;
 
 const OFFRES={
-  '39':{title:'Mise en demeure bancaire',price:'39 €',desc:'Courrier officiel LRAR avec fondements CMF',feats:['Analyse juridique complète','Mise en demeure rédigée selon CMF','Articles L133-18 et s. applicables','Délais de contestation identifiés','Livraison PDF sous 24h ouvrées']},
-  '599':{title:'Procédure complète + expertise',price:'599 €',desc:'Expert bancaire + procédure prête au tribunal',feats:['Tout le contenu de la mise en demeure','Rapport expert bancaire certifié','Saisine médiateur bancaire / ACPR','Assignation ou requête rédigée','Avocat partenaire si préjudice ≥ 10 000 €','Suivi temps réel — espace client']}
+  '39':{title:'Mise en demeure bancaire',price:'49 €',desc:'PDF livré immédiatement après paiement',feats:['Analyse juridique fondée sur le CMF','Mise en demeure rédigée par notre IA','Articles L133-18 et s. applicables','Délais de contestation identifiés','PDF téléchargeable immédiatement','Prêt à envoyer en recommandé AR']},
+  '49m':{title:'Saisine médiateur bancaire',price:'49 €',desc:'PDF livré immédiatement après paiement',feats:['Exposé des faits structuré et complet','Fondements CMF art. L316-1 cités','Pièces justificatives listées','Formulaire conforme FBF','PDF téléchargeable immédiatement','Prêt à déposer sur le portail médiateur']},
+  '599':{title:'Procédure judiciaire complète',price:'599 €',desc:'Acte complet prêt huissier ou tribunal',feats:['Acte complet juridiquement correct','Canva dédié personnalisé à votre dossier','Prêt à remettre à un huissier','Transmissible directement au tribunal','Avocat partenaire si préjudice ≥ 10 000 €','Suivi temps réel — espace client']}
 };
 
 let H=[],pj=false,tarif='599',files=[],busy=false;
 let user=null,dosA=null,pendPay=null,nMsg=0;
 
 function oK(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}}
-function setO(t){tarif=t;['39','599'].forEach(x=>document.getElementById('o'+x).classList.toggle('sel',x===t))}
+function setO(t){tarif=t;['39','49m','599'].forEach(x=>{const el=document.getElementById('o'+x);if(el)el.classList.toggle('sel',x===t)})}
 function tPJ(){
   pj=!pj;
   document.getElementById('pjT').classList.toggle('on',pj);
@@ -1305,7 +1322,9 @@ async function doPay(){
     await upsD(dosA);
   }
   document.getElementById('sRef').textContent='Référence dossier · '+ref;
-  document.getElementById('sSub').textContent=o==='599'?'Votre dossier est ouvert. Notre expert bancaire vous contacte sous 48h ouvrées.':'Votre mise en demeure est en cours de rédaction. Livraison PDF sous 24h ouvrées.';
+  document.getElementById('sSub').textContent=o==='599'
+    ?'Votre acte de procédure judiciaire est prêt. Téléchargez votre document depuis votre espace client — prêt à remettre à un huissier ou au greffe du tribunal.'
+    :'Votre document est prêt. Téléchargez votre PDF depuis votre espace client — il est immédiatement utilisable.';
   showV('vSuc');
 }
 
@@ -1349,7 +1368,7 @@ function rmTyp(){const e=document.getElementById('typ');if(e)e.remove()}
 function addCTA(){
   const c=document.getElementById('chatMsgs');
   const d=document.createElement('div');d.className='msg bot mfade';
-  d.innerHTML=`<div class="av b">CB</div><div style="flex:1;min-width:0"><div class="cta-pay"><div class="cta-lbl">Passer à l'action</div><div class="cta-ttl">Votre dossier est qualifié</div><div class="cta-sub">Choisissez votre procédure pour forcer votre banque à rembourser.</div><div class="cta-btns"><button class="btn-ct lt" onclick="startPay('39')">Mise en demeure · 39 €</button><button class="btn-ct dk" onclick="startPay('599')">Procédure complète · 599 €</button></div></div></div>`;
+  d.innerHTML=`<div class="av b">CB</div><div style="flex:1;min-width:0"><div class="cta-pay"><div class="cta-lbl">Document prêt en quelques minutes</div><div class="cta-ttl">Choisissez votre acte juridique</div><div class="cta-sub">Dès le paiement validé, votre PDF est généré immédiatement et disponible en téléchargement. Prêt à envoyer en recommandé, déposer au médiateur ou remettre à un huissier.</div><div class="cta-btns"><button class="btn-ct lt" onclick="startPay('39')">Mise en demeure · 49 €</button><button class="btn-ct lt" onclick="startPay('49m')">Saisine médiateur · 49 €</button><button class="btn-ct dk" onclick="startPay('599')">Procédure complète · 599 €</button></div></div></div>`;
   c.appendChild(d);
   setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'end'}),50);
 }
@@ -1393,7 +1412,7 @@ async function send(){
 
 window.addEventListener('load',()=>{
   setTimeout(()=>{
-    addMsg('bot','Bonjour — je suis <strong>CLAMO Banque</strong>. Décrivez votre problème avec votre banque, joignez vos documents, et j\'analyse immédiatement vos droits selon le Code monétaire et financier. <strong>Gratuit, sans inscription.</strong>');
+    addMsg('bot','Bonjour — je suis <strong>CLAMO Banque</strong>, IA entraînée sur le droit bancaire français et connectée aux sources officielles du CMF. Décrivez votre litige, joignez vos documents — j\'analyse vos droits et vous génère l\'acte juridique adapté <strong>immédiatement</strong>. Gratuit, sans inscription.');
   },400);
 });
 </script>
