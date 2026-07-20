@@ -39,6 +39,7 @@ async function createSession(origin, code, withConsent) {
     "metadata[product]": code,
     "success_url": `${origin}/?paid={CHECKOUT_SESSION_ID}&p=${code}`,
     "cancel_url": `${origin}/`,
+    "allow_promotion_codes": "true",
   };
   if (withConsent) {
     params["consent_collection[terms_of_service]"] = "required";

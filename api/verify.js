@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     });
     if (!r.ok) return res.status(200).json({ ok: false });
     const sess = await r.json();
-    const paid = sess.payment_status === "paid";
+    const paid = sess.payment_status === "paid" || sess.payment_status === "no_payment_required";
     return res.status(200).json({ ok: paid, product: (sess.metadata && sess.metadata.product) || "MED" });
   } catch (e) {
     return res.status(200).json({ ok: false });

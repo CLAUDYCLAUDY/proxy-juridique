@@ -444,7 +444,7 @@ module.exports = async function handler(req, res) {
         );
         if (sres.ok) {
           const sess = await sres.json();
-          if (sess.payment_status === "paid") {
+          if (sess.payment_status === "paid" || sess.payment_status === "no_payment_required") {
             paidProduct = (sess.metadata && sess.metadata.product) || "MED";
           }
         }
