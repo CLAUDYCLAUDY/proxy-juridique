@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Espace client — CLAMO</title>
+<meta name="description" content="Retrouvez vos dossiers CLAMO : suivi d'avancement et documents rédigés, accessibles par lien sécurisé envoyé à votre adresse.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#211E1A">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papier:#F7F5F0; --blanc:#FFFFFF; --encre:#211E1A; --encre-2:#3A362F;
+  --brun:#6E675C; --ligne:#E4E0D6; --ligne-2:#D8D3C6; --laiton:#9C7E3C;
+  --bulle:#EDEAE2;
+  --serif:'Spectral',Georgia,serif;
+  --sans:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--sans);background:var(--papier);color:var(--encre);font-size:15px;line-height:1.68;-webkit-font-smoothing:antialiased;min-height:100dvh}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--encre);outline-offset:2px;border-radius:3px}
+.label{font-size:10.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--laiton)}
+
+header{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:16px 28px;
+  background:rgba(247,245,240,.88);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--ligne);
+}
+.mark{font-family:var(--serif);font-weight:500;font-size:21px}
+.mark span{color:var(--laiton)}
+nav{display:flex;gap:20px;align-items:center}
+.nav-link{font-size:13px;font-weight:500;color:var(--brun);padding:6px 2px;transition:color .15s}
+.nav-link:hover{color:var(--encre)}
+
+.page{max-width:760px;margin:0 auto;padding:48px 22px 80px}
+.page-title{font-family:var(--serif);font-weight:400;font-size:clamp(26px,4vw,36px);letter-spacing:-.01em;margin:10px 0 6px}
+.page-sub{color:var(--brun);font-size:14px;max-width:560px}
+
+.card{
+  background:var(--blanc);border:1px solid var(--ligne-2);border-radius:15px;
+  padding:26px 26px;margin-top:28px;
+  box-shadow:0 1px 2px rgba(33,30,26,.04),0 10px 30px -12px rgba(33,30,26,.08);
+}
+.card h2{font-family:var(--serif);font-weight:500;font-size:20px;margin-bottom:6px}
+.card .hint{color:var(--brun);font-size:13px;margin-bottom:16px}
+.field{display:flex;gap:8px;flex-wrap:wrap}
+.field input{
+  flex:1;min-width:220px;
+  font-family:inherit;font-size:15px;color:var(--encre);
+  background:var(--papier);border:1px solid var(--ligne-2);border-radius:11px;
+  padding:12px 15px;outline:none;transition:border-color .15s;
+}
+.field input:focus{border-color:var(--encre)}
+.btn{
+  background:var(--encre);color:var(--papier);border-radius:11px;
+  padding:12px 20px;font-size:14px;font-weight:600;
+  transition:background .15s,opacity .15s;
+}
+.btn:hover{background:var(--encre-2)}
+.btn:disabled{opacity:.5;cursor:default}
+.note{font-size:12.5px;color:var(--brun);margin-top:12px}
+.ok{color:#3E6B3A}
+.err{color:#8C3B2A}
+
+.dossier{
+  background:var(--blanc);border:1px solid var(--ligne-2);border-radius:15px;
+  margin-top:22px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(33,30,26,.04),0 10px 30px -12px rgba(33,30,26,.08);
+}
+.dossier-head{padding:22px 26px 18px;border-bottom:1px solid var(--ligne)}
+.dossier-head .d-date{font-size:11.5px;color:var(--brun);margin-bottom:4px}
+.dossier-head h3{font-family:var(--serif);font-weight:500;font-size:19px;line-height:1.35}
+
+.timeline{display:flex;padding:18px 26px;gap:0;border-bottom:1px solid var(--ligne)}
+.tstep{flex:1;position:relative;text-align:center;padding-top:16px}
+.tstep::before{
+  content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:11px;height:11px;border-radius:50%;
+  background:var(--papier);border:2px solid var(--ligne-2);
+}
+.tstep::after{
+  content:'';position:absolute;top:10px;left:calc(50% + 10px);right:calc(-50% + 10px);
+  height:1.5px;background:var(--ligne-2);
+}
+.tstep:last-child::after{display:none}
+.tstep.done::before{background:var(--laiton);border-color:var(--laiton)}
+.tstep.done::after{background:var(--laiton)}
+.tstep .t-l{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--brun)}
+.tstep.done .t-l{color:var(--encre)}
+@media(max-width:520px){.tstep .t-l{font-size:9.5px;letter-spacing:.03em}}
+
+.dossier-body{padding:20px 26px 24px}
+.doc-item{border:1px solid var(--ligne-2);border-radius:12px;padding:16px 18px;margin-bottom:12px;background:var(--papier)}
+.doc-item .d-t{font-family:var(--serif);font-weight:500;font-size:16px}
+.doc-item .d-m{font-size:12px;color:var(--brun);margin:2px 0 12px}
+.delivery{display:flex;gap:8px;flex-wrap:wrap}
+.delivery button{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--ligne-2);border-radius:10px;background:var(--blanc);
+  padding:9px 14px;font-size:13px;font-weight:600;color:var(--encre);
+  transition:border-color .15s,box-shadow .15s;
+}
+.delivery button:hover{border-color:var(--encre);box-shadow:0 3px 10px rgba(33,30,26,.08)}
+.delivery button svg{flex-shrink:0;color:var(--laiton)}
+.delivery button:disabled{opacity:.5;cursor:default}
+
+.docview{
+  background:var(--blanc);border:1px solid var(--ligne-2);border-radius:3px;
+  padding:30px 32px;margin-top:14px;
+  font-family:var(--serif);font-size:14px;line-height:1.8;
+  box-shadow:0 1px 2px rgba(33,30,26,.05),0 14px 40px -18px rgba(33,30,26,.14);
+  white-space:pre-wrap;word-wrap:break-word;
+}
+.docview strong{font-weight:600}
+@media(max-width:600px){.docview{padding:22px 18px;font-size:13.5px}}
+
+.toggle{
+  font-size:12.5px;font-weight:500;color:var(--brun);
+  padding:6px 0;transition:color .15s;
+}
+.toggle:hover{color:var(--encre)}
+.echanges{display:none;margin-top:10px;border-top:1px solid var(--ligne);padding-top:16px}
+.echanges.open{display:block}
+.emsg{margin-bottom:16px}
+.emsg .e-r{font-size:10.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--laiton);margin-bottom:3px}
+.emsg .e-c{font-size:13.5px;color:var(--encre-2);white-space:pre-wrap;word-wrap:break-word}
+.empty{color:var(--brun);font-size:13.5px;font-style:italic;font-family:var(--serif)}
+.status-line{display:inline-flex;align-items:center;gap:9px;color:var(--brun);font-size:13.5px;font-style:italic;font-family:var(--serif)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--laiton);animation:pulse 1.1s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25;transform:scale(.85)}50%{opacity:1;transform:scale(1)}}
+footer{border-top:1px solid var(--ligne);padding:30px 24px;text-align:center}
+footer p{font-size:11px;color:var(--brun);max-width:620px;margin:0 auto;line-height:1.75}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <a class="mark" href="/">CLAMO<span>.</span></a>
+  <nav>
+    <a class="nav-link" href="/">Nouveau litige</a>
+    <button class="nav-link" id="logoutBtn" style="display:none" onclick="logout()">Se déconnecter</button>
+  </nav>
+</header>
+
+<div class="page">
+  <span class="label">Espace client</span>
+  <h1 class="page-title">Vos dossiers, <em>à tout moment</em>.</h1>
+  <p class="page-sub" id="pageSub">Recevez un lien de connexion sécurisé à votre adresse : aucun mot de passe à retenir.</p>
+
+  <!-- Connexion -->
+  <div class="card" id="loginCard" style="display:none">
+    <h2>Recevoir mon lien de connexion</h2>
+    <p class="hint">Indiquez l'adresse utilisée lors de votre commande. Un lien sécurisé, valable une heure, vous sera envoyé.</p>
+    <form class="field" onsubmit="event.preventDefault();sendLink()">
+      <input type="email" id="emailInp" placeholder="votre@adresse.fr" autocomplete="email" required aria-label="Votre adresse électronique">
+      <button class="btn" type="submit" id="sendBtn">Recevoir le lien</button>
+    </form>
+    <p class="note" id="loginNote"></p>
+  </div>
+
+  <!-- Contenu connecté -->
+  <div id="content" style="display:none">
+    <p class="note" style="margin-top:22px" id="whoami"></p>
+    <div id="dossiers"></div>
+  </div>
+
+  <div id="loading" class="card"><span class="status-line"><span class="dot"></span>Chargement de votre espace…</span></div>
+</div>
+
+<footer>
+  <p>CLAMO est un service d'aide à la rédaction de documents juridiques et ne constitue pas une consultation juridique au sens de la loi n°&nbsp;71-1130 du 31&nbsp;décembre&nbsp;1971. <a href="/legal.html" style="text-decoration:underline">Mentions légales &amp; confidentialité</a></p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+let db = null;
+
+function esc(s){ return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(iso){
+  try{
+    return new Intl.DateTimeFormat('fr-FR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(iso));
+  }catch(e){ return ''; }
+}
+function stripMarkers(s){ return String(s??'').replace(/\s*\[\[(?:\/?DOC|OFFRE:[A-Z]{3,5})\]\]\s*/g,'\n').trim(); }
+function docPlain(t){ return String(t??'').replace(/\*\*(.+?)\*\*/g,'$1'); }
+function fmtDoc(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
+
+/* ---------- Initialisation ---------- */
+(async function init(){
+  try{
+    const r = await fetch('/api/config');
+    if(!r.ok) throw new Error('config');
+    const cfg = await r.json();
+    /* flowType 'implicit' : le lien magique reste valable même s'il est
+       ouvert dans un autre navigateur que celui qui l'a demandé
+       (le flux PKCE par défaut l'interdirait). */
+    db = supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+      auth: { flowType: 'implicit', detectSessionInUrl: true, persistSession: true }
+    });
+  }catch(e){
+    $('loading').innerHTML = '<span class="err">L\'espace client est momentanément indisponible. Réessayez dans quelques instants.</span>';
+    return;
+  }
+  /* Le lien magique dépose la session dans l'URL ; supabase-js la récupère automatiquement. */
+  db.auth.onAuthStateChange((_event, session)=>{ render(session); });
+  const { data } = await db.auth.getSession();
+  render(data ? data.session : null);
+})();
+
+let rendered = null;
+async function render(session){
+  const state = session ? 'in:' + (session.user && session.user.id || '') : 'out';
+  if(rendered === state) return;   // évite les doubles rendus (INITIAL_SESSION, TOKEN_REFRESHED…)
+  rendered = state;
+  $('loading').style.display = 'none';
+  if(!session){
+    $('loginCard').style.display = 'block';
+    $('content').style.display = 'none';
+    $('logoutBtn').style.display = 'none';
+    return;
+  }
+  $('loginCard').style.display = 'none';
+  $('content').style.display = 'block';
+  $('logoutBtn').style.display = 'inline-block';
+  $('pageSub').textContent = 'Retrouvez ici l’avancement de vos dossiers et les documents rédigés pour vous.';
+  $('whoami').textContent = 'Connecté en tant que ' + (session.user.email || '');
+  await loadDossiers();
+}
+
+/* ---------- Connexion par lien magique ---------- */
+async function sendLink(){
+  const email = $('emailInp').value.trim();
+  if(!email) return;
+  const btn = $('sendBtn');
+  btn.disabled = true; btn.textContent = 'Envoi…';
+  const { error } = await db.auth.signInWithOtp({
+    email,
+    options: { emailRedirectTo: location.origin + '/espace' }
+  });
+  btn.disabled = false; btn.textContent = 'Recevoir le lien';
+  if(error){
+    $('loginNote').innerHTML = '<span class="err">L\'envoi n\'a pas abouti ('+esc(error.message)+'). Vérifiez l\'adresse et réessayez.</span>';
+  }else{
+    $('loginNote').innerHTML = '<span class="ok">Lien envoyé à '+esc(email)+'. Ouvrez le courriel et cliquez sur le lien pour accéder à vos dossiers. Pensez au dossier « indésirables ».</span>';
+  }
+}
+async function logout(){
+  await db.auth.signOut();
+  location.reload();
+}
+
+/* ---------- Dossiers ---------- */
+const STATUTS = [
+  { key:'echange',  label:'Échanges' },
+  { key:'commande', label:'Commande réglée' },
+  { key:'livre',    label:'Document livré' },
+];
+function timelineHtml(statut){
+  const idx = Math.max(0, STATUTS.findIndex(s=>s.key===statut));
+  return '<div class="timeline">' + STATUTS.map((s,i)=>
+    `<div class="tstep${i<=idx?' done':''}"><div class="t-l">${s.label}</div></div>`
+  ).join('') + '</div>';
+}
+
+async function loadDossiers(){
+  const box = $('dossiers');
+  box.innerHTML = '<div class="card"><span class="status-line"><span class="dot"></span>Chargement de vos dossiers…</span></div>';
+  const { data: dossiers, error } = await db
+    .from('dossiers')
+    .select('id, titre, statut, created_at, updated_at')
+    .order('updated_at', { ascending:false });
+  if(error){
+    box.innerHTML = '<div class="card"><span class="err">Vos dossiers n\'ont pas pu être chargés. Réessayez dans un instant.</span></div>';
+    return;
+  }
+  if(!dossiers || !dossiers.length){
+    box.innerHTML = '<div class="card"><h2>Aucun dossier pour le moment</h2>'
+      + '<p class="hint">Vos dossiers apparaissent ici après une commande réglée avec cette adresse. '
+      + 'Si vous venez de payer, patientez un instant puis rechargez la page. '
+      + 'Pour engager une nouvelle démarche, <a href="/" style="text-decoration:underline">exposez votre litige</a>.</p></div>';
+    return;
+  }
+  const ids = dossiers.map(d=>d.id);
+  const { data: docs } = await db
+    .from('documents')
+    .select('id, dossier_id, type, titre, contenu, created_at')
+    .in('dossier_id', ids)
+    .order('created_at', { ascending:true });
+  const byDossier = {};
+  (docs||[]).forEach(d=>{ (byDossier[d.dossier_id] = byDossier[d.dossier_id] || []).push(d); });
+
+  box.innerHTML = '';
+  dossiers.forEach(d=>{
+    const el = document.createElement('div');
+    el.className = 'dossier';
+    const docList = byDossier[d.id] || [];
+    el.innerHTML =
+      `<div class="dossier-head">
+        <div class="d-date">Ouvert le ${fmtDate(d.created_at)} — dernière activité le ${fmtDate(d.updated_at)}</div>
+        <h3>${esc(d.titre)}</h3>
+      </div>`
+      + timelineHtml(d.statut)
+      + `<div class="dossier-body">
+          ${docList.length
+            ? docList.map(doc=>docItemHtml(doc)).join('')
+            : '<p class="empty">Aucun document rédigé pour l’instant dans ce dossier.</p>'}
+          <button class="toggle" onclick="toggleEchanges(this,'${d.id}')">Voir les échanges du dossier ▾</button>
+          <div class="echanges" id="ech-${d.id}"></div>
+        </div>`;
+    box.appendChild(el);
+  });
+}
+
+const DOC_TYPES = { MED:'Mise en demeure', REC:'Contestation / recours', SAIS:'Assignation / saisine', DOSS:'Dossier complet' };
+const docStore = {};
+function docItemHtml(doc){
+  docStore[doc.id] = doc.contenu;
+  const icoPdf = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>';
+  const icoDoc = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>';
+  const icoEye = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  return `<div class="doc-item">
+    <div class="d-t">${esc(doc.titre || DOC_TYPES[doc.type] || 'Document juridique')}</div>
+    <div class="d-m">${esc(DOC_TYPES[doc.type] || '')} — rédigé le ${fmtDate(doc.created_at)}</div>
+    <div class="delivery">
+      <button onclick="viewDoc(this,'${doc.id}')">${icoEye} Consulter</button>
+      <button onclick="downloadPdf(this,'${doc.id}')">${icoPdf} PDF</button>
+      <button onclick="downloadWord(this,'${doc.id}')">${icoDoc} Word</button>
+    </div>
+    <div id="view-${doc.id}" style="display:none"></div>
+  </div>`;
+}
+function viewDoc(btn, id){
+  const v = $('view-'+id);
+  if(v.style.display === 'none'){
+    v.innerHTML = '<div class="docview">'+fmtDoc(stripMarkers(docStore[id]||''))+'</div>';
+    v.style.display = 'block';
+    btn.innerHTML = btn.innerHTML.replace('Consulter','Masquer');
+  }else{
+    v.style.display = 'none'; v.innerHTML = '';
+    btn.innerHTML = btn.innerHTML.replace('Masquer','Consulter');
+  }
+}
+
+/* ---------- Échanges du dossier ---------- */
+async function toggleEchanges(btn, dossierId){
+  const box = $('ech-'+dossierId);
+  if(box.classList.contains('open')){
+    box.classList.remove('open');
+    btn.textContent = 'Voir les échanges du dossier ▾';
+    return;
+  }
+  box.classList.add('open');
+  btn.textContent = 'Masquer les échanges ▴';
+  if(box.dataset.loaded) return;
+  box.innerHTML = '<span class="status-line"><span class="dot"></span>Chargement…</span>';
+  const { data: msgs, error } = await db
+    .from('messages')
+    .select('role, content, created_at')
+    .eq('dossier_id', dossierId)
+    .order('created_at', { ascending:true })
+    .limit(200);
+  if(error){ box.innerHTML = '<span class="err">Les échanges n\'ont pas pu être chargés.</span>'; return; }
+  box.dataset.loaded = '1';
+  if(!msgs || !msgs.length){ box.innerHTML = '<p class="empty">Aucun échange enregistré.</p>'; return; }
+  box.innerHTML = msgs.map(m=>
+    `<div class="emsg"><div class="e-r">${m.role==='user'?'Vous':'CLAMO'}</div>`
+    + `<div class="e-c">${esc(stripMarkers(m.content)).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}</div></div>`
+  ).join('');
+}
+
+/* ---------- Téléchargements (même rendu que le site) ---------- */
+let jsPdfReady = null;
+function loadJsPdf(){
+  if(window.jspdf) return Promise.resolve();
+  if(jsPdfReady) return jsPdfReady;
+  jsPdfReady = new Promise((ok,ko)=>{
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    sc.onload = ok; sc.onerror = ()=>{ jsPdfReady=null; ko(new Error('Chargement PDF impossible — vérifiez votre connexion.')); };
+    document.head.appendChild(sc);
+  });
+  return jsPdfReady;
+}
+function docFileName(t){
+  const m = t.match(/Objet\s*:\s*([^\n]+)/);
+  let base = m ? m[1] : 'Document juridique';
+  base = docPlain(base).split('—')[0].split('-')[0].trim().slice(0, 40);
+  return (base || 'Document juridique')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Za-z0-9 ]/g,'').trim().replace(/\s+/g,'-') + '-CLAMO';
+}
+async function downloadPdf(btn, id){
+  const raw = docStore[id] || '';
+  btn.disabled = true;
+  try{
+    await loadJsPdf();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit:'mm', format:'a4' });
+    const L = 25, R = 20, T = 26, B = 25;
+    const W = 210 - L - R, MAXY = 297 - B;
+    let y = T;
+    pdf.setFont('times','normal'); pdf.setFontSize(11.5);
+    const lineH = 6.1, paraGap = 3.4;
+    for(const lineRaw of raw.split('\n')){
+      const line = lineRaw.trimEnd();
+      if(!line.trim()){ y += paraGap; continue; }
+      const isBold = /^\*\*.*\*\*$/.test(line.trim()) || /^Objet\s*:/.test(docPlain(line));
+      const text = docPlain(line);
+      const isDate = /,\s*le\s+\d{1,2}(er)?\s+\S+\s+\d{4}\s*$/.test(text) && text.length < 60;
+      pdf.setFont('times', isBold ? 'bold' : 'normal');
+      const wrapped = pdf.splitTextToSize(text, W);
+      for(const wl of wrapped){
+        if(y > MAXY){ pdf.addPage(); y = T; }
+        if(isDate){ pdf.text(wl, 210 - R, y, { align:'right' }); }
+        else { pdf.text(wl, L, y); }
+        y += lineH;
+      }
+    }
+    pdf.save(docFileName(raw) + '.pdf');
+  }catch(e){ alert(e.message || 'Génération du PDF impossible.'); }
+  btn.disabled = false;
+}
+function downloadWord(btn, id){
+  const raw = docStore[id] || '';
+  const bodyHtml = esc(raw)
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .split('\n').map(l=>{
+      const plain = l.replace(/<[^>]+>/g,'');
+      const right = /,\s*le\s+\d{1,2}(er)?\s+\S+\s+\d{4}\s*$/.test(plain) && plain.length < 60;
+      return '<p style="margin:0 0 6pt'+(right?';text-align:right':'')+'">'+(l||'&nbsp;')+'</p>';
+    }).join('');
+  const html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">'
+    + '<head><meta charset="utf-8"><title>Document CLAMO</title></head>'
+    + '<body style="font-family:\'Times New Roman\',serif;font-size:12pt;line-height:1.55">' + bodyHtml + '</body></html>';
+  const blob = new Blob(['\ufeff', html], { type:'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = docFileName(raw) + '.doc';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+</script>
+</body>
+</html>

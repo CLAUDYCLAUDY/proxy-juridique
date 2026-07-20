@@ -3,12 +3,15 @@
   "functions": {
     "api/chat.js": { "maxDuration": 60 },
     "api/checkout.js": { "maxDuration": 15 },
-    "api/verify.js": { "maxDuration": 15 }
+    "api/verify.js": { "maxDuration": 15 },
+    "api/config.js": { "maxDuration": 10 }
   },
   "rewrites": [
     { "source": "/api/chat", "destination": "/api/chat.js" },
     { "source": "/api/checkout", "destination": "/api/checkout.js" },
     { "source": "/api/verify", "destination": "/api/verify.js" },
+    { "source": "/api/config", "destination": "/api/config.js" },
+    { "source": "/espace", "destination": "/espace.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

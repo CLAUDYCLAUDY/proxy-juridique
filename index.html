@@ -503,6 +503,7 @@ body.chatting .app{display:flex}
   <a class="mark" href="#" onclick="event.preventDefault();toTop()">CLAMO<span>.</span></a>
   <nav>
     <a class="nav-link" id="navTarifs" href="#tarifs" onclick="navTarifs(event)">Tarifs</a>
+    <a class="nav-link" href="/espace">Espace client</a>
     <button class="nav-link" id="newChatBtn" style="display:none" onclick="newChat()">Nouveau litige</button>
   </nav>
 </header>
@@ -604,7 +605,7 @@ body.chatting .app{display:flex}
 
   <footer>
     <div class="f-mark">CLAMO<span>.</span></div>
-    <p style="margin-bottom:10px"><a href="/legal.html#mentions" style="color:inherit">Mentions légales</a> &nbsp;·&nbsp; <a href="/legal.html#confidentialite" style="color:inherit">Confidentialité</a> &nbsp;·&nbsp; <a href="/legal.html#cgv" style="color:inherit">CGV</a></p>
+    <p style="margin-bottom:10px"><a href="/espace" style="color:inherit">Espace client</a> &nbsp;·&nbsp; <a href="/legal.html#mentions" style="color:inherit">Mentions légales</a> &nbsp;·&nbsp; <a href="/legal.html#confidentialite" style="color:inherit">Confidentialité</a> &nbsp;·&nbsp; <a href="/legal.html#cgv" style="color:inherit">CGV</a></p>
     <p>CLAMO est un service d'aide à la rédaction de documents juridiques et ne constitue pas une consultation juridique au sens de la loi n°&nbsp;71-1130 du 31&nbsp;décembre&nbsp;1971. Les références citées sont issues des textes officiels en vigueur. Pour les situations complexes, le recours à un professionnel du droit inscrit au barreau est recommandé.</p>
   </footer>
 </div>
@@ -669,6 +670,7 @@ body.chatting .app{display:flex}
 /* ============ État ============ */
 const H = [];          // historique envoyé au serveur (avec marqueurs de pièces)
 const D = [];          // affichage persisté : {r:'u'|'b', t:texte, a:pièces}
+let dossierId = null;  // identifiant du dossier (UUID) : persistance Supabase + espace client
 let files = [];
 let busy = false;
 let started = false;
@@ -710,6 +712,16 @@ async function idbDel(k){
     t.oncomplete = ()=>ok(); t.onerror = ()=>ok();
   });
 }
+function ensureDossierId(){
+  if(!dossierId){
+    dossierId = (crypto.randomUUID && crypto.randomUUID()) ||
+      'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c=>{
+        const r = Math.random()*16|0, v = c==='x' ? r : (r&0x3|0x8);
+        return v.toString(16);
+      });
+  }
+  return dossierId;
+}
 function trimmedCopy(){
   // Plafond global des pièces conservées : ~18 Mo (les plus récentes gardées en priorité)
   let budget = 24000000;
@@ -722,7 +734,7 @@ function trimmedCopy(){
     }
     return c;
   });
-  return { H: H2, D: D.slice(-40) };
+  return { H: H2, D: D.slice(-40), id: dossierId };
 }
 function saveConv(){
   const snap = trimmedCopy();
@@ -755,6 +767,7 @@ async function restoreConv(){
       if(raw) saved = JSON.parse(raw);
     }
     if(!saved) return;
+    if(saved.id) dossierId = saved.id;
     if(renderSaved(saved.D)) (saved.H||[]).forEach(m => H.push(m));
   }catch(e){ /* sauvegarde illisible : on repart de zéro */ }
 }
@@ -1076,7 +1089,7 @@ async function streamRequest(txt, sentFiles, target, paidSession){
   const resp = await fetch('/api/chat', {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles, paid_session: paidSession || undefined })
+    body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles, paid_session: paidSession || undefined, dossier_id: ensureDossierId() })
   });
 
   if(!resp.ok){
@@ -1235,7 +1248,7 @@ async function verifyAndGenerate(sessionId, codeHint){
   try{
     const r = await fetch('/api/verify', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ session_id: sessionId })
+      body: JSON.stringify({ session_id: sessionId, dossier_id: ensureDossierId() })
     });
     const d = await r.json();
     ok = !!d.ok; if(d.product) code = d.product;
@@ -1253,7 +1266,17 @@ async function verifyAndGenerate(sessionId, codeHint){
   D.push({ r:'u', t: 'Commande réglée — ' + p.name + ' ✓', a: '' });
   saveConv();
   lastReq = { txt: genMsg, files: [], paidSession: sessionId };
-  await runRequest(genMsg, [], target, sessionId);
+  const delivered = await runRequest(genMsg, [], target, sessionId);
+  if(delivered){
+    const note = "**Votre espace client est ouvert.** Ce document et le suivi de votre dossier restent accessibles à tout moment dans votre [espace client](/espace) : un lien de connexion sécurisé vous y est envoyé à l'adresse utilisée pour le paiement — aucun mot de passe à retenir.";
+    const noteHtml = '<p><strong>Votre espace client est ouvert.</strong> Ce document et le suivi de votre dossier restent accessibles à tout moment dans votre <a href="/espace" style="text-decoration:underline">espace client</a> : connectez-vous avec l\'adresse utilisée pour le paiement, un lien sécurisé vous sera envoyé — aucun mot de passe à retenir.</p>';
+    const d = document.createElement('div');
+    d.className = 'msg bot';
+    d.innerHTML = '<div class="content">'+noteHtml+'</div>';
+    $('chatInner').appendChild(d);
+    D.push({ r:'b', t: note.replace(/\[espace client\]\(\/espace\)/,'espace client (clamo.fr/espace)') });
+    saveConv();
+  }
   scrollDown();
 }
 
