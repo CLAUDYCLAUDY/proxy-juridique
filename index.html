@@ -374,6 +374,21 @@ body.chatting .app{display:flex}
 .file-chip button{color:var(--brun);font-size:14px;line-height:1;padding:0 2px}
 .file-chip button:hover{color:var(--encre)}
 
+/* ---------- Zone de dépôt ---------- */
+#dropzone{
+  position:fixed;inset:0;z-index:60;display:none;
+  background:rgba(247,245,240,.92);
+  align-items:center;justify-content:center;
+  pointer-events:none;
+}
+#dropzone.open{display:flex}
+.dz-inner{
+  border:2px dashed var(--laiton);border-radius:20px;
+  padding:46px 60px;text-align:center;background:var(--blanc);
+}
+.dz-t{font-family:var(--serif);font-weight:500;font-size:24px;margin-bottom:6px}
+.dz-s{color:var(--brun);font-size:13px}
+
 /* ---------- Boîtier de paiement ---------- */
 .paycard{
   border:1px solid var(--ligne-2);background:var(--blanc);
@@ -580,6 +595,13 @@ body.chatting .app{display:flex}
 
 <input type="file" id="fileInput" multiple accept="application/pdf,image/jpeg,image/png,image/webp" style="display:none">
 
+<div id="dropzone" aria-hidden="true">
+  <div class="dz-inner">
+    <div class="dz-t">Déposez vos documents</div>
+    <div class="dz-s">PDF, photos — contrat, courriers, factures (6&nbsp;Mo max par pièce)</div>
+  </div>
+</div>
+
 <!-- Modale tarifs (mode conversation) -->
 <div class="modal-bg" id="tarifsModal" onclick="if(event.target===this)closeTarifs()">
   <div class="modal" role="dialog" aria-label="Tarifs">
@@ -616,41 +638,93 @@ let autoScroll = true;
 let lastReq = null;    // dernier envoi, pour « Réessayer »
 
 const $ = id => document.getElementById(id);
-const STORE = 'clamo_conversation_v1';
+const STORE = 'clamo_conversation_v2';
 
-/* ============ Persistance locale (aucune donnée envoyée ailleurs) ============ */
-function saveConv(){
-  try{
-    let payload = JSON.stringify({ H, D });
-    if(payload.length > 400000){
-      // Conversation très longue : on retire les plus anciens échanges de la sauvegarde
-      const H2 = H.slice(-24), D2 = D.slice(-24);
-      payload = JSON.stringify({ H: H2, D: D2 });
-    }
-    localStorage.setItem(STORE, payload);
-  }catch(e){ /* stockage plein ou indisponible : le site fonctionne sans */ }
+/* ============ Persistance locale : IndexedDB (pièces incluses), repli localStorage ============ */
+function idbOpen(){
+  return new Promise((ok,ko)=>{
+    const r = indexedDB.open('clamo', 1);
+    r.onupgradeneeded = ()=>r.result.createObjectStore('kv');
+    r.onsuccess = ()=>ok(r.result);
+    r.onerror = ()=>ko(r.error);
+  });
 }
-function restoreConv(){
+async function idbSet(k,v){
+  const db = await idbOpen();
+  return new Promise((ok,ko)=>{
+    const t = db.transaction('kv','readwrite');
+    t.objectStore('kv').put(v,k);
+    t.oncomplete = ()=>ok(); t.onerror = ()=>ko(t.error);
+  });
+}
+async function idbGet(k){
+  const db = await idbOpen();
+  return new Promise((ok,ko)=>{
+    const g = db.transaction('kv','readonly').objectStore('kv').get(k);
+    g.onsuccess = ()=>ok(g.result); g.onerror = ()=>ko(g.error);
+  });
+}
+async function idbDel(k){
+  const db = await idbOpen();
+  return new Promise((ok)=>{
+    const t = db.transaction('kv','readwrite');
+    t.objectStore('kv').delete(k);
+    t.oncomplete = ()=>ok(); t.onerror = ()=>ok();
+  });
+}
+function trimmedCopy(){
+  // Plafond global des pièces conservées : ~18 Mo (les plus récentes gardées en priorité)
+  let budget = 24000000;
+  const H2 = H.slice(-40).map(m=>{
+    const c = { role:m.role, content:m.content };
+    if(m.files && m.files.length){
+      const kept = [];
+      for(const f of m.files){ if((budget -= f.data.length) >= 0) kept.push(f); }
+      if(kept.length) c.files = kept;
+    }
+    return c;
+  });
+  return { H: H2, D: D.slice(-40) };
+}
+function saveConv(){
+  const snap = trimmedCopy();
+  idbSet(STORE, snap).catch(()=>{
+    try{
+      // Repli sans pièces si IndexedDB indisponible
+      const light = { H: snap.H.map(m=>({role:m.role, content:m.content})), D: snap.D };
+      localStorage.setItem(STORE, JSON.stringify(light));
+    }catch(e){}
+  });
+}
+function renderSaved(d){
+  if(!Array.isArray(d) || !d.length) return false;
+  enterChat();
+  d.forEach(m => {
+    D.push(m);
+    if(m.r === 'u') renderUserMsg(m.t, m.a);
+    else if(m.r === 'p') renderPayCard(m.c);
+    else {
+      const el = renderBotMsg(m.t);
+      if(m.doc) renderDocActions(el, m.t);
+    }
+  });
+  requestAnimationFrame(()=>scrollDown(true));
+  return true;
+}
+async function restoreConv(){
   try{
-    const raw = localStorage.getItem(STORE);
-    if(!raw) return;
-    const { H: h, D: d } = JSON.parse(raw);
-    if(!Array.isArray(d) || !d.length) return;
-    h.forEach(m => H.push(m));
-    enterChat();
-    d.forEach(m => {
-      D.push(m);
-      if(m.r === 'u') renderUserMsg(m.t, m.a);
-      else if(m.r === 'p') renderPayCard(m.c);
-      else {
-        const el = renderBotMsg(m.t);
-        if(m.doc) renderDocActions(el, m.t);
-      }
-    });
-    requestAnimationFrame(()=>scrollDown(true));
+    let saved = null;
+    try{ saved = await idbGet(STORE); }catch(e){}
+    if(!saved){
+      const raw = localStorage.getItem(STORE);
+      if(raw) saved = JSON.parse(raw);
+    }
+    if(!saved) return;
+    if(renderSaved(saved.D)) (saved.H||[]).forEach(m => H.push(m));
   }catch(e){ /* sauvegarde illisible : on repart de zéro */ }
 }
 function clearConv(){
+  idbDel(STORE);
   try{ localStorage.removeItem(STORE); }catch(e){}
 }
 
@@ -689,9 +763,11 @@ function usePill(btn){
 
 /* ============ Pièces jointes ============ */
 function pickFiles(){ $('fileInput').click(); }
-$('fileInput').addEventListener('change', async e=>{
-  for(const f of e.target.files){
-    if(files.length >= 4) break;
+const ACCEPTED = ['application/pdf','image/jpeg','image/png','image/webp'];
+async function addFiles(list){
+  for(const f of list){
+    if(files.length >= 4){ alert('4 pièces maximum par message.'); break; }
+    if(!ACCEPTED.includes(f.type)){ alert(`« ${f.name} » : format non pris en charge (PDF ou image).`); continue; }
     if(f.size > 6*1024*1024){ alert(`« ${f.name} » dépasse 6 Mo.`); continue; }
     const data = await new Promise((ok,ko)=>{
       const r = new FileReader();
@@ -701,8 +777,24 @@ $('fileInput').addEventListener('change', async e=>{
     }).catch(()=>null);
     if(data) files.push({ name:f.name, mediaType:f.type, data });
   }
-  e.target.value = '';
   renderFiles();
+}
+$('fileInput').addEventListener('change', e=>{ addFiles(e.target.files); e.target.value=''; });
+
+/* Glisser-déposer sur toute la page */
+let dragDepth = 0;
+document.addEventListener('dragenter', e=>{
+  if(e.dataTransfer && [...(e.dataTransfer.types||[])].includes('Files')){
+    dragDepth++; $('dropzone').classList.add('open');
+  }
+});
+document.addEventListener('dragleave', ()=>{
+  if(--dragDepth <= 0){ dragDepth = 0; $('dropzone').classList.remove('open'); }
+});
+document.addEventListener('dragover', e=>e.preventDefault());
+document.addEventListener('drop', e=>{
+  e.preventDefault(); dragDepth = 0; $('dropzone').classList.remove('open');
+  if(e.dataTransfer && e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
 });
 function renderFiles(){
   const html = files.map((f,i)=>
@@ -956,7 +1048,9 @@ async function send(){
   scrollDown(true);
 
   const hContent = (txt || 'Documents joints.') + (attNames ? '\n[Pièces jointes transmises : ' + attNames + ']' : '');
-  H.push({ role:'user', content: hContent });
+  const hItem = { role:'user', content: hContent };
+  if(sentFiles.length) hItem.files = sentFiles;
+  H.push(hItem);
   D.push({ r:'u', t: txt || 'Documents joints', a: attNames });
   saveConv();
 
@@ -1013,12 +1107,12 @@ async function verifyAndGenerate(sessionId, codeHint){
 }
 
 /* ============ Restauration au chargement ============ */
-(function init(){
+(async function init(){
   const params = new URLSearchParams(location.search);
   const paid = params.get('paid');
   const codeHint = params.get('p');
   if(params.has('paid') || params.has('p')) history.replaceState({}, '', '/');
-  restoreConv();
+  await restoreConv();
   if(paid) verifyAndGenerate(paid, codeHint);
 })();
 </script>
