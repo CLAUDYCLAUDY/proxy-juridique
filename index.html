@@ -697,7 +697,7 @@ async function send(){
   autoScroll = true;
   scrollDown(true);
 
-  H.push({ role:'user', content: txt || 'Documents joints.' });
+  H.push({ role:'user', content: (txt || 'Documents joints.') + (attNames ? '\n[Pièces jointes transmises : ' + attNames + ']' : '') });
 
   let full = '';
   try{
