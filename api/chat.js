@@ -460,6 +460,15 @@ module.exports = async function handler(req, res) {
           text: SYSTEM_PROMPT,
           cache_control: { type: "ephemeral" }, // prompt constant → mis en cache par l'API
         },
+        {
+          /* Bloc volontairement séparé et NON mis en cache : la date change
+             chaque jour et casserait le cache du grand prompt. */
+          type: "text",
+          text: `Date du jour : ${new Intl.DateTimeFormat("fr-FR", {
+            weekday: "long", day: "numeric", month: "long", year: "numeric",
+            timeZone: "Europe/Paris",
+          }).format(new Date())}. Tous les délais, prescriptions et chronologies se calculent à partir de cette date. Si une date fournie par la personne semble incohérente avec elle (par exemple située dans le futur), poser la question plutôt que supposer.`,
+        },
       ],
       messages,
     });
