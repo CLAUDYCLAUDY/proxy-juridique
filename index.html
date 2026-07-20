@@ -455,7 +455,7 @@ body.chatting .app{display:flex}
       <div>Textes officiels en vigueur</div>
       <div>PDF prêt à envoyer</div>
       <div>Sans frais cachés</div>
-      <div>Confidentiel, sans inscription</div>
+      <div>Confidentiel — vos informations respectées</div>
     </div>
   </div>
 
@@ -518,6 +518,7 @@ body.chatting .app{display:flex}
 
   <footer>
     <div class="f-mark">CLAMO<span>.</span></div>
+    <p style="margin-bottom:10px"><a href="/legal.html#mentions" style="color:inherit">Mentions légales</a> &nbsp;·&nbsp; <a href="/legal.html#confidentialite" style="color:inherit">Confidentialité</a> &nbsp;·&nbsp; <a href="/legal.html#cgv" style="color:inherit">CGV</a></p>
     <p>CLAMO est un service d'aide à la rédaction de documents juridiques et ne constitue pas une consultation juridique au sens de la loi n°&nbsp;71-1130 du 31&nbsp;décembre&nbsp;1971. Les références citées sont issues des textes officiels en vigueur. Pour les situations complexes, le recours à un professionnel du droit inscrit au barreau est recommandé.</p>
   </footer>
 </div>
@@ -573,13 +574,48 @@ body.chatting .app{display:flex}
 
 <script>
 /* ============ État ============ */
-const H = [];
+const H = [];          // historique envoyé au serveur (avec marqueurs de pièces)
+const D = [];          // affichage persisté : {r:'u'|'b', t:texte, a:pièces}
 let files = [];
 let busy = false;
 let started = false;
 let autoScroll = true;
+let lastReq = null;    // dernier envoi, pour « Réessayer »
 
 const $ = id => document.getElementById(id);
+const STORE = 'clamo_conversation_v1';
+
+/* ============ Persistance locale (aucune donnée envoyée ailleurs) ============ */
+function saveConv(){
+  try{
+    let payload = JSON.stringify({ H, D });
+    if(payload.length > 400000){
+      // Conversation très longue : on retire les plus anciens échanges de la sauvegarde
+      const H2 = H.slice(-24), D2 = D.slice(-24);
+      payload = JSON.stringify({ H: H2, D: D2 });
+    }
+    localStorage.setItem(STORE, payload);
+  }catch(e){ /* stockage plein ou indisponible : le site fonctionne sans */ }
+}
+function restoreConv(){
+  try{
+    const raw = localStorage.getItem(STORE);
+    if(!raw) return;
+    const { H: h, D: d } = JSON.parse(raw);
+    if(!Array.isArray(d) || !d.length) return;
+    h.forEach(m => H.push(m));
+    enterChat();
+    d.forEach(m => {
+      D.push(m);
+      if(m.r === 'u') renderUserMsg(m.t, m.a);
+      else renderBotMsg(m.t);
+    });
+    requestAnimationFrame(()=>scrollDown(true));
+  }catch(e){ /* sauvegarde illisible : on repart de zéro */ }
+}
+function clearConv(){
+  try{ localStorage.removeItem(STORE); }catch(e){}
+}
 
 /* ============ En-tête ============ */
 window.addEventListener('scroll', ()=>{
@@ -644,11 +680,19 @@ function rmFile(i){ files.splice(i,1); renderFiles(); }
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function fmt(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
 
-function addUserMsg(text, attNames){
+function renderUserMsg(text, attNames){
   const d = document.createElement('div');
   d.className = 'msg user';
   d.innerHTML = `<div><div class="content">${esc(text)}</div>${attNames?`<div class="att">${esc(attNames)}</div>`:''}</div>`;
   $('chatInner').appendChild(d);
+  return d;
+}
+function renderBotMsg(text){
+  const d = document.createElement('div');
+  d.className = 'msg bot';
+  d.innerHTML = `<div class="content">${fmt(text)}</div>`;
+  $('chatInner').appendChild(d);
+  return d.querySelector('.content');
 }
 function addBotShell(){
   const d = document.createElement('div');
@@ -674,9 +718,109 @@ function enterChat(){
   window.scrollTo(0,0);
   $('newChatBtn').style.display = 'inline-block';
 }
-function newChat(){ location.reload(); }
+function newChat(){
+  if(!confirm('Commencer un nouveau litige ?\nLa conversation actuelle sera effacée.')) return;
+  clearConv();
+  location.reload();
+}
 
-/* ============ Envoi + streaming ============ */
+/* ============ Cœur réseau : requête + streaming (utilisé par envoi et réessai) ============ */
+async function streamRequest(txt, sentFiles, target){
+  let full = '';
+  const resp = await fetch('/api/chat', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json' },
+    body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles })
+  });
+
+  if(!resp.ok){
+    const err = await resp.json().catch(()=>({}));
+    const e = new Error(err.error || `Erreur ${resp.status}`);
+    e.partial = '';
+    throw e;
+  }
+
+  const reader = resp.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  try{
+    while(true){
+      const { done, value } = await reader.read();
+      if(done) break;
+      buffer += decoder.decode(value, { stream:true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: ')) continue;
+        const payload = line.slice(6);
+        if(payload === '[DONE]') continue;
+        let obj = null;
+        try{ obj = JSON.parse(payload); }catch(_){ continue; }
+        if(obj.t){
+          full += obj.t;
+          target.innerHTML = fmt(full) + '<span class="caret"></span>';
+          scrollDown();
+        } else if(obj.s){
+          if(!full) target.innerHTML = '<span class="status"><span class="dot"></span>Analyse du dossier…</span>';
+        } else if(obj.error){
+          const e = new Error(obj.error);
+          e.partial = full;
+          throw e;
+        }
+      }
+    }
+  }catch(e){
+    if(e.partial === undefined) e.partial = full;
+    throw e;
+  }
+  return full;
+}
+
+function showRetry(target, message){
+  target.innerHTML = `<span class="err">${esc(message)}</span><br>` +
+    `<button class="pill" style="margin-top:10px" onclick="retryLast(this)">Réessayer l'envoi</button>`;
+}
+
+async function retryLast(btn){
+  if(!lastReq || busy) return;
+  busy = true;
+  $('sendHero').disabled = true; $('sendChat').disabled = true;
+  const target = btn.closest('.content');
+  target.innerHTML = '<span class="status"><span class="dot"></span>Nouvel essai…</span>';
+  autoScroll = true;
+  await runRequest(lastReq.txt, lastReq.files, target);
+}
+
+async function runRequest(txt, sentFiles, target){
+  try{
+    const full = await streamRequest(txt, sentFiles, target);
+    target.innerHTML = fmt(full) || '<span class="err">Réponse vide — réessayez.</span>';
+    if(full){
+      H.push({ role:'assistant', content: full });
+      D.push({ r:'b', t: full });
+      saveConv();
+      lastReq = null;
+    }
+  }catch(e){
+    const partial = e.partial || '';
+    if(partial){
+      target.innerHTML = fmt(partial) + `<br><span class="err">${esc(e.message || 'La connexion a été interrompue.')}</span>`;
+      H.push({ role:'assistant', content: partial });
+      D.push({ r:'b', t: partial });
+      saveConv();
+      lastReq = null;
+    } else {
+      showRetry(target, e.message || 'Connexion impossible. Vérifiez votre réseau.');
+    }
+  }
+  scrollDown();
+  busy = false;
+  $('sendHero').disabled = false;
+  $('sendChat').disabled = false;
+  activeInput().focus();
+}
+
+/* ============ Envoi ============ */
 async function send(){
   const el = activeInput();
   const txt = el.value.trim();
@@ -692,72 +836,18 @@ async function send(){
   el.value = ''; autoGrow(el);
 
   enterChat();
-  addUserMsg(txt || 'Documents joints', attNames);
+  renderUserMsg(txt || 'Documents joints', attNames);
   const target = addBotShell();
   autoScroll = true;
   scrollDown(true);
 
-  H.push({ role:'user', content: (txt || 'Documents joints.') + (attNames ? '\n[Pièces jointes transmises : ' + attNames + ']' : '') });
+  const hContent = (txt || 'Documents joints.') + (attNames ? '\n[Pièces jointes transmises : ' + attNames + ']' : '');
+  H.push({ role:'user', content: hContent });
+  D.push({ r:'u', t: txt || 'Documents joints', a: attNames });
+  saveConv();
 
-  let full = '';
-  try{
-    const resp = await fetch('/api/chat', {
-      method:'POST',
-      headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles })
-    });
-
-    if(!resp.ok){
-      const err = await resp.json().catch(()=>({}));
-      throw new Error(err.error || `Erreur ${resp.status}`);
-    }
-
-    const reader = resp.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-
-    while(true){
-      const { done, value } = await reader.read();
-      if(done) break;
-      buffer += decoder.decode(value, { stream:true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop();
-      for(const line of lines){
-        if(!line.startsWith('data: ')) continue;
-        const payload = line.slice(6);
-        if(payload === '[DONE]') continue;
-        try{
-          const obj = JSON.parse(payload);
-          if(obj.t){
-            full += obj.t;
-            target.innerHTML = fmt(full) + '<span class="caret"></span>';
-            scrollDown();
-          } else if(obj.s){
-            if(!full) target.innerHTML = '<span class="status"><span class="dot"></span>Analyse du dossier…</span>';
-          } else if(obj.error){
-            throw new Error(obj.error);
-          }
-        }catch(e){
-          if(e.message && e.message !== 'Unexpected end of JSON input') throw e;
-        }
-      }
-    }
-
-    target.innerHTML = fmt(full) || '<span class="err">Réponse vide — réessayez.</span>';
-    if(full) H.push({ role:'assistant', content: full });
-
-  }catch(e){
-    target.innerHTML = full
-      ? fmt(full) + `<br><span class="err">${esc(e.message || 'La connexion a été interrompue.')}</span>`
-      : `<span class="err">${esc(e.message || 'Connexion impossible. Vérifiez votre réseau et réessayez.')}</span>`;
-    if(full) H.push({ role:'assistant', content: full });
-  }
-
-  scrollDown();
-  busy = false;
-  $('sendHero').disabled = false;
-  $('sendChat').disabled = false;
-  activeInput().focus();
+  lastReq = { txt, files: sentFiles };
+  await runRequest(txt, sentFiles, target);
 }
 
 /* ============ Tarifs ============ */
@@ -771,6 +861,9 @@ function chooseOffer(name, price){
   el.focus(); autoGrow(el);
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeTarifs(); });
+
+/* ============ Restauration au chargement ============ */
+restoreConv();
 </script>
 </body>
 </html>
