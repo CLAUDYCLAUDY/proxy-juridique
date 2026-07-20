@@ -1,24 +1,16 @@
 {
-  "name": "CLAMO — La défense pour tous",
+  "name": "CLAMO — Votre acte juridique, prêt à envoyer",
   "short_name": "CLAMO",
-  "description": "Plateforme d'assistance juridique de haute exigence",
+  "description": "Exposez votre litige. CLAMO transforme votre récit en mise en demeure, assignation ou tout acte pour faire valoir vos droits, fondé sur les textes officiels en vigueur.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#f5f5f3",
-  "theme_color": "#1a4a2a",
+  "background_color": "#F7F5F0",
+  "theme_color": "#211E1A",
+  "lang": "fr",
   "orientation": "portrait",
   "icons": [
-    {
-      "src": "/icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
-    }
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ]
 }
