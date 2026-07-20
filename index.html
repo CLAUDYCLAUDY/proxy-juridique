@@ -61,7 +61,7 @@
         "name": "Documents juridiques",
         "itemListElement": [
           { "@type": "Offer", "name": "Mise en demeure", "price": "49", "priceCurrency": "EUR", "description": "Le courrier qui formalise votre demande : faits, fondements, montant, délai ferme." },
-          { "@type": "Offer", "name": "Courrier de contestation ou recours", "price": "79", "priceCurrency": "EUR", "description": "Le courrier pour vous opposer formellement, par écrit motivé." },
+          { "@type": "Offer", "name": "Courrier de contestation ou recours", "price": "79", "priceCurrency": "EUR", "description": "Tout acte pour vous opposer formellement, par écrit motivé : contestation, recours, réponse argumentée." },
           { "@type": "Offer", "name": "Assignation, requête ou saisine", "price": "149", "priceCurrency": "EUR", "description": "Le document qui porte votre demande devant la juridiction, dans les formes requises." },
           { "@type": "Offer", "name": "Dossier complet", "price": "199", "priceCurrency": "EUR", "description": "Mise en demeure, analyse de la réponse, acte de procédure : la démarche d'un seul tenant." }
         ]
@@ -514,7 +514,7 @@ body.chatting .app{display:flex}
   <div class="hero">
     <div class="label">Rédaction juridique intelligente</div>
     <h1>Exposez votre litige.<br>Repartez avec <em>l'acte</em>.</h1>
-    <p class="sub">CLAMO est une intelligence de rédaction <strong>entraînée aux exigences du contentieux français</strong>. Votre récit devient une mise en demeure qui pèse, une assignation solide — l'acte qu'il faut pour <strong>faire valoir vos droits, vraiment</strong>. Appuyé sur les textes officiels en vigueur, prêt à envoyer en quelques minutes, <strong>au prix juste</strong> : dès 49&nbsp;€, sans frais cachés.</p>
+    <p class="sub">CLAMO est une intelligence rédactionnelle <strong>conçue et entraînée pour transformer votre récit en un acte qui compte</strong>, conforme aux exigences du contentieux français. Mise en demeure, assignation ou conclusions : chaque document est <strong>fondé sur les textes officiels en vigueur</strong> et pensé pour <strong>défendre efficacement vos droits</strong>. Prêt à être envoyé en quelques minutes, <strong>au prix juste</strong> : dès 49&nbsp;€, sans frais cachés.</p>
 
     <div class="files-row" id="filesHero"></div>
     <div class="bar-wrap">
@@ -539,7 +539,7 @@ body.chatting .app{display:flex}
     </div>
 
     <div class="trust">
-      <div>Textes officiels en vigueur</div>
+      <div>Textes officiels et jurisprudences en vigueur</div>
       <div>PDF prêt à envoyer</div>
       <div>Sans frais cachés</div>
       <div>Confidentiel — vos informations respectées</div>
@@ -555,18 +555,18 @@ body.chatting .app{display:flex}
       <div class="steps">
         <div class="step">
           <div class="n">Temps 01</div>
-          <h3>Racontez</h3>
-          <p>Dans vos mots, comme à un proche. Joignez vos pièces si vous en avez — contrat, courriers, factures, photos.</p>
+          <h3>Exposez les faits, simplement</h3>
+          <p>Décrivez votre situation naturellement, avec vos propres mots. Joignez ensuite les documents qui étayeront votre dossier : contrats, échanges, factures, photographies ou toute autre pièce pertinente.</p>
         </div>
         <div class="step">
           <div class="n">Temps 02</div>
-          <h3>CLAMO rédige</h3>
-          <p>Une mise en demeure, une assignation ou tout acte pour faire valoir vos droits — motivé, chiffré, appuyé sur les textes officiels en vigueur. Jamais une référence inventée.</p>
+          <h3>CLAMO rédige votre acte avec vous</h3>
+          <p>Mise en demeure, assignation ou tout document juridique nécessaire à la défense de vos droits : chaque rédaction est argumentée, chiffrée et appuyée exclusivement sur les textes officiels en vigueur. Jamais de références fictives.</p>
         </div>
         <div class="step">
           <div class="n">Temps 03</div>
-          <h3>Vous envoyez</h3>
-          <p>En recommandé avec accusé de réception, par lettre recommandée électronique, ou remis à un commissaire de justice — l'ancien huissier — pour donner à votre démarche tout son poids.</p>
+          <h3>Vous passez à l'action</h3>
+          <p>Votre acte est prêt à être expédié par lettre recommandée avec accusé de réception, par lettre recommandée électronique, ou signifié par un commissaire de justice — pour lui conférer toute sa force juridique.</p>
         </div>
       </div>
     </div>
@@ -586,7 +586,7 @@ body.chatting .app{display:flex}
         </button>
         <button class="offer" onclick="chooseOffer('Courrier de contestation ou recours',79)">
           <span class="o-t">Contestation / recours</span>
-          <span class="o-d">Le courrier pour vous opposer formellement, par écrit motivé — administration, assureur, bailleur.</span>
+          <span class="o-d">Tout acte pour vous opposer formellement — contestation, recours, réponse motivée — face à une administration, un assureur, un bailleur ou toute partie adverse.</span>
           <span class="o-p">79&nbsp;€<small>TTC</small></span>
         </button>
         <button class="offer" onclick="chooseOffer('Assignation, requête ou saisine',149)">
@@ -596,7 +596,7 @@ body.chatting .app{display:flex}
         </button>
         <button class="offer" onclick="chooseOffer('Dossier complet',199)">
           <span class="o-t">Dossier complet</span>
-          <span class="o-d">Les trois temps de votre démarche, d'un seul tenant : mise en demeure, réponse, acte suivant.</span>
+          <span class="o-d">Votre démarche conduite de bout en bout : la mise en demeure, l'analyse de la réponse adverse, puis l'acte qui s'impose pour la suite.</span>
           <span class="o-p">199&nbsp;€<small>TTC</small></span>
         </button>
       </div>
@@ -651,7 +651,7 @@ body.chatting .app{display:flex}
       <span class="o-p">49&nbsp;€</span>
     </button>
     <button class="m-offer" onclick="chooseOffer('Courrier de contestation ou recours',79)">
-      <span><span class="o-t">Contestation / recours</span><span class="o-d">Pour vous opposer formellement, par écrit motivé</span></span>
+      <span><span class="o-t">Contestation / recours</span><span class="o-d">Tout acte pour vous opposer formellement, par écrit motivé</span></span>
       <span class="o-p">79&nbsp;€</span>
     </button>
     <button class="m-offer" onclick="chooseOffer('Assignation, requête ou saisine',149)">
@@ -659,7 +659,7 @@ body.chatting .app{display:flex}
       <span class="o-p">149&nbsp;€</span>
     </button>
     <button class="m-offer" onclick="chooseOffer('Dossier complet',199)">
-      <span><span class="o-t">Dossier complet</span><span class="o-d">Mise en demeure, réponse, acte suivant</span></span>
+      <span><span class="o-t">Dossier complet</span><span class="o-d">De la mise en demeure à l'acte final : la démarche complète</span></span>
       <span class="o-p">199&nbsp;€</span>
     </button>
     <button class="close" onclick="closeTarifs()">Fermer</button>
@@ -858,11 +858,11 @@ const PRODUCTS = {
   MED:  { name:'Mise en demeure', price:49,
     pitch:"Datée, motivée, chiffrée — rédigée pour votre dossier. Prête en deux minutes : à imprimer et envoyer en recommandé, ou à remettre à un commissaire de justice." },
   REC:  { name:'Contestation / recours', price:79,
-    pitch:"Votre opposition formelle, motivée point par point sur vos éléments, prête à partir vers l'administration, l'assureur ou le bailleur." },
+    pitch:"L'acte qui porte votre opposition, motivé point par point sur vos éléments — prêt à partir vers l'administration, l'assureur, le bailleur ou toute partie adverse." },
   SAIS: { name:'Assignation / saisine', price:149,
     pitch:"L'acte qui porte votre demande devant la juridiction, dans les formes requises, prêt à être remis au commissaire de justice." },
   DOSS: { name:'Dossier complet', price:199,
-    pitch:"Votre démarche de bout en bout : mise en demeure, analyse de la réponse adverse, puis l'acte suivant. Le sérieux d'un dossier construit." },
+    pitch:"Votre démarche conduite de bout en bout : mise en demeure, analyse de la réponse adverse, puis l'acte qui s'impose. Le sérieux d'un dossier construit." },
 };
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function stripMarkers(s){ return s.replace(/\s*\[\[(?:\/?DOC|OFFRE:[A-Z]{3,5})\]\]\s*/g, '\n').trim(); }
