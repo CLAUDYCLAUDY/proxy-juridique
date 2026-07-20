@@ -251,6 +251,9 @@ D — VÉRIFICATIONS SYSTÉMATIQUES :
 - PRESCRIPTION : calcul précis, point de départ exact, date limite. Délai inférieur à 3 mois → le signaler en tête de réponse avec la mention ⚠️ DÉLAI.
 - AMIABLE PRÉALABLE : article 750-1 CPC et médiation de la consommation ; la mise en demeure vaut souvent tentative amiable et doit être formulée en conséquence.
 - COMPÉTENCE : matérielle (tribunal judiciaire, tribunal de proximité ≤ 10 000 €, conseil de prud'hommes, tribunal de commerce, tribunal administratif) et territoriale (domicile du défendeur ; options : lieu d'exécution du contrat, du dommage, de l'immeuble ; en consommation, possibilité du domicile du consommateur).
+- REPRÉSENTATION OBLIGATOIRE PAR AVOCAT : à vérifier dès qu'une saisine se profile. Devant le tribunal judiciaire, la représentation par avocat est en principe obligatoire pour les demandes supérieures à 10 000 € (art. 760 CPC). Elle ne l'est PAS, quel que soit le montant, dans plusieurs matières du quotidien : celles du juge des contentieux de la protection (baux d'habitation, crédit à la consommation, surendettement), le conseil de prud'hommes, et les demandes ≤ 10 000 €. En appel, la représentation est en principe obligatoire.
+  → Si l'action envisagée relève d'une représentation obligatoire : le dire clairement et positivement, sans jamais le présenter comme une impasse : "Pour ce montant, la loi impose que l'action devant le tribunal judiciaire soit portée par un avocat. Le dossier préparé ici conserve toute son utilité : la mise en demeure reste votre acte, et l'ensemble structuré (chronologie, fondements, pièces) fera gagner un temps précieux à l'avocat qui conduira l'instance." Ne JAMAIS proposer l'assignation à 149 € dans ce cas ; proposer la mise en demeure et le dossier structuré, et mentionner la protection juridique et l'aide juridictionnelle.
+  → Si l'utilisateur peut agir seul, le valoriser : "Pour ce litige, la loi vous permet d'agir vous-même, sans avocat obligatoire."
 - PREUVE : quelles pièces existent, lesquelles créer dès maintenant (capture horodatée, envoi recommandé conservé, constat).
 
 E — SÉQUENCE : la mise en demeure précède quasi systématiquement la saisine. Exceptions : mise en demeure déjà restée vaine, prescription imminente (moins d'un mois), urgence justifiant le référé (art. 835 CPC), refus adverse écrit et définitif. Ne jamais présenter mise en demeure et assignation comme des alternatives équivalentes.
@@ -321,11 +324,19 @@ MODES DE TRANSMISSION — à mentionner lorsque le document est proposé ou livr
 - Assignation : sa remise à l'adversaire passe OBLIGATOIREMENT par un commissaire de justice (signification) ; le document livré est rédigé pour lui être remis tel quel, avec les mentions de l'article 56 CPC. L'indiquer systématiquement quand une assignation est proposée, pour que la personne sache exactement quoi en faire.
 - Requêtes et saisines simplifiées (CPH, tribunal de proximité) : dépôt ou envoi au greffe ; le préciser selon le cas.
 
+MARQUEUR D'OFFRE — règle technique impérative : chaque fois que tu proposes un document à la commande, termine ta réponse par le marqueur correspondant, seul sur sa propre ligne, exactement sous cette forme : [[OFFRE:MED]] (mise en demeure), [[OFFRE:REC]] (contestation/recours), [[OFFRE:SAIS]] (assignation/saisine), [[OFFRE:DOSS]] (dossier complet). Un seul marqueur par réponse, celui du document justifié. Le marqueur déclenche l'affichage du paiement ; il est invisible pour la personne : ne jamais le mentionner, le décrire ni l'inclure dans un document.
+
+GÉNÉRATION APRÈS PAIEMENT — règles impératives :
+- Ne produire un document final intégral QUE lorsqu'un message système porte la mention "PAIEMENT VÉRIFIÉ". Sans elle, jamais de document complet prêt à l'emploi : au plus la structure ou de courts extraits illustratifs.
+- Lorsque le paiement est vérifié : produire IMMÉDIATEMENT le document intégral commandé, complet et soigné, conforme au modèle, avec toutes les informations du dossier ; utiliser [À COMPLÉTER : ...] uniquement pour les informations réellement absentes de l'échange. Aucune mention du paiement dans le document. Si une information essentielle manque au point d'empêcher un document utilisable, poser UNIQUEMENT les questions strictement nécessaires puis produire le document dès la réponse reçue.
+- Après le document, ajouter 2-3 lignes seulement : relire, dater et signer ; modes d'envoi (recommandé avec accusé de réception, lettre recommandée électronique, ou remise à un commissaire de justice) ; conserver la preuve d'envoi.
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 VIII. FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 - Dense, précis, chaque phrase utile. **Gras** pour les titres, jamais de # ni ##. Tirets simples pour les listes, sans lignes vides entre items.
+- BRIÈVETÉ DE L'ÉCHANGE GRATUIT : avant paiement, viser des réponses de 150 mots maximum (hors requalification indispensable). Aller droit à l'essentiel : la qualification en une phrase, le fondement principal, le point délai s'il existe, puis les questions décisives ou la proposition. La pédagogie approfondie n'est pas le rôle de cette phase ; l'objectif est d'atteindre la proposition du bon document en 2 à 3 échanges quand le dossier le permet, sans jamais sacrifier une question déterminante.
 - Structure type d'une première réponse : requalification bienveillante si nécessaire → ce que les textes prévoient (références exactes) → le point de vigilance délai s'il existe → les 2-3 questions décisives OU la proposition de document.
 - Jamais plus de 3 questions. Jamais de question dont la réponse figure déjà dans le récit.
 
@@ -408,6 +419,26 @@ module.exports = async function handler(req, res) {
 
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
+    /* Paiement : vérification directe auprès de Stripe (jamais sur la foi du client) */
+    const PRODUCT_LABELS = { MED: "Mise en demeure (49 €)", REC: "Courrier de contestation / recours (79 €)", SAIS: "Assignation / requête / saisine (149 €)", DOSS: "Dossier complet (199 €)" };
+    let paidProduct = null;
+    const paidSession = req.body && req.body.paid_session;
+    if (paidSession && /^cs_[A-Za-z0-9_]+$/.test(paidSession) && process.env.STRIPE_SECRET_KEY) {
+      try {
+        const sres = await fetchWithTimeout(
+          `https://api.stripe.com/v1/checkout/sessions/${paidSession}`,
+          { headers: { "Authorization": `Bearer ${process.env.STRIPE_SECRET_KEY}` } },
+          5000
+        );
+        if (sres.ok) {
+          const sess = await sres.json();
+          if (sess.payment_status === "paid") {
+            paidProduct = (sess.metadata && sess.metadata.product) || "MED";
+          }
+        }
+      } catch (e) { console.log("Vérification Stripe indisponible:", e.message); }
+    }
+
     /* Recherches juridiques en parallèle (jeton mis en cache) */
     let legiResults = null, juriResults = null;
     if (message) {
@@ -453,27 +484,36 @@ module.exports = async function handler(req, res) {
     });
 
     const THINKING_BUDGET = 1500; // réflexion interne : qualification, délais, requalification du profane
+    const outputTokens = paidProduct ? 4000 : MAX_OUTPUT_TOKENS;
+
+    const systemBlocks = [
+      {
+        type: "text",
+        text: SYSTEM_PROMPT,
+        cache_control: { type: "ephemeral" }, // prompt constant → mis en cache par l'API
+      },
+      {
+        /* Bloc volontairement séparé et NON mis en cache : la date change
+           chaque jour et casserait le cache du grand prompt. */
+        type: "text",
+        text: `Date du jour : ${new Intl.DateTimeFormat("fr-FR", {
+          weekday: "long", day: "numeric", month: "long", year: "numeric",
+          timeZone: "Europe/Paris",
+        }).format(new Date())}. Tous les délais, prescriptions et chronologies se calculent à partir de cette date. Si une date fournie par la personne semble incohérente avec elle (par exemple située dans le futur), poser la question plutôt que supposer.`,
+      },
+    ];
+    if (paidProduct) {
+      systemBlocks.push({
+        type: "text",
+        text: `PAIEMENT VÉRIFIÉ — commande réglée : ${PRODUCT_LABELS[paidProduct] || paidProduct}. Applique maintenant les règles de GÉNÉRATION APRÈS PAIEMENT et produis le document intégral.`,
+      });
+    }
 
     const stream = client.messages.stream({
       model: "claude-sonnet-4-5",
-      max_tokens: MAX_OUTPUT_TOKENS + THINKING_BUDGET,
+      max_tokens: outputTokens + THINKING_BUDGET,
       thinking: { type: "enabled", budget_tokens: THINKING_BUDGET },
-      system: [
-        {
-          type: "text",
-          text: SYSTEM_PROMPT,
-          cache_control: { type: "ephemeral" }, // prompt constant → mis en cache par l'API
-        },
-        {
-          /* Bloc volontairement séparé et NON mis en cache : la date change
-             chaque jour et casserait le cache du grand prompt. */
-          type: "text",
-          text: `Date du jour : ${new Intl.DateTimeFormat("fr-FR", {
-            weekday: "long", day: "numeric", month: "long", year: "numeric",
-            timeZone: "Europe/Paris",
-          }).format(new Date())}. Tous les délais, prescriptions et chronologies se calculent à partir de cette date. Si une date fournie par la personne semble incohérente avec elle (par exemple située dans le futur), poser la question plutôt que supposer.`,
-        },
-      ],
+      system: systemBlocks,
       messages,
     });
 
