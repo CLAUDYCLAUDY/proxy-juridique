@@ -374,6 +374,37 @@ body.chatting .app{display:flex}
 .file-chip button{color:var(--brun);font-size:14px;line-height:1;padding:0 2px}
 .file-chip button:hover{color:var(--encre)}
 
+/* ---------- Feuillet du document généré ---------- */
+.docview{
+  background:var(--blanc);
+  border:1px solid var(--ligne-2);
+  border-radius:3px;
+  padding:34px 36px;
+  margin:14px 0;
+  font-family:var(--serif);
+  font-size:14px;line-height:1.8;
+  box-shadow:0 1px 2px rgba(33,30,26,.05),0 14px 40px -18px rgba(33,30,26,.14);
+  white-space:pre-wrap;word-wrap:break-word;
+}
+.docview strong{font-weight:600}
+.doc-label{
+  font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--laiton);margin:18px 0 6px;
+}
+.delivery{
+  display:flex;gap:8px;margin:2px 0 28px;flex-wrap:wrap;
+}
+.delivery button{
+  display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--ligne-2);border-radius:10px;background:var(--blanc);
+  padding:10px 16px;font-size:13px;font-weight:600;color:var(--encre);
+  transition:border-color .15s,box-shadow .15s;
+}
+.delivery button:hover{border-color:var(--encre);box-shadow:0 3px 10px rgba(33,30,26,.08)}
+.delivery button svg{flex-shrink:0;color:var(--laiton)}
+.delivery button:disabled{opacity:.5;cursor:default}
+@media(max-width:600px){.docview{padding:24px 20px;font-size:13.5px}}
+
 /* ---------- Zone de dépôt ---------- */
 #dropzone{
   position:fixed;inset:0;z-index:60;display:none;
@@ -703,10 +734,7 @@ function renderSaved(d){
     D.push(m);
     if(m.r === 'u') renderUserMsg(m.t, m.a);
     else if(m.r === 'p') renderPayCard(m.c);
-    else {
-      const el = renderBotMsg(m.t);
-      if(m.doc) renderDocActions(el, m.t);
-    }
+    else renderBotMsg(m.t);
   });
   requestAnimationFrame(()=>scrollDown(true));
   return true;
@@ -817,7 +845,17 @@ const PRODUCTS = {
     pitch:"Votre démarche de bout en bout : mise en demeure, analyse de la réponse adverse, puis l'acte suivant. Le sérieux d'un dossier construit." },
 };
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function stripMarkers(s){ return s.replace(/\s*\[\[OFFRE:[A-Z]{3,5}\]\]\s*/g, '\n').trim(); }
+function stripMarkers(s){ return s.replace(/\s*\[\[(?:\/?DOC|OFFRE:[A-Z]{3,5})\]\]\s*/g, '\n').trim(); }
+function parseDoc(s){ const m = s.match(/\[\[DOC\]\]([\s\S]*?)\[\[\/DOC\]\]/); return m ? m[1].trim() : null; }
+function richHtml(s){
+  const m = s.match(/^([\s\S]*?)\[\[DOC\]\]([\s\S]*?)\[\[\/DOC\]\]([\s\S]*)$/);
+  if(!m) return fmt(s);
+  const before = m[1].trim(), doc = m[2].trim(), after = m[3].trim();
+  return (before ? fmt(before) : '')
+    + '<div class="doc-label">Votre document — à relire avant envoi</div>'
+    + '<div class="docview">' + fmt(doc) + '</div>'
+    + (after ? fmt(after) : '');
+}
 function fmt(s){ return esc(stripMarkers(s)).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
 function parseOffer(s){ const m = s.match(/\[\[OFFRE:(MED|REC|SAIS|DOSS)\]\]/); return m ? m[1] : null; }
 
@@ -831,9 +869,12 @@ function renderUserMsg(text, attNames){
 function renderBotMsg(text){
   const d = document.createElement('div');
   d.className = 'msg bot';
-  d.innerHTML = `<div class="content">${fmt(text)}</div>`;
+  d.innerHTML = `<div class="content">${richHtml(text)}</div>`;
   $('chatInner').appendChild(d);
-  return d.querySelector('.content');
+  const el = d.querySelector('.content');
+  const doc = parseDoc(text);
+  if(doc) renderDelivery(el, doc);
+  return el;
 }
 function addBotShell(){
   const d = document.createElement('div');
@@ -872,28 +913,97 @@ async function startCheckout(code, btn){
     alert(e.message || 'Le paiement est momentanément indisponible.');
   }
 }
-function docPlain(t){ return stripMarkers(t).replace(/\*\*(.+?)\*\*/g,'$1'); }
-function renderDocActions(afterEl, text){
+function docPlain(t){ return t.replace(/\*\*(.+?)\*\*/g,'$1'); }
+function docFileName(t){
+  const m = t.match(/Objet\s*:\s*([^\n]+)/);
+  let base = m ? m[1] : 'Document juridique';
+  base = docPlain(base).split('—')[0].split('-')[0].trim().slice(0, 40);
+  return (base || 'Document juridique')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .replace(/[^A-Za-z0-9 ]/g,'').trim().replace(/\s+/g,'-') + '-CLAMO';
+}
+function renderDelivery(afterEl, docText){
   const d = document.createElement('div');
-  d.className = 'docactions';
-  d.innerHTML = `<button onclick="printDoc(this)">Imprimer / Enregistrer en PDF</button><button onclick="copyDoc(this)">Copier le document</button>`;
-  d.dataset.doc = docPlain(text);
+  d.className = 'delivery';
+  const icoPdf = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>';
+  const icoDoc = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6"/><path d="M9 17h6"/></svg>';
+  const icoCopy = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+  d.innerHTML = `<button onclick="downloadPdf(this)">${icoPdf} PDF</button>`
+    + `<button onclick="downloadWord(this)">${icoDoc} Word</button>`
+    + `<button onclick="copyDoc(this)">${icoCopy} Copier</button>`;
+  d.dataset.doc = docText;
   const msg = afterEl.closest('.msg');
   msg.parentNode.insertBefore(d, msg.nextSibling);
 }
-function printDoc(btn){
-  const text = btn.parentNode.dataset.doc || '';
-  const w = window.open('', '_blank');
-  if(!w){ alert('Autorisez les fenêtres surgissantes pour imprimer.'); return; }
-  w.document.write('<html><head><title>Document — CLAMO</title><style>body{font-family:Georgia,\'Times New Roman\',serif;font-size:12.5pt;line-height:1.65;max-width:17cm;margin:2cm auto;white-space:pre-wrap;color:#111}</style></head><body>'+esc(text)+'</body></html>');
-  w.document.close(); w.focus();
-  setTimeout(()=>{ try{ w.print(); }catch(e){} }, 350);
+let jsPdfReady = null;
+function loadJsPdf(){
+  if(window.jspdf) return Promise.resolve();
+  if(jsPdfReady) return jsPdfReady;
+  jsPdfReady = new Promise((ok,ko)=>{
+    const sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    sc.onload = ok; sc.onerror = ()=>{ jsPdfReady=null; ko(new Error('Chargement PDF impossible — vérifiez votre connexion.')); };
+    document.head.appendChild(sc);
+  });
+  return jsPdfReady;
+}
+async function downloadPdf(btn){
+  const raw = btn.parentNode.dataset.doc || '';
+  btn.disabled = true;
+  try{
+    await loadJsPdf();
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({ unit:'mm', format:'a4' });
+    const L = 25, R = 20, T = 26, B = 25;
+    const W = 210 - L - R, MAXY = 297 - B;
+    let y = T;
+    pdf.setFont('times','normal'); pdf.setFontSize(11.5);
+    const lineH = 6.1, paraGap = 3.4;
+    const lines = raw.split('\n');
+    for(const lineRaw of lines){
+      const line = lineRaw.trimEnd();
+      if(!line.trim()){ y += paraGap; continue; }
+      const isBold = /^\*\*.*\*\*$/.test(line.trim()) || /^Objet\s*:/.test(docPlain(line));
+      const text = docPlain(line);
+      const isDate = /,\s*le\s+\d{1,2}(er)?\s+\S+\s+\d{4}\s*$/.test(text) && text.length < 60;
+      pdf.setFont('times', isBold ? 'bold' : 'normal');
+      const wrapped = pdf.splitTextToSize(text, W);
+      for(const wl of wrapped){
+        if(y > MAXY){ pdf.addPage(); y = T; }
+        if(isDate){ pdf.text(wl, 210 - R, y, { align:'right' }); }
+        else { pdf.text(wl, L, y); }
+        y += lineH;
+      }
+    }
+    pdf.save(docFileName(raw) + '.pdf');
+  }catch(e){ alert(e.message || 'Génération du PDF impossible.'); }
+  btn.disabled = false;
+}
+function downloadWord(btn){
+  const raw = btn.parentNode.dataset.doc || '';
+  const bodyHtml = esc(raw)
+    .replace(/\*\*(.+?)\*\*/g,'<b>$1</b>')
+    .split('\n').map(l=>{
+      const plain = l.replace(/<[^>]+>/g,'');
+      const right = /,\s*le\s+\d{1,2}(er)?\s+\S+\s+\d{4}\s*$/.test(plain) && plain.length < 60;
+      return '<p style="margin:0 0 6pt'+(right?';text-align:right':'')+'">'+(l||'&nbsp;')+'</p>';
+    }).join('');
+  const html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word">'
+    + '<head><meta charset="utf-8"><title>Document CLAMO</title></head>'
+    + '<body style="font-family:\'Times New Roman\',serif;font-size:12pt;line-height:1.55">' + bodyHtml + '</body></html>';
+  const blob = new Blob(['\ufeff', html], { type:'application/msword' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = docFileName(raw) + '.doc';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 800);
 }
 function copyDoc(btn){
-  const text = btn.parentNode.dataset.doc || '';
+  const text = docPlain(btn.parentNode.dataset.doc || '');
   navigator.clipboard.writeText(text).then(()=>{
-    btn.textContent = 'Copié ✓';
-    setTimeout(()=>{ btn.textContent = 'Copier le document'; }, 1800);
+    const old = btn.innerHTML;
+    btn.innerHTML = 'Copié ✓';
+    setTimeout(()=>{ btn.innerHTML = old; }, 1800);
   }).catch(()=>alert('Copie impossible — sélectionnez le texte manuellement.'));
 }
 
@@ -997,10 +1107,12 @@ async function runRequest(txt, sentFiles, target, paidSession){
   let full = '';
   try{
     full = await streamRequest(txt, sentFiles, target, paidSession);
-    target.innerHTML = fmt(full) || '<span class="err">Réponse vide — réessayez.</span>';
+    target.innerHTML = richHtml(full) || '<span class="err">Réponse vide — réessayez.</span>';
     if(full){
       H.push({ role:'assistant', content: full });
       D.push({ r:'b', t: full });
+      const doc = parseDoc(full);
+      if(doc) renderDelivery(target, doc);
       const offer = parseOffer(full);
       if(offer){ renderPayCard(offer); D.push({ r:'p', c: offer }); }
       saveConv();
@@ -1098,12 +1210,8 @@ async function verifyAndGenerate(sessionId, codeHint){
   D.push({ r:'u', t: 'Commande réglée — ' + p.name + ' ✓', a: '' });
   saveConv();
   lastReq = { txt: genMsg, files: [], paidSession: sessionId };
-  const full = await runRequest(genMsg, [], target, sessionId);
-  if(full){
-    renderDocActions(target, full);
-    if(D.length && D[D.length-1].r === 'b'){ D[D.length-1].doc = true; saveConv(); }
-    scrollDown();
-  }
+  await runRequest(genMsg, [], target, sessionId);
+  scrollDown();
 }
 
 /* ============ Restauration au chargement ============ */
