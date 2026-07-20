@@ -1,6 +1,10 @@
 /* ============================================================
    CLAMO — Vérification d'une session de paiement au retour de Stripe
+   Enregistre également, en best effort, l'adresse du payeur et la
+   progression du dossier dans Supabase (espace client).
    ============================================================ */
+
+const sb = require("./_supabase");
 
 const ALLOWED_ORIGINS = ["https://clamo.fr", "https://www.clamo.fr"];
 
@@ -23,7 +27,23 @@ module.exports = async function handler(req, res) {
     if (!r.ok) return res.status(200).json({ ok: false });
     const sess = await r.json();
     const paid = sess.payment_status === "paid" || sess.payment_status === "no_payment_required";
-    return res.status(200).json({ ok: paid, product: (sess.metadata && sess.metadata.product) || "MED" });
+
+    /* Rattachement du dossier au payeur (avant même la génération du document) */
+    const dossierId = sb.isUuid(req.body && req.body.dossier_id) ? req.body.dossier_id : null;
+    const email = (sess.customer_details && sess.customer_details.email) || sess.customer_email || null;
+    if (paid && dossierId && sb.ready()) {
+      try {
+        await sb.ensureDossier(dossierId, null);
+        if (email) await sb.attachEmail(dossierId, email);
+        await sb.advanceStatut(dossierId, "commande");
+      } catch (e) { console.log("Persistance Supabase échouée:", e.message); }
+    }
+
+    return res.status(200).json({
+      ok: paid,
+      product: (sess.metadata && sess.metadata.product) || "MED",
+      email: paid ? email : null,
+    });
   } catch (e) {
     return res.status(200).json({ ok: false });
   }

@@ -1,4 +1,5 @@
 const Anthropic = require("@anthropic-ai/sdk");
+const sb = require("./_supabase");
 
 /* ============================================================
    CLAMO — API de chat juridique (streaming SSE)
@@ -430,11 +431,18 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: "Message vide" });
     }
 
+    /* Identifiant de dossier (généré par le navigateur) : permet la
+       persistance Supabase et l'espace client. Optionnel et validé. */
+    const dossierId = sb.isUuid(req.body && req.body.dossier_id) ? req.body.dossier_id : null;
+    const isFirstMessage = history.length === 0;
+
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
     /* Paiement : vérification directe auprès de Stripe (jamais sur la foi du client) */
     const PRODUCT_LABELS = { MED: "Mise en demeure (49 €)", REC: "Courrier de contestation / recours (79 €)", SAIS: "Assignation / requête / saisine (149 €)", DOSS: "Dossier complet (199 €)" };
     let paidProduct = null;
+    let paidEmail = null;
+    let paidAmount = null;
     const paidSession = req.body && req.body.paid_session;
     if (paidSession && /^cs_[A-Za-z0-9_]+$/.test(paidSession) && process.env.STRIPE_SECRET_KEY) {
       try {
@@ -447,6 +455,8 @@ module.exports = async function handler(req, res) {
           const sess = await sres.json();
           if (sess.payment_status === "paid" || sess.payment_status === "no_payment_required") {
             paidProduct = (sess.metadata && sess.metadata.product) || "MED";
+            paidEmail = (sess.customer_details && sess.customer_details.email) || sess.customer_email || null;
+            paidAmount = Number.isInteger(sess.amount_total) ? sess.amount_total : null;
           }
         }
       } catch (e) { console.log("Vérification Stripe indisponible:", e.message); }
@@ -574,7 +584,51 @@ module.exports = async function handler(req, res) {
       res.end();
     });
 
-    await stream.finalMessage();
+    const finalMessage = await stream.finalMessage();
+
+    /* ---------- Persistance Supabase (best effort, jamais bloquante) ----------
+       Effectuée AVANT la clôture de la réponse : sur Vercel, l'exécution
+       peut être gelée dès res.end(). Le texte est déjà intégralement
+       affiché chez l'utilisateur à ce stade. */
+    try {
+      if (dossierId && sb.ready()) {
+        const fullText = (finalMessage.content || [])
+          .filter(b => b.type === "text")
+          .map(b => b.text)
+          .join("");
+        const userStored = (message || "Documents joints.") +
+          (files.length ? `\n[Pièces jointes : ${files.map(f => f.name || "pièce").join(" · ")}]` : "");
+
+        await sb.ensureDossier(dossierId, isFirstMessage ? message : null);
+        await sb.saveMessages(dossierId, [
+          { role: "user", content: userStored },
+          { role: "assistant", content: fullText },
+        ]);
+
+        if (paidProduct) {
+          if (paidEmail) await sb.attachEmail(dossierId, paidEmail);
+          const docMatch = fullText.match(/\[\[DOC\]\]([\s\S]*?)\[\[\/DOC\]\]/);
+          if (docMatch) {
+            const contenu = docMatch[1].trim();
+            const objet = contenu.match(/Objet\s*:\s*([^\n]+)/);
+            const titre = objet
+              ? objet[1].replace(/\*\*/g, "").trim()
+              : (PRODUCT_LABELS[paidProduct] || "Document juridique");
+            await sb.saveDocument(dossierId, {
+              type: paidProduct,
+              titre,
+              contenu,
+              stripeSessionId: paidSession,
+              montantCentimes: paidAmount,
+            });
+            await sb.advanceStatut(dossierId, "livre");
+          } else {
+            await sb.advanceStatut(dossierId, "commande");
+          }
+        }
+      }
+    } catch (e) { console.log("Persistance Supabase échouée:", e.message); }
+
     res.write("data: [DONE]\n\n");
     res.end();
 
