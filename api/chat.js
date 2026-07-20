@@ -340,9 +340,11 @@ VIII. FORMAT
 - Structure type d'une première réponse : requalification bienveillante si nécessaire → ce que les textes prévoient (références exactes) → le point de vigilance délai s'il existe → les 2-3 questions décisives OU la proposition de document.
 - Jamais plus de 3 questions. Jamais de question dont la réponse figure déjà dans le récit.
 
-GESTION DES PIÈCES JOINTES — règle technique impérative : un fichier joint n'est accessible que le temps du message qui le contient ; aux tours suivants, l'historique n'en conserve que la mention "[Pièces jointes transmises : ...]". En conséquence :
-- Au moment où une pièce est transmise, en extraire IMMÉDIATEMENT et consigner dans ta réponse tout ce qui servira ensuite : parties et leurs adresses, dates, montants, clauses pertinentes, références. Ta réponse est la mémoire du dossier.
-- Ne JAMAIS affirmer qu'une pièce n'a pas été envoyée si l'historique porte la mention de sa transmission. Dire au contraire qu'elle a bien été reçue et exploitée, rappeler ce qui en a été retenu, et si un détail non consigné manque, demander soit ce détail précis, soit un nouvel envoi de la pièce pour vérification.
+GESTION DES PIÈCES JOINTES — règles impératives : les pièces transmises font partie du dossier et te restent accessibles à chaque tour de la conversation. En conséquence :
+- Avant de demander une information (adresse, date, montant, référence, clause), TOUJOURS vérifier d'abord si elle figure dans les pièces du dossier. Ne jamais demander à la personne une information qui s'y trouve : la lire soi-même. Demander une information disponible dans une pièce transmise est une faute.
+- À la réception d'une pièce, en extraire et consigner les éléments clés dans ta réponse (parties, adresses, dates, montants), pour montrer que le dossier est maîtrisé.
+- Ne JAMAIS affirmer qu'une pièce n'a pas été transmise si l'historique en porte la trace ou la mention.
+- Lors de la rédaction d'un document payé, puiser directement dans les pièces toutes les données nécessaires (identités, adresses, montants, dates, références).
 - Disclaimer, une seule fois, à la fin du premier échange substantiel : "CLAMO est un service d'aide à la rédaction de documents juridiques et ne constitue pas une consultation juridique au sens de la loi du 31 décembre 1971."
 
 MODÈLE MISE EN DEMEURE (à respecter lors des rédactions) :
@@ -403,11 +405,21 @@ module.exports = async function handler(req, res) {
 
     /* Bornage des entrées */
     if (typeof message === "string") message = message.slice(0, MAX_MESSAGE_CHARS);
+    let historyFileBudget = 24_000_000; // ~18 Mo de pièces cumulées sur l'historique
     if (Array.isArray(history)) {
-      history = history.slice(-MAX_HISTORY_MESSAGES).map(m => ({
-        role: m.role === "assistant" ? "assistant" : "user",
-        content: typeof m.content === "string" ? m.content.slice(0, MAX_HISTORY_ITEM_CHARS) : "",
-      })).filter(m => m.content);
+      history = history.slice(-MAX_HISTORY_MESSAGES).map(m => {
+        const item = {
+          role: m.role === "assistant" ? "assistant" : "user",
+          content: typeof m.content === "string" ? m.content.slice(0, MAX_HISTORY_ITEM_CHARS) : "",
+        };
+        if (item.role === "user" && Array.isArray(m.files)) {
+          item.files = m.files.slice(0, MAX_FILES).filter(f =>
+            f && typeof f.data === "string" && f.data.length <= MAX_FILE_B64_CHARS &&
+            (historyFileBudget -= f.data.length) >= 0
+          );
+        }
+        return item;
+      }).filter(m => m.content || (m.files && m.files.length));
     } else history = [];
     if (Array.isArray(files)) {
       files = files.slice(0, MAX_FILES).filter(f => !f.data || f.data.length <= MAX_FILE_B64_CHARS);
@@ -473,7 +485,30 @@ module.exports = async function handler(req, res) {
       text: (message || "Analysez les documents joints.") + (verifiedContext ? "\n" + verifiedContext : ""),
     });
 
-    const messages = [...history, { role: "user", content: userContent }];
+    function fileBlocks(fs) {
+      const blocks = [];
+      for (const f of fs || []) {
+        if (f.mediaType === "application/pdf") {
+          blocks.push({ type: "document", source: { type: "base64", media_type: "application/pdf", data: f.data } });
+        } else if (["image/jpeg", "image/png", "image/webp", "image/gif"].includes(f.mediaType)) {
+          blocks.push({ type: "image", source: { type: "base64", media_type: f.mediaType, data: f.data } });
+        }
+      }
+      return blocks;
+    }
+    const messages = history.map(m => {
+      if (m.role === "user" && m.files && m.files.length) {
+        return { role: "user", content: [...fileBlocks(m.files), { type: "text", text: m.content || "Documents joints." }] };
+      }
+      return { role: m.role, content: m.content };
+    });
+    /* Cache de la conversation : le préfixe (dont les pièces) n'est plus refacturé à chaque tour */
+    if (messages.length) {
+      const last = messages[messages.length - 1];
+      if (typeof last.content === "string") last.content = [{ type: "text", text: last.content }];
+      last.content[last.content.length - 1].cache_control = { type: "ephemeral" };
+    }
+    messages.push({ role: "user", content: userContent });
 
     /* Streaming SSE */
     res.writeHead(200, {
