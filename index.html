@@ -91,9 +91,15 @@
         },
         {
           "@type": "Question",
+          "name": "Puis-je agir sans avocat ?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Oui, dans la plupart des litiges du quotidien. Devant le tribunal judiciaire, vous pouvez agir vous-même pour les demandes jusqu'à 10 000 €, et sans condition de montant dans plusieurs matières comme les baux d'habitation, le crédit à la consommation ou les litiges du travail devant le conseil de prud'hommes. Lorsque la représentation par avocat est obligatoire (notamment au-delà de 10 000 € devant le tribunal judiciaire, ou en appel), CLAMO vous l'indique clairement : votre dossier préparé conserve alors toute son utilité pour l'avocat qui portera l'action." },
+          "position": 4
+        },
+        {
+          "@type": "Question",
           "name": "CLAMO remplace-t-il un avocat ?",
           "acceptedAnswer": { "@type": "Answer", "text": "Non. CLAMO est un service d'aide à la rédaction de documents juridiques et ne constitue pas une consultation juridique au sens de la loi n° 71-1130 du 31 décembre 1971. Pour les situations complexes, le recours à un professionnel du droit inscrit au barreau est recommandé." },
-          "position": 4
+          "position": 5
         }
       ]
     }
@@ -368,6 +374,33 @@ body.chatting .app{display:flex}
 .file-chip button{color:var(--brun);font-size:14px;line-height:1;padding:0 2px}
 .file-chip button:hover{color:var(--encre)}
 
+/* ---------- Boîtier de paiement ---------- */
+.paycard{
+  border:1px solid var(--ligne-2);background:var(--blanc);
+  border-radius:15px;padding:22px;max-width:440px;
+  box-shadow:0 1px 2px rgba(33,30,26,.04),0 10px 30px -12px rgba(33,30,26,.10);
+}
+.paycard .p-label{font-size:10px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--laiton);margin-bottom:8px}
+.paycard .p-t{font-family:var(--serif);font-weight:500;font-size:19px;margin-bottom:6px}
+.paycard .p-pitch{color:var(--brun);font-size:13px;line-height:1.6;margin-bottom:16px}
+.paycard .p-btn{
+  display:block;width:100%;text-align:center;
+  background:var(--encre);color:var(--papier);
+  border-radius:11px;padding:13px 16px;
+  font-size:14.5px;font-weight:600;
+  transition:background .15s,opacity .15s;
+}
+.paycard .p-btn:hover{background:var(--encre-2)}
+.paycard .p-btn:disabled{opacity:.5;cursor:default}
+.paycard .p-sub{font-size:10.5px;color:var(--brun);text-align:center;margin-top:9px}
+.docactions{display:flex;gap:8px;margin:-14px 0 28px;flex-wrap:wrap}
+.docactions button{
+  border:1px solid var(--ligne-2);border-radius:9px;background:var(--blanc);
+  padding:9px 15px;font-size:12.5px;font-weight:500;color:var(--encre-2);
+  transition:border-color .15s,color .15s;
+}
+.docactions button:hover{border-color:var(--encre);color:var(--encre)}
+
 /* ---------- Modale tarifs (conversation) ---------- */
 .modal-bg{
   position:fixed;inset:0;background:rgba(33,30,26,.5);
@@ -608,7 +641,11 @@ function restoreConv(){
     d.forEach(m => {
       D.push(m);
       if(m.r === 'u') renderUserMsg(m.t, m.a);
-      else renderBotMsg(m.t);
+      else if(m.r === 'p') renderPayCard(m.c);
+      else {
+        const el = renderBotMsg(m.t);
+        if(m.doc) renderDocActions(el, m.t);
+      }
     });
     requestAnimationFrame(()=>scrollDown(true));
   }catch(e){ /* sauvegarde illisible : on repart de zéro */ }
@@ -677,8 +714,20 @@ function renderFiles(){
 function rmFile(i){ files.splice(i,1); renderFiles(); }
 
 /* ============ Rendu ============ */
+const PRODUCTS = {
+  MED:  { name:'Mise en demeure', price:49,
+    pitch:"Datée, motivée, chiffrée — rédigée pour votre dossier. Prête en deux minutes : à imprimer et envoyer en recommandé, ou à remettre à un commissaire de justice." },
+  REC:  { name:'Contestation / recours', price:79,
+    pitch:"Votre opposition formelle, motivée point par point sur vos éléments, prête à partir vers l'administration, l'assureur ou le bailleur." },
+  SAIS: { name:'Assignation / saisine', price:149,
+    pitch:"L'acte qui porte votre demande devant la juridiction, dans les formes requises, prêt à être remis au commissaire de justice." },
+  DOSS: { name:'Dossier complet', price:199,
+    pitch:"Votre démarche de bout en bout : mise en demeure, analyse de la réponse adverse, puis l'acte suivant. Le sérieux d'un dossier construit." },
+};
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmt(s){ return esc(s).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
+function stripMarkers(s){ return s.replace(/\s*\[\[OFFRE:[A-Z]{3,5}\]\]\s*/g, '\n').trim(); }
+function fmt(s){ return esc(stripMarkers(s)).replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>'); }
+function parseOffer(s){ const m = s.match(/\[\[OFFRE:(MED|REC|SAIS|DOSS)\]\]/); return m ? m[1] : null; }
 
 function renderUserMsg(text, attNames){
   const d = document.createElement('div');
@@ -700,6 +749,60 @@ function addBotShell(){
   d.innerHTML = `<div class="content"><span class="status"><span class="dot"></span>Lecture de votre litige…</span></div>`;
   $('chatInner').appendChild(d);
   return d.querySelector('.content');
+}
+
+function renderPayCard(code){
+  const p = PRODUCTS[code];
+  if(!p) return;
+  const d = document.createElement('div');
+  d.className = 'msg';
+  d.innerHTML = `<div class="paycard">
+    <div class="p-label">Votre document est prêt à être rédigé</div>
+    <div class="p-t">${p.name} — ${p.price}&nbsp;€ <span style="font-size:11px;color:var(--brun);font-family:var(--sans);font-weight:400">TTC</span></div>
+    <div class="p-pitch">${p.pitch}</div>
+    <button class="p-btn" onclick="startCheckout('${code}', this)">Payer ${p.price}&nbsp;€ et recevoir mon document</button>
+    <div class="p-sub">CB · Apple&nbsp;Pay · Google&nbsp;Pay — Paiement sécurisé Stripe · Prix ferme, sans frais cachés</div>
+  </div>`;
+  $('chatInner').appendChild(d);
+}
+async function startCheckout(code, btn){
+  if(btn){ btn.disabled = true; btn.textContent = 'Ouverture du paiement sécurisé…'; }
+  try{
+    const r = await fetch('/api/checkout', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ product: code })
+    });
+    const d = await r.json();
+    if(d.url){ window.location.href = d.url; return; }
+    throw new Error(d.error || 'Paiement indisponible');
+  }catch(e){
+    if(btn){ btn.disabled = false; btn.textContent = 'Réessayer le paiement'; }
+    alert(e.message || 'Le paiement est momentanément indisponible.');
+  }
+}
+function docPlain(t){ return stripMarkers(t).replace(/\*\*(.+?)\*\*/g,'$1'); }
+function renderDocActions(afterEl, text){
+  const d = document.createElement('div');
+  d.className = 'docactions';
+  d.innerHTML = `<button onclick="printDoc(this)">Imprimer / Enregistrer en PDF</button><button onclick="copyDoc(this)">Copier le document</button>`;
+  d.dataset.doc = docPlain(text);
+  const msg = afterEl.closest('.msg');
+  msg.parentNode.insertBefore(d, msg.nextSibling);
+}
+function printDoc(btn){
+  const text = btn.parentNode.dataset.doc || '';
+  const w = window.open('', '_blank');
+  if(!w){ alert('Autorisez les fenêtres surgissantes pour imprimer.'); return; }
+  w.document.write('<html><head><title>Document — CLAMO</title><style>body{font-family:Georgia,\'Times New Roman\',serif;font-size:12.5pt;line-height:1.65;max-width:17cm;margin:2cm auto;white-space:pre-wrap;color:#111}</style></head><body>'+esc(text)+'</body></html>');
+  w.document.close(); w.focus();
+  setTimeout(()=>{ try{ w.print(); }catch(e){} }, 350);
+}
+function copyDoc(btn){
+  const text = btn.parentNode.dataset.doc || '';
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent = 'Copié ✓';
+    setTimeout(()=>{ btn.textContent = 'Copier le document'; }, 1800);
+  }).catch(()=>alert('Copie impossible — sélectionnez le texte manuellement.'));
 }
 
 const chat = $('chat');
@@ -725,12 +828,12 @@ function newChat(){
 }
 
 /* ============ Cœur réseau : requête + streaming (utilisé par envoi et réessai) ============ */
-async function streamRequest(txt, sentFiles, target){
+async function streamRequest(txt, sentFiles, target, paidSession){
   let full = '';
   const resp = await fetch('/api/chat', {
     method:'POST',
     headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles })
+    body: JSON.stringify({ message: txt, history: H.slice(0,-1), files: sentFiles, paid_session: paidSession || undefined })
   });
 
   if(!resp.ok){
@@ -743,6 +846,7 @@ async function streamRequest(txt, sentFiles, target){
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
   let buffer = '';
+  let renderQueued = false;
   try{
     while(true){
       const { done, value } = await reader.read();
@@ -758,8 +862,14 @@ async function streamRequest(txt, sentFiles, target){
         try{ obj = JSON.parse(payload); }catch(_){ continue; }
         if(obj.t){
           full += obj.t;
-          target.innerHTML = fmt(full) + '<span class="caret"></span>';
-          scrollDown();
+          if(!renderQueued){
+            renderQueued = true;
+            requestAnimationFrame(()=>{
+              renderQueued = false;
+              target.innerHTML = fmt(full) + '<span class="caret"></span>';
+              scrollDown();
+            });
+          }
         } else if(obj.s){
           if(!full) target.innerHTML = '<span class="status"><span class="dot"></span>Analyse du dossier…</span>';
         } else if(obj.error){
@@ -788,16 +898,19 @@ async function retryLast(btn){
   const target = btn.closest('.content');
   target.innerHTML = '<span class="status"><span class="dot"></span>Nouvel essai…</span>';
   autoScroll = true;
-  await runRequest(lastReq.txt, lastReq.files, target);
+  await runRequest(lastReq.txt, lastReq.files, target, lastReq.paidSession);
 }
 
-async function runRequest(txt, sentFiles, target){
+async function runRequest(txt, sentFiles, target, paidSession){
+  let full = '';
   try{
-    const full = await streamRequest(txt, sentFiles, target);
+    full = await streamRequest(txt, sentFiles, target, paidSession);
     target.innerHTML = fmt(full) || '<span class="err">Réponse vide — réessayez.</span>';
     if(full){
       H.push({ role:'assistant', content: full });
       D.push({ r:'b', t: full });
+      const offer = parseOffer(full);
+      if(offer){ renderPayCard(offer); D.push({ r:'p', c: offer }); }
       saveConv();
       lastReq = null;
     }
@@ -818,6 +931,7 @@ async function runRequest(txt, sentFiles, target){
   $('sendHero').disabled = false;
   $('sendChat').disabled = false;
   activeInput().focus();
+  return full;
 }
 
 /* ============ Envoi ============ */
@@ -862,8 +976,51 @@ function chooseOffer(name, price){
 }
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeTarifs(); });
 
+/* ============ Retour de paiement : vérification puis génération ============ */
+async function verifyAndGenerate(sessionId, codeHint){
+  enterChat();
+  const target = addBotShell();
+  target.innerHTML = '<span class="status"><span class="dot"></span>Vérification de votre paiement…</span>';
+  autoScroll = true; scrollDown(true);
+  let ok = false, code = codeHint || 'MED';
+  try{
+    const r = await fetch('/api/verify', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ session_id: sessionId })
+    });
+    const d = await r.json();
+    ok = !!d.ok; if(d.product) code = d.product;
+  }catch(e){}
+  if(!ok){
+    target.innerHTML = '<span class="err">Le paiement n\'a pas pu être confirmé. S\'il a bien été débité, il sera pris en compte : réessayez dans un instant ou écrivez à contact@clamo.fr.</span>';
+    return;
+  }
+  const p = PRODUCTS[code] || PRODUCTS.MED;
+  target.innerHTML = '<span class="status"><span class="dot"></span>Paiement confirmé — rédaction de votre document…</span>';
+  busy = true;
+  $('sendHero').disabled = true; $('sendChat').disabled = true;
+  const genMsg = 'Commande réglée : ' + p.name + '. Rédige maintenant le document intégral à partir de tout notre échange.';
+  H.push({ role:'user', content: '[Commande payée : ' + p.name + ']' });
+  D.push({ r:'u', t: 'Commande réglée — ' + p.name + ' ✓', a: '' });
+  saveConv();
+  lastReq = { txt: genMsg, files: [], paidSession: sessionId };
+  const full = await runRequest(genMsg, [], target, sessionId);
+  if(full){
+    renderDocActions(target, full);
+    if(D.length && D[D.length-1].r === 'b'){ D[D.length-1].doc = true; saveConv(); }
+    scrollDown();
+  }
+}
+
 /* ============ Restauration au chargement ============ */
-restoreConv();
+(function init(){
+  const params = new URLSearchParams(location.search);
+  const paid = params.get('paid');
+  const codeHint = params.get('p');
+  if(params.has('paid') || params.has('p')) history.replaceState({}, '', '/');
+  restoreConv();
+  if(paid) verifyAndGenerate(paid, codeHint);
+})();
 </script>
 </body>
 </html>
