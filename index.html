@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>CLAMO — Votre acte juridique, prêt à envoyer</title>
-<meta name="description" content="Exposez votre litige. CLAMO transforme votre récit en mise en demeure, assignation ou tout acte pour faire valoir vos droits — fondé sur les textes officiels, prêt à envoyer. Dès 49 €.">
+<meta name="description" content="Exposez votre litige. CLAMO transforme votre récit en un acte de défense structuré — mise en demeure, assignation, requête — fondé sur les textes officiels en vigueur, prêt à envoyer. Dès 49 €.">
 <meta name="theme-color" content="#211E1A">
 <link rel="canonical" href="https://clamo.fr/">
 <meta name="robots" content="index, follow, max-image-preview:large">
@@ -18,11 +18,11 @@
 <meta property="og:locale" content="fr_FR">
 <meta property="og:url" content="https://clamo.fr/">
 <meta property="og:title" content="CLAMO — Votre acte juridique, prêt à envoyer">
-<meta property="og:description" content="Exposez votre litige. CLAMO transforme votre récit en mise en demeure, assignation ou tout acte pour faire valoir vos droits — fondé sur les textes officiels, prêt à envoyer. Dès 49 €.">
+<meta property="og:description" content="Exposez votre litige. CLAMO transforme votre récit en un acte de défense structuré — mise en demeure, assignation, requête — fondé sur les textes officiels en vigueur, prêt à envoyer. Dès 49 €.">
 <meta property="og:image" content="https://clamo.fr/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="CLAMO — Exposez votre litige. Repartez avec l'acte.">
+<meta property="og:image:alt" content="CLAMO — Exposez votre litige. Repartez avec votre acte.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="CLAMO — Votre acte juridique, prêt à envoyer">
 <meta name="twitter:description" content="Votre récit devient une mise en demeure, une assignation ou tout acte pour faire valoir vos droits. Dès 49 €, sans frais cachés.">
@@ -63,7 +63,7 @@
           { "@type": "Offer", "name": "Mise en demeure", "price": "49", "priceCurrency": "EUR", "description": "Le courrier qui formalise votre demande : faits, fondements, montant, délai ferme." },
           { "@type": "Offer", "name": "Courrier de contestation ou recours", "price": "79", "priceCurrency": "EUR", "description": "Tout acte pour vous opposer formellement, par écrit motivé : contestation, recours, réponse argumentée." },
           { "@type": "Offer", "name": "Assignation, requête ou saisine", "price": "149", "priceCurrency": "EUR", "description": "Le document qui porte votre demande devant la juridiction, dans les formes requises." },
-          { "@type": "Offer", "name": "Dossier complet", "price": "199", "priceCurrency": "EUR", "description": "Mise en demeure, analyse de la réponse, acte de procédure : la démarche d'un seul tenant." }
+          { "@type": "Offer", "name": "Dossier complet", "price": "199", "priceCurrency": "EUR", "description": "Mise en demeure, acte introductif d'instance et premier jeu de conclusions en réponse inclus : la démarche d'un seul tenant." }
         ]
       }
     },
@@ -182,10 +182,16 @@ nav{display:flex;gap:20px;align-items:center}
 .hero h1 em{font-style:italic;font-weight:400}
 .hero .sub{
   color:var(--encre-2);font-size:clamp(14.5px,1.5vw,16.5px);
-  max-width:600px;margin-bottom:44px;line-height:1.72;
+  max-width:640px;margin-bottom:44px;line-height:1.72;
   font-weight:400;
 }
-.hero .sub strong{font-weight:600}
+.hero .sub p{
+  text-align:justify;text-align-last:center;
+  hyphens:auto;-webkit-hyphens:auto;
+  margin:0 0 14px;
+}
+.hero .sub p:last-child{margin-bottom:0;color:var(--brun)}
+.hero .sub strong{font-weight:600;color:var(--encre)}
 
 .bar-wrap{width:100%;max-width:720px}
 .bar{
@@ -222,13 +228,15 @@ nav{display:flex;gap:20px;align-items:center}
 .send-btn:disabled{opacity:.3;cursor:default}
 
 .pills{
-  display:flex;gap:7px;flex-wrap:wrap;justify-content:center;
-  margin-top:22px;max-width:690px;
+  display:grid;grid-template-columns:repeat(3,minmax(0,max-content));
+  gap:10px 12px;justify-content:center;
+  margin-top:26px;max-width:720px;
 }
+@media(max-width:640px){.pills{grid-template-columns:repeat(2,minmax(0,max-content));gap:8px 8px}}
 .pill{
   font-size:12.5px;font-weight:500;color:var(--encre-2);
   background:transparent;border:1px solid var(--ligne-2);
-  padding:7px 14px;border-radius:99px;
+  padding:8px 16px;border-radius:99px;text-align:center;
   transition:border-color .15s,background .15s,color .15s;
 }
 .pill:hover{border-color:var(--encre);background:var(--blanc);color:var(--encre)}
@@ -280,7 +288,10 @@ nav{display:flex;gap:20px;align-items:center}
   color:var(--laiton);margin-bottom:12px;
 }
 .step h3{font-family:var(--serif);font-weight:500;font-size:19px;margin-bottom:8px}
-.step p{color:var(--brun);font-size:13.5px;line-height:1.7}
+.step p{
+  color:var(--brun);font-size:13.5px;line-height:1.72;
+  text-align:justify;hyphens:auto;-webkit-hyphens:auto;
+}
 
 /* Tarifs : rangées éditoriales sous filets */
 .offers{border-top:1px solid var(--ligne-2)}
@@ -513,8 +524,11 @@ body.chatting .app{display:flex}
 
   <div class="hero">
     <div class="label">Rédaction juridique intelligente</div>
-    <h1>Exposez votre litige.<br>Repartez avec <em>l'acte</em>.</h1>
-    <p class="sub">CLAMO est une intelligence rédactionnelle <strong>conçue et entraînée pour transformer votre récit en un acte qui compte</strong>, conforme aux exigences du contentieux français. Mise en demeure, assignation ou conclusions : chaque document est <strong>fondé sur les textes officiels en vigueur</strong> et pensé pour <strong>défendre efficacement vos droits</strong>. Prêt à être envoyé en quelques minutes, <strong>au prix juste</strong> : dès 49&nbsp;€, sans frais cachés.</p>
+    <h1>Exposez votre litige.<br>Repartez avec <em>votre acte</em>.</h1>
+    <div class="sub">
+      <p>CLAMO est une intelligence rédactionnelle <strong>conçue et entraînée pour transformer votre récit en un acte de défense structuré</strong>, conforme aux exigences du contentieux français — l'acte qu'il faut pour <strong>vous faire entendre et faire valoir vos droits</strong>.</p>
+      <p>Mise en demeure, assignation ou requête : chaque document est <strong>fondé sur les textes officiels en vigueur</strong> et prêt à être envoyé en quelques minutes. <strong>Dès 49&nbsp;€</strong>, sans frais cachés.</p>
+    </div>
 
     <div class="files-row" id="filesHero"></div>
     <div class="bar-wrap">
@@ -556,7 +570,7 @@ body.chatting .app{display:flex}
         <div class="step">
           <div class="n">Temps 01</div>
           <h3>Exposez les faits, simplement</h3>
-          <p>Décrivez votre situation naturellement, avec vos propres mots. Joignez ensuite les documents qui étayeront votre dossier : contrats, échanges, factures, photographies ou toute autre pièce pertinente.</p>
+          <p>Décrivez votre situation naturellement, avec vos propres mots. Surtout, préparez et joignez dès le départ le maximum de pièces — contrats, échanges, factures, photographies : chaque document transmis étaye votre dossier et donne du poids à votre acte.</p>
         </div>
         <div class="step">
           <div class="n">Temps 02</div>
@@ -596,7 +610,7 @@ body.chatting .app{display:flex}
         </button>
         <button class="offer" onclick="chooseOffer('Dossier complet',199)">
           <span class="o-t">Dossier complet</span>
-          <span class="o-d">Votre démarche conduite de bout en bout : la mise en demeure, l'analyse de la réponse adverse, puis l'acte qui s'impose pour la suite.</span>
+          <span class="o-d">Votre démarche conduite de bout en bout : la mise en demeure, puis l'acte introductif d'instance — premier jeu de conclusions en réponse inclus.</span>
           <span class="o-p">199&nbsp;€<small>TTC</small></span>
         </button>
       </div>
@@ -659,7 +673,7 @@ body.chatting .app{display:flex}
       <span class="o-p">149&nbsp;€</span>
     </button>
     <button class="m-offer" onclick="chooseOffer('Dossier complet',199)">
-      <span><span class="o-t">Dossier complet</span><span class="o-d">De la mise en demeure à l'acte final : la démarche complète</span></span>
+      <span><span class="o-t">Dossier complet</span><span class="o-d">Mise en demeure, acte introductif, premier jeu de conclusions en réponse inclus</span></span>
       <span class="o-p">199&nbsp;€</span>
     </button>
     <button class="close" onclick="closeTarifs()">Fermer</button>
@@ -862,7 +876,7 @@ const PRODUCTS = {
   SAIS: { name:'Assignation / saisine', price:149,
     pitch:"L'acte qui porte votre demande devant la juridiction, dans les formes requises, prêt à être remis au commissaire de justice." },
   DOSS: { name:'Dossier complet', price:199,
-    pitch:"Votre démarche conduite de bout en bout : mise en demeure, analyse de la réponse adverse, puis l'acte qui s'impose. Le sérieux d'un dossier construit." },
+    pitch:"Votre démarche conduite de bout en bout : la mise en demeure, l'acte introductif d'instance, et le premier jeu de conclusions en réponse inclus. Le sérieux d'un dossier construit." },
 };
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function stripMarkers(s){ return s.replace(/\s*\[\[(?:\/?DOC|OFFRE:[A-Z]{3,5})\]\]\s*/g, '\n').trim(); }
