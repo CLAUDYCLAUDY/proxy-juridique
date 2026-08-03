@@ -190,7 +190,14 @@ nav{display:flex;gap:20px;align-items:center}
   hyphens:auto;-webkit-hyphens:auto;
   margin:0 0 14px;
 }
-.hero .sub p:last-child{margin-bottom:0;color:var(--brun)}
+.hero .sub p:last-child{margin-bottom:0}
+.hero .sub p:not(:first-child){color:var(--brun)}
+/* Le prix est isolé sur une ligne propre, centrée et non justifiée. */
+.hero .sub p.prix{
+  text-align:center;text-align-last:center;
+  hyphens:none;-webkit-hyphens:none;
+  margin-top:20px;
+}
 .hero .sub strong{font-weight:600;color:var(--encre)}
 
 .bar-wrap{width:100%;max-width:720px}
@@ -210,7 +217,18 @@ nav{display:flex;gap:20px;align-items:center}
   background:transparent;color:var(--encre);
   max-height:168px;padding:5px 0;
 }
+.bar textarea.trame{max-height:min(58dvh,520px)}
+@media(max-width:600px){.bar textarea.trame{max-height:min(44dvh,340px)}}
 .bar textarea::placeholder{color:#A8A296}
+.trame-aide{
+  max-width:720px;margin:10px auto 0;
+  font-size:12.5px;line-height:1.5;color:var(--brun);
+  text-align:center;letter-spacing:.01em;
+  opacity:0;transform:translateY(-2px);
+  transition:opacity .22s ease,transform .22s ease;
+  pointer-events:none;height:0;overflow:hidden;
+}
+.trame-aide.on{opacity:1;transform:none;height:auto;margin-bottom:2px}
 .icon-btn{
   width:38px;height:38px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
@@ -240,6 +258,51 @@ nav{display:flex;gap:20px;align-items:center}
   transition:border-color .15s,background .15s,color .15s;
 }
 .pill:hover{border-color:var(--encre);background:var(--blanc);color:var(--encre)}
+
+/* ---- Autre litige : catalogue déployable ---- */
+[hidden]{display:none!important}
+.plus-row{display:flex;justify-content:center;margin-top:12px}
+.pill-plus{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:500;color:var(--brun);
+  background:transparent;border:1px dashed var(--ligne-2);
+  padding:8px 16px;border-radius:99px;
+  transition:border-color .15s,background .15s,color .15s;
+}
+.pill-plus:hover{border-style:solid;border-color:var(--encre);background:var(--blanc);color:var(--encre)}
+.catalogue{
+  max-width:760px;margin:26px auto 0;text-align:left;
+  border-top:1px solid var(--ligne);padding-top:22px;
+}
+.cat-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:20px;margin-bottom:20px;
+}
+.cat-head p{margin:0;font-size:13px;line-height:1.55;color:var(--brun)}
+.cat-retour{
+  flex-shrink:0;font-size:12.5px;color:var(--brun);
+  text-decoration:underline;text-underline-offset:3px;
+  background:transparent;transition:color .15s;
+}
+.cat-retour:hover{color:var(--encre)}
+.cat-groupe{margin-bottom:20px}
+.cat-groupe:last-child{margin-bottom:0}
+.cat-titre{
+  font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--brun);margin:0 0 10px;
+}
+.cat-liste{display:flex;flex-wrap:wrap;gap:8px}
+.cat-item{
+  font-size:12.5px;font-weight:500;color:var(--encre-2);
+  background:var(--blanc);border:1px solid var(--ligne);
+  padding:7px 14px;border-radius:99px;text-align:left;
+  transition:border-color .15s,color .15s;
+}
+.cat-item:hover{border-color:var(--encre);color:var(--encre)}
+@media(max-width:600px){
+  .cat-head{flex-direction:column;gap:8px}
+  .cat-item{font-size:12px;padding:7px 12px}
+}
 
 .trust{
   display:flex;flex-wrap:wrap;justify-content:center;
@@ -527,7 +590,8 @@ body.chatting .app{display:flex}
     <h1>Exposez votre litige.<br>Repartez avec <em>votre acte</em>.</h1>
     <div class="sub">
       <p>CLAMO est une intelligence rédactionnelle <strong>conçue et entraînée pour transformer votre récit en un acte de défense structuré</strong>, conforme aux exigences du contentieux français — l'acte qu'il faut pour <strong>vous faire entendre et faire valoir vos droits</strong>.</p>
-      <p>Mise en demeure, assignation ou requête : chaque document est <strong>fondé sur les textes officiels en vigueur</strong> et prêt à être envoyé en quelques minutes. <strong>Dès 49&nbsp;€</strong>, sans frais cachés.</p>
+      <p>Mise en demeure, assignation ou requête : chaque document est <strong>fondé sur les textes officiels en vigueur</strong> et prêt à être envoyé en quelques minutes.</p>
+      <p class="prix"><strong>Dès 49&nbsp;€</strong>, sans frais cachés et en toute transparence.</p>
     </div>
 
     <div class="files-row" id="filesHero"></div>
@@ -543,7 +607,9 @@ body.chatting .app{display:flex}
       </div>
     </div>
 
-    <div class="pills">
+    <p class="trame-aide" id="trameAide">Complétez les lignes que vous pouvez et laissez les autres vides. Plus vos réponses sont précises — dates, montants, noms, teneur des échanges —, plus l'acte sera solide. Le trombone permet de joindre vos pièces.</p>
+
+    <div class="pills" id="pills">
       <button class="pill" onclick="usePill(this)">Caution non restituée</button>
       <button class="pill" onclick="usePill(this)">Vol retardé ou annulé</button>
       <button class="pill" onclick="usePill(this)">Achat en ligne non livré</button>
@@ -551,6 +617,15 @@ body.chatting .app{display:flex}
       <button class="pill" onclick="usePill(this)">Fraude bancaire</button>
       <button class="pill" onclick="usePill(this)">Travaux mal réalisés</button>
     </div>
+
+    <div class="plus-row" id="plusRow">
+      <button class="pill-plus" onclick="ouvrirCatalogue()" aria-label="Voir tous les types de litige">
+        Autre litige
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+      </button>
+    </div>
+
+    <div class="catalogue" id="catalogue" hidden></div>
 
     <div class="trust">
       <div>Textes officiels et jurisprudences en vigueur</div>
@@ -805,23 +880,888 @@ function navTarifs(e){
 /* ============ Saisie ============ */
 function activeInput(){ return started ? $('inpChat') : $('inpHero'); }
 function autoGrow(el){
+  const petit = window.innerWidth <= 600;
+  const cap = el.classList.contains('trame')
+    ? (petit ? Math.min(Math.round(window.innerHeight * 0.44), 340)
+             : Math.min(Math.round(window.innerHeight * 0.58), 520))
+    : 168;
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 168) + 'px';
+  el.style.height = Math.min(el.scrollHeight, cap) + 'px';
+}
+function clearTrame(el){
+  el.classList.remove('trame');
+  const aide = $('trameAide');
+  if(aide) aide.classList.remove('on');
 }
 ['inpHero','inpChat'].forEach(id=>{
   const el = $(id);
-  el.addEventListener('input', ()=>autoGrow(el));
+  el.addEventListener('input', ()=>{ if(!el.value.trim()) clearTrame(el); autoGrow(el); });
   el.addEventListener('keydown', e=>{
     if(e.key==='Enter' && !e.shiftKey && window.innerWidth > 600){
       e.preventDefault(); send();
     }
   });
 });
-function usePill(btn){
+/* Trames de recueil — deux temps par contentieux : le récit de la situation,
+   puis, sous l'intertitre « À ne pas omettre », les points que le client
+   n'évoque presque jamais spontanément et dont l'omission compromet l'acte :
+   point de départ des délais, formalité préalable, qualité exacte de la partie
+   adverse, preuve à préserver, option procédurale à arrêter. L'utilisateur
+   complète après les deux points ; les lignes vides et les intertitres sont
+   retirés à l'envoi. */
+const TRAMES = {
+  /* — Logement et voisinage — */
+  "Caution non restituée": [
+    "Date de sortie et de remise des clés",
+    "Montant du dépôt de garantie versé",
+    "Montant restitué à ce jour",
+    "État des lieux d'entrée établi (oui / non)",
+    "État des lieux de sortie établi (oui / non ; contradictoire ou non)",
+    "Justificatifs des retenues reçus (devis, factures)",
+    "Bailleur particulier, agence ou société",
+    "RIB et nouvelle adresse transmis au bailleur, à quelle date",
+    "— À ne pas omettre —",
+    "Logement loué vide ou meublé, et date de signature du bail",
+    "Colocation (oui / non ; départ des autres colocataires à la même date)",
+    "Dégradations qui vous sont reprochées, et votre position sur chacune",
+    "Somme retenue dans l'attente de la régularisation des charges de copropriété (oui / non ; montant)",
+    "Loyers, charges ou réparations restés dus à votre départ (oui / non ; montant)",
+    "Vétusté du logement et durée totale de votre occupation",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Loyers impayés — je suis bailleur": [
+    "Adresse du logement loué",
+    "Nom du locataire",
+    "Date de signature du bail et type de bail (vide, meublé)",
+    "Montant du loyer et des charges, et jour d'échéance",
+    "Mois impayés et montant total de la dette à ce jour",
+    "Date du dernier paiement reçu",
+    "Dépôt de garantie détenu (montant)",
+    "Ce que vous souhaitez (paiement, échéancier, résiliation du bail)",
+    "— À ne pas omettre —",
+    "Clause résolutoire stipulée au bail (oui / non)",
+    "Commandement de payer déjà délivré par commissaire de justice (date)",
+    "Garant ou caution : acte de cautionnement signé, coordonnées, et information de l'impayé déjà adressée (date)",
+    "Assurance loyers impayés ou garantie Visale souscrite (oui / non ; sinistre déclaré)",
+    "Aide au logement versée directement entre vos mains (oui / non ; organisme prévenu)",
+    "Locataire en surendettement, en procédure collective, ou bénéficiaire d'une aide du fonds de solidarité pour le logement (oui / non)",
+    "Locataire toujours dans les lieux (oui / non), et sa situation (emploi, ressources, personnes à charge)",
+    "Signalement déjà fait à la commission de coordination des actions de prévention des expulsions (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Logement non décent ou travaux non faits": [
+    "Adresse du logement et nom du bailleur",
+    "Date d'entrée dans les lieux",
+    "Désordres constatés (humidité, chauffage, infiltration, sécurité)",
+    "Date d'apparition et évolution depuis",
+    "Signalements déjà faits au bailleur (dates et forme)",
+    "Réponse du bailleur",
+    "Conséquences subies (santé, pièce inutilisable, surcoût de chauffage)",
+    "Ce que vous souhaitez (exécution des travaux, réduction de loyer, indemnisation)",
+    "— À ne pas omettre —",
+    "Loyers payés régulièrement depuis l'apparition des désordres (oui / non) — cesser de payer vous exposerait",
+    "Photos datées, constat de commissaire de justice, rapport d'expert ou diagnostic disponible (oui / non)",
+    "Service communal d'hygiène, agence régionale de santé ou mairie déjà saisis (oui / non ; date)",
+    "Arrêté de mise en sécurité ou d'insalubrité pris (oui / non ; date)",
+    "Allocation logement versée directement au bailleur, ou conservée par l'organisme (oui / non)",
+    "Désordre existant déjà à votre entrée dans les lieux, ou apparu depuis",
+    "Relogement provisoire assumé et son coût (montant)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Charges locatives ou régularisation contestées": [
+    "Adresse du logement et nom du bailleur",
+    "Montant de la provision mensuelle de charges",
+    "Montant réclamé au titre de la régularisation, et période concernée",
+    "Date de réception du décompte",
+    "Décompte par nature de charges reçu (oui / non)",
+    "Postes qui vous paraissent injustifiés",
+    "Ce que vous souhaitez (justification, annulation, remboursement)",
+    "— À ne pas omettre —",
+    "Année la plus ancienne sur laquelle porte le rappel — un rattrapage ne remonte pas indéfiniment",
+    "Justificatifs demandés au bailleur et mis à votre disposition (date de la demande ; réponse)",
+    "Charges réclamées figurant au bail comme récupérables (oui / non)",
+    "Clé de répartition appliquée, et surface retenue",
+    "Sommes déjà réglées, et réglées sous réserve ou sans réserve",
+    "Montant des régularisations des années précédentes, à titre de comparaison",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Trouble de voisinage (bruit, nuisances)": [
+    "Nature exacte des nuisances (bruit, odeurs, fumées, végétation, animaux)",
+    "Depuis quelle date, et à quels moments (jours et horaires)",
+    "Fréquence et durée des nuisances",
+    "Auteur des nuisances (voisin propriétaire, locataire, commerce)",
+    "Démarches déjà faites (parole, courrier, syndic, mairie, police)",
+    "Conséquences subies (sommeil, santé, jouissance du logement)",
+    "Ce que vous souhaitez (cessation, travaux, indemnisation)",
+    "— À ne pas omettre —",
+    "Tentative amiable déjà engagée devant un conciliateur de justice ou un médiateur (date) — cette démarche est en principe exigée avant d'agir en trouble de voisinage",
+    "Auteur locataire : propriétaire du logement identifié et déjà averti (oui / non)",
+    "Activité, installation ou exploitation antérieure à votre propre installation dans les lieux (oui / non)",
+    "Main courante, procès-verbal, constat de commissaire de justice ou mesure acoustique (oui / non ; dates)",
+    "Attestations de témoins rédigées et signées, avec pièce d'identité (nombre)",
+    "Certificats médicaux ou arrêts de travail rattachés aux nuisances (oui / non)",
+    "Journal des nuisances tenu au jour le jour (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Syndic ou copropriété": [
+    "Nom du syndic et adresse de la copropriété",
+    "Objet du litige (charges, travaux, défaut d'entretien, absence de réponse, décision d'assemblée)",
+    "Vous êtes copropriétaire occupant ou bailleur",
+    "Date des faits, ou date de l'assemblée générale concernée",
+    "Résolution contestée et sens de votre vote (contre, absent, favorable)",
+    "Montant en jeu",
+    "Démarches déjà faites auprès du syndic ou du conseil syndical (dates) et réponse obtenue",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Date exacte de notification du procès-verbal d'assemblée — le délai pour contester une décision est très bref et court de cette notification",
+    "Vous étiez opposant à la résolution, ou absent et non représenté (oui / non)",
+    "Convocation reçue dans les délais, avec l'ordre du jour et les pièces annexes (oui / non)",
+    "Appels de fonds réglés, réglés sous réserve, ou impayés (montant)",
+    "Nombre de lots et de tantièmes que vous détenez",
+    "Mise en demeure adressée au syndic par lettre recommandée (date)",
+    "Assurance de la copropriété ou du syndic mobilisable (oui / non)",
+    "Autres copropriétaires prêts à se joindre à la démarche (nombre)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Achats et consommation — */
+  "Achat en ligne non livré": [
+    "Nom du vendeur ou du site",
+    "Vendeur professionnel ou particulier",
+    "Date de la commande et numéro de commande",
+    "Montant payé et moyen de paiement",
+    "Date ou délai de livraison annoncé",
+    "Situation exacte (rien reçu, colis incomplet, colis endommagé)",
+    "Réponse du vendeur, le cas échéant",
+    "Ce que vous souhaitez obtenir (livraison ou remboursement)",
+    "— À ne pas omettre —",
+    "Mise en demeure de livrer déjà adressée par écrit (date) — elle conditionne en principe la résolution de la vente",
+    "Paiement par carte bancaire (oui / non) — une contestation auprès de votre banque reste alors ouverte",
+    "Achat financé par un crédit affecté (oui / non ; organisme)",
+    "Vendeur tiers sur une place de marché, ou établi hors de l'Union européenne (oui / non)",
+    "Vendeur en liquidation, site fermé ou injoignable (oui / non)",
+    "Confirmation de commande, conditions générales et échanges conservés (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Produit en panne — garantie refusée": [
+    "Produit concerné (marque, modèle)",
+    "Date d'achat et prix payé",
+    "Vendeur (enseigne ou site), professionnel ou particulier",
+    "Panne ou défaut constaté, et date de son apparition",
+    "Démarche faite auprès du vendeur (date et forme) et réponse obtenue",
+    "Motif du refus opposé (hors garantie, mauvaise utilisation, usure)",
+    "Ce que vous souhaitez (réparation, remplacement, remboursement)",
+    "— À ne pas omettre —",
+    "Date de livraison effective du bien — les délais courent de la remise, non de la commande",
+    "Bien neuf ou d'occasion — la présomption applicable n'est pas la même",
+    "Réparation déjà effectuée au titre de la garantie (date) — elle proroge la garantie",
+    "Garantie commerciale ou extension payante souscrite (oui / non ; durée et contenu)",
+    "Facture, ticket de caisse ou relevé bancaire conservé (oui / non)",
+    "Diagnostic ou devis de réparation établi par un professionnel (montant)",
+    "Bien immobilisé, déjà réparé par un tiers, ou remplacé (oui / non)",
+    "Usage conforme à la notice, absence de choc et d'intervention extérieure (précisez)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Rétractation refusée (achat à distance)": [
+    "Vendeur, et produit ou service concerné",
+    "Achat conclu en ligne, par téléphone, ou hors établissement",
+    "Date de la commande et date de réception",
+    "Montant payé",
+    "Date de votre demande de rétractation et forme employée",
+    "Réponse du vendeur et motif du refus",
+    "Ce que vous souhaitez (remboursement, prise en charge des frais de retour)",
+    "— À ne pas omettre —",
+    "Information écrite sur le droit de rétractation reçue avant l'achat, avec formulaire type (oui / non) — son absence allonge considérablement le délai",
+    "Nature exacte du bien ou du service (fabriqué sur mesure, scellé et descellé, denrée, contenu numérique, service déjà exécuté)",
+    "Exécution du service commencée avant l'expiration du délai, à votre demande expresse (oui / non)",
+    "Produit renvoyé : date de dépôt, transporteur et numéro de suivi",
+    "Frais de retour annoncés dans les conditions générales (oui / non ; montant)",
+    "Achat financé par un crédit affecté (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Abonnement impossible à résilier": [
+    "Prestataire et nature de l'abonnement (sport, télécom, presse, logiciel)",
+    "Date de souscription et durée d'engagement annoncée",
+    "Montant prélevé et périodicité",
+    "Date et forme de votre demande de résiliation",
+    "Réponse du prestataire, ou absence de réponse",
+    "Prélèvements poursuivis depuis la demande (dates et montants)",
+    "Motif invoqué pour refuser la résiliation",
+    "Ce que vous souhaitez (résiliation, remboursement des prélèvements)",
+    "— À ne pas omettre —",
+    "Contrat souscrit en ligne (oui / non) — une résiliation en ligne aussi simple doit alors vous être offerte",
+    "Avis vous rappelant la date limite de résiliation reçu avant la reconduction (oui / non ; date)",
+    "Fonctionnalité de résiliation effectivement accessible sur le site ou l'application (décrivez ce que vous avez trouvé)",
+    "Motif légitime invoqué (déménagement, maladie, perte d'emploi, incarcération) et justificatif disponible",
+    "Mandat de prélèvement révoqué auprès de votre banque, ou opposition formée (date)",
+    "Relances d'une société de recouvrement ou inscription à un fichier (oui / non)",
+    "Contrat et conditions générales en votre possession (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Facture d'énergie ou de télécom contestée": [
+    "Fournisseur et type de contrat (électricité, gaz, internet, mobile)",
+    "Numéro de client ou de contrat",
+    "Montant contesté et période concernée",
+    "Date de réception de la facture",
+    "Motif de la contestation (relevé estimé, rattrapage, double facturation, option non souscrite)",
+    "Index réellement relevé au compteur, et date du relevé",
+    "Réponse obtenue",
+    "Ce que vous souhaitez (annulation, remboursement, échéancier)",
+    "— À ne pas omettre —",
+    "Réclamation écrite adressée au fournisseur (date, canal, numéro de dossier) — le médiateur ne peut être saisi qu'ensuite, et après un délai d'attente",
+    "Ancienneté de la consommation refacturée — un rattrapage ne peut porter sur une période illimitée",
+    "Compteur relevé, estimé ou communicant, et accessibilité du compteur lors des passages",
+    "Contrat souscrit à la suite d'un démarchage téléphonique ou à domicile (oui / non)",
+    "Changement de fournisseur, déménagement ou relève spéciale intervenus dans la période",
+    "Coupure, réduction de puissance, ou mise en recouvrement déjà intervenue (date)",
+    "Chèque énergie, aide du fonds de solidarité pour le logement ou situation de précarité (oui / non)",
+    "Factures et relevés d'index des trois dernières années conservés (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Démarchage à domicile ou par téléphone": [
+    "Société démarcheuse et objet du contrat",
+    "Date et lieu de la signature (domicile, téléphone, foire ou salon)",
+    "Montant total et crédit souscrit pour le financer (oui / non)",
+    "Somme versée le jour même (montant et moyen de paiement)",
+    "Date de votre demande de rétractation, le cas échéant",
+    "Prestation déjà exécutée ou matériel déjà installé",
+    "Informations trompeuses ou pressions subies (précisez)",
+    "Ce que vous souhaitez (annulation, remboursement)",
+    "— À ne pas omettre —",
+    "Bordereau de rétractation détachable remis avec le contrat (oui / non) — son absence est une cause de nullité",
+    "Contrat comportant l'identité complète du professionnel, le prix, le délai d'exécution et les modalités de rétractation (précisez ce qui manque)",
+    "Paiement ou acompte encaissé le jour même à votre domicile (oui / non) — la loi l'interdit avant un certain délai",
+    "Crédit souscrit lors du rendez-vous (organisme, montant, mensualité, durée)",
+    "Promesses verbales non reprises au contrat (revente d'électricité, économies chiffrées, subvention, aide de l'État)",
+    "Vulnérabilité au moment de la signature (âge, isolement, santé, maîtrise du français)",
+    "Travaux ou installation réalisés, et leur état actuel (photos disponibles)",
+    "Signalement déjà fait à la répression des fraudes ou à Bloctel (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Véhicule — */
+  "Vice caché — voiture d'occasion": [
+    "Date d'achat du véhicule",
+    "Vendeur professionnel ou particulier",
+    "Prix payé",
+    "Marque, modèle, année et kilométrage lors de l'achat",
+    "Panne ou défaut constaté, et date de son apparition",
+    "Diagnostic écrit d'un garage (oui / non ; coût chiffré des réparations)",
+    "Contrôle technique remis lors de la vente (date et mentions)",
+    "Ce que l'annonce ou le vendeur affirmait sur l'état du véhicule",
+    "Échanges déjà eus avec le vendeur (dates et teneur)",
+    "— À ne pas omettre —",
+    "Date précise à laquelle vous avez découvert le défaut — le délai pour agir court de cette découverte, non de l'achat",
+    "Véhicule encore en l'état, ou déjà réparé — une réparation avant expertise fait disparaître la preuve",
+    "Kilométrage au jour de la découverte du défaut",
+    "Éléments laissant penser que le vendeur connaissait le défaut (historique d'entretien lacunaire, réparation dissimulée, annonce trompeuse, compteur suspect)",
+    "Clause du contrat ou de la facture excluant la garantie (reproduisez-en les termes)",
+    "Ce que vous choisissez : rendre le véhicule contre restitution du prix, ou le conserver contre une réduction du prix",
+    "Expertise amiable contradictoire ou expertise judiciaire déjà demandée (oui / non)",
+    "Frais consécutifs (dépannage, immobilisation, location de remplacement)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Garagiste — réparation ratée ou facture contestée": [
+    "Nom du garage et date de l'intervention",
+    "Véhicule (marque, modèle, kilométrage)",
+    "Panne ou prestation confiée au garage",
+    "Montant annoncé et montant effectivement facturé",
+    "Problème rencontré (panne persistante, panne nouvelle, travaux non commandés, retard)",
+    "Échanges déjà eus avec le garage (dates)",
+    "Ce que vous souhaitez (reprise sans frais, remboursement, indemnisation)",
+    "— À ne pas omettre —",
+    "Devis ou ordre de réparation signé avant l'intervention (oui / non) — produisez-le",
+    "Travaux supplémentaires exécutés sans votre accord écrit (lesquels, pour quel montant)",
+    "Véhicule retenu par le garage jusqu'au paiement (oui / non ; depuis quelle date)",
+    "Facture réglée en totalité, en partie, ou sous réserve écrite",
+    "Second avis technique écrit d'un autre professionnel (oui / non ; teneur)",
+    "Pièces remplacées restituées ou conservées par le garage",
+    "Frais consécutifs (dépannage, véhicule de remplacement, jours d'immobilisation)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Accident de la route — indemnisation refusée": [
+    "Date, heure et lieu de l'accident",
+    "Circonstances en quelques mots",
+    "Constat amiable établi et signé (oui / non)",
+    "Votre assureur, et celui de l'autre conducteur",
+    "Dommages matériels et montant du devis ou de l'expertise",
+    "Position écrite de l'assureur (refus, part de responsabilité retenue, montant proposé), et date de réception",
+    "Procès-verbal de police ou de gendarmerie (oui / non)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Vous étiez conducteur, passager, piéton ou cycliste — la protection n'est pas la même",
+    "Blessures : état consolidé, ou encore évolutif — accepter une indemnisation avant consolidation est presque irréversible",
+    "Offre d'indemnisation reçue de l'assureur (date et montant) et délai qui vous est imparti pour répondre",
+    "Expertise médicale subie, assisté ou non d'un médecin de recours (date, nom de l'expert, conclusions)",
+    "Arrêts de travail, perte de revenus, frais restés à charge, aide d'un tiers (montants et justificatifs)",
+    "Organismes ayant versé des prestations (sécurité sociale, mutuelle, employeur, prévoyance)",
+    "Autre conducteur non assuré, en fuite, ou sous l'emprise d'un état alcoolique ou stupéfiant (oui / non)",
+    "Poursuites pénales engagées, et votre constitution de partie civile (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Location de voiture — frais contestés": [
+    "Loueur et agence concernés",
+    "Dates de la location et montant initial",
+    "Montant supplémentaire prélevé, et date du prélèvement",
+    "Motif invoqué (dégâts, carburant, retard, nettoyage, amende)",
+    "Devis ou facture de réparation communiqué par le loueur (oui / non)",
+    "Réclamation déjà adressée (date et réponse)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "État des lieux de départ et de retour établis en votre présence et signés (oui / non)",
+    "Photographies ou vidéo horodatées du véhicule au départ et au retour (oui / non)",
+    "Franchise, assurances et options effectivement souscrites au contrat (montants)",
+    "Prélèvement contesté auprès de votre banque, ou opposition formée (date)",
+    "Amende refacturée avec des frais de dossier (montant des frais)",
+    "Véhicule restitué hors présence d'un agent, ou en dehors des heures d'ouverture (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Travaux et prestataires — */
+  "Travaux mal réalisés": [
+    "Nom de l'entreprise ou de l'artisan",
+    "Date du devis signé et montant total",
+    "Acomptes versés (montants et dates)",
+    "Nature des travaux commandés",
+    "Désordres ou malfaçons constatés",
+    "Photos datées disponibles (oui / non)",
+    "Ce que vous souhaitez (achèvement, reprise des malfaçons, remboursement, indemnisation)",
+    "— À ne pas omettre —",
+    "Réception des travaux prononcée (date ; avec ou sans réserves ; par écrit, ou de fait par la prise de possession) — c'est le point de départ des garanties",
+    "Désordres apparus après la réception, ou déjà visibles au moment de celle-ci",
+    "Nature des désordres : atteinte à la solidité ou à l'usage normal du bien, ou défaut esthétique",
+    "Assurance dommages-ouvrage souscrite avant l'ouverture du chantier (oui / non ; sinistre déclaré)",
+    "Attestation d'assurance décennale remise par l'entreprise avant les travaux (oui / non)",
+    "Entreprise toujours en activité, radiée ou en liquidation (numéro SIREN et vérification faite)",
+    "Solde du prix encore dû, et sommes retenues (montants)",
+    "Chantier abandonné (date du dernier passage) et achèvement confié à un tiers (devis)",
+    "Expertise amiable contradictoire ou expertise judiciaire déjà demandée (oui / non)",
+    "Sous-traitants ou maître d'œuvre intervenus (noms)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Facture impayée par un client": [
+    "Vous êtes entreprise, artisan, profession libérale ou particulier",
+    "Nom du débiteur, et sa qualité (professionnel ou particulier)",
+    "Objet de la prestation ou de la vente",
+    "Date et montant de chaque facture impayée",
+    "Date d'échéance de paiement convenue",
+    "Devis signé, bon de commande ou contrat (oui / non)",
+    "Preuve d'exécution (bon de livraison, procès-verbal de réception, échanges)",
+    "Paiements partiels reçus (montants et dates)",
+    "Contestation éventuelle formulée par le débiteur",
+    "— À ne pas omettre —",
+    "Date de la facture la plus ancienne — le délai pour agir diffère selon que le débiteur est professionnel ou particulier",
+    "Débiteur en sauvegarde, redressement ou liquidation judiciaire (oui / non) — une déclaration de créance s'impose alors sans attendre",
+    "Conditions générales de vente acceptées, prévoyant intérêts de retard et clause pénale (oui / non)",
+    "Indemnité forfaitaire de recouvrement et intérêts de retard déjà réclamés sur les factures (oui / non)",
+    "Reconnaissance de dette, échéancier consenti ou paiement partiel intervenu (dates) — ils font repartir le délai",
+    "Adresse actuelle, forme sociale et numéro SIREN du débiteur vérifiés (oui / non)",
+    "Clause du contrat désignant un tribunal ou un mode de règlement des litiges (reproduisez-la)",
+    "Garantie détenue (caution, retenue, assurance-crédit, réserve de propriété)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Prestation non conforme (déménageur, événement…)": [
+    "Prestataire et nature de la prestation",
+    "Date du contrat ou du devis, et montant",
+    "Date d'exécution prévue et date réelle",
+    "Ce qui n'a pas été exécuté, ou mal exécuté",
+    "Dommages ou pertes subis (nature et valeur)",
+    "Photos, constat ou témoins (oui / non)",
+    "Réclamation adressée au prestataire (date et réponse)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Réserves écrites formulées le jour même, sur le document de livraison ou dans les jours suivants (date, support, termes employés) — leur absence ou leur tardiveté est systématiquement opposée",
+    "Déclaration de valeur ou liste détaillée des biens remise avant la prestation (oui / non)",
+    "Lettre de voiture, bulletin de livraison ou procès-verbal signé (oui / non ; mentions portées)",
+    "Plafond d'indemnisation stipulé au contrat, par objet et au total (montants)",
+    "Assurance complémentaire souscrite pour la prestation (oui / non)",
+    "Prestataire assuré en responsabilité civile professionnelle (attestation reçue ou non)",
+    "Préjudice consécutif chiffré (rachat, relogement, annulation, journée perdue)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Banque, assurance et crédit — */
+  "Fraude bancaire": [
+    "Banque concernée",
+    "Dates et montants des opérations contestées",
+    "Nature des opérations (paiement en ligne, retrait, virement)",
+    "Date à laquelle vous avez découvert les opérations",
+    "Date et forme du signalement à la banque (agence, téléphone, écrit)",
+    "Réponse de la banque et motif de son refus",
+    "Plainte déposée (date et service)",
+    "— À ne pas omettre —",
+    "Date de l'opération contestée la plus ancienne — le droit de contester est enfermé dans un délai strict",
+    "Opposition formée sur la carte ou le compte, et date exacte",
+    "Carte et identifiants perdus, volés, ou toujours en votre possession",
+    "Opération validée par un code reçu par message, une empreinte ou l'application bancaire (oui / non ; décrivez la manœuvre)",
+    "Code confidentiel, code de validation ou identifiants communiqués à un tiers, même sous la pression d'un faux conseiller",
+    "Négligence grave reprochée par la banque : reproduisez ses termes exacts",
+    "Remboursement partiel déjà obtenu (montant et date)",
+    "Frais, découvert, rejets ou incidents provoqués par la fraude (montants)",
+    "Relevés, messages frauduleux et captures d'écran conservés (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Assurance — refus d'indemnisation": [
+    "Assureur et type de contrat (habitation, auto, santé, emprunteur, protection juridique)",
+    "Numéro de contrat et date de souscription",
+    "Nature et date du sinistre",
+    "Date de la déclaration de sinistre",
+    "Montant du préjudice, et devis ou factures à l'appui",
+    "Motif du refus (exclusion, déchéance, non-garantie), et date de réception de ce refus",
+    "Expertise réalisée (nom de l'expert, date, conclusions)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Date exacte du premier refus écrit — l'action contre un assureur se prescrit plus vite qu'on ne le croit",
+    "Clause invoquée par l'assureur : reproduisez-en les termes exacts, et indiquez si elle figure en caractères apparents",
+    "Questionnaire de souscription : réponses exactes et complètes, ou omission possible (une inexactitude est l'argument le plus fréquent)",
+    "Déclaration du sinistre faite dans le délai prévu au contrat (oui / non ; délai stipulé)",
+    "Primes à jour au jour du sinistre (oui / non ; mise en demeure reçue)",
+    "Contre-expertise demandée, ou expert d'assuré mandaté (oui / non)",
+    "Médiateur de l'assurance déjà saisi (date et réponse)",
+    "Conditions générales et particulières en votre possession (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Frais bancaires ou clôture de compte": [
+    "Banque et type de compte",
+    "Nature du litige (frais d'incident, commissions, clôture, refus de service, blocage des fonds)",
+    "Montants prélevés et périodes concernées",
+    "Date de la décision de la banque et forme de sa notification",
+    "Motif invoqué par la banque",
+    "Réclamation adressée au service clientèle (date, numéro de dossier) et réponse",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Préavis écrit reçu avant la clôture, et durée de ce préavis",
+    "Médiateur bancaire déjà saisi (date et réponse) — cette étape est en principe préalable",
+    "Situation de fragilité financière reconnue par la banque, ouvrant un plafonnement des frais (oui / non)",
+    "Inscription à un fichier de la Banque de France (chèques, incidents de remboursement) — oui / non",
+    "Refus d'ouverture opposé par d'autres établissements, et droit au compte exercé (oui / non)",
+    "Conséquences subies (prélèvements rejetés, salaire non versé, crédit dénoncé, activité bloquée)",
+    "Relevés de compte et conditions tarifaires en votre possession (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Crédit à la consommation — litige": [
+    "Prêteur et type de crédit (affecté, renouvelable, personnel)",
+    "Date de signature de l'offre et montant emprunté",
+    "Mensualité, durée et taux annuel effectif global",
+    "Nature du litige (prestation financée non exécutée, défaut d'information, assurance imposée, déchéance du terme, recouvrement)",
+    "Sommes déjà remboursées",
+    "Courriers reçus du prêteur ou d'une société de recouvrement (dates)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Fiche d'information précontractuelle et notice d'assurance remises avant la signature (oui / non)",
+    "Vérification de votre solvabilité effectuée (justificatifs demandés, fiche de dialogue signée)",
+    "Crédit destiné à financer un bien ou une prestation déterminés (oui / non) — le sort du crédit suit alors celui du contrat financé",
+    "Bien ou prestation effectivement livré ou exécuté (date)",
+    "Date de la première échéance impayée — elle commande le délai dont dispose le prêteur pour agir",
+    "Déchéance du terme prononcée, et mise en demeure préalable reçue (dates)",
+    "Assurance emprunteur souscrite, et sinistre déclaré (chômage, incapacité)",
+    "Dossier de surendettement déposé ou envisagé (oui / non ; date)",
+    "Offre, tableau d'amortissement et notice en votre possession (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Travail — */
+  "Licenciement contesté": [
+    "Employeur et secteur d'activité",
+    "Date d'embauche et poste occupé",
+    "Type de contrat et convention collective applicable",
+    "Effectif de l'entreprise",
+    "Ancienneté et dernier salaire brut mensuel",
+    "Date de l'entretien préalable et date de la lettre de licenciement",
+    "Motif énoncé dans la lettre",
+    "Avertissements ou sanctions antérieurs",
+    "Ce que vous contestez, et ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Date de notification de la lettre — le délai pour saisir le conseil de prud'hommes est bref et court de cette date",
+    "Reçu pour solde de tout compte signé (date) — sa dénonciation obéit à un délai plus bref encore",
+    "Transaction, rupture conventionnelle ou protocole d'accord déjà signé (oui / non)",
+    "Statut protégé (représentant du personnel, conseiller prud'homme, salariée enceinte, salarié en arrêt pour accident du travail)",
+    "Arrêt de travail, inaptitude, alerte sur votre santé ou signalement antérieurs au licenciement (oui / non ; dates)",
+    "Faits que vous tenez pour la véritable cause (dénonciation, discrimination, harcèlement, refus d'une modification, état de santé)",
+    "Procédure suivie : convocation reçue, délai respecté, assistance possible mentionnée, entretien tenu",
+    "Documents remis (solde de tout compte, certificat de travail, attestation France Travail) et leurs incohérences",
+    "Témoignages écrits, courriels, messages et pièces conservés avant votre départ (oui / non)",
+    "Situation depuis la rupture (nouvel emploi, chômage, revenus, préjudice)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Salaires ou heures supplémentaires impayés": [
+    "Employeur et poste occupé",
+    "Date d'embauche, type de contrat, convention collective",
+    "Périodes et montants non payés",
+    "Horaires réellement effectués et horaires contractuels",
+    "Bulletins de paie reçus pour ces périodes (oui / non)",
+    "Demandes déjà faites à l'employeur (dates et forme) et réponse",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Mois le plus ancien réclamé — un rappel de salaire ne remonte pas indéfiniment",
+    "Convention de forfait en jours ou en heures signée (oui / non ; suivi de la charge de travail assuré)",
+    "Décompte personnel des heures, semaine par semaine, que vous pouvez produire (oui / non) — c'est la pièce décisive",
+    "Éléments de preuve des heures (badgeuse, plannings, courriels envoyés tard, messages, témoins)",
+    "Primes, majorations, repos compensateurs et contreparties également dus",
+    "Congés payés et jours de repos non pris (nombre)",
+    "Vous êtes toujours en poste, ou le contrat a pris fin (date et mode de rupture)",
+    "Rupture envisagée en reprochant ces manquements à l'employeur (oui / non)",
+    "Représentants du personnel ou inspection du travail saisis (oui / non ; date)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Documents de fin de contrat non remis": [
+    "Employeur",
+    "Date de fin du contrat et mode de rupture",
+    "Documents manquants (certificat de travail, attestation France Travail, solde de tout compte, épargne salariale)",
+    "Demandes déjà faites (dates et forme) et réponse de l'employeur",
+    "Sommes également dues (préavis, congés payés, indemnité)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Date de sortie effective des effectifs, et dernier jour travaillé",
+    "Solde de tout compte reçu et signé (date)",
+    "Indemnisation par France Travail refusée, retardée ou suspendue faute d'attestation (oui / non ; date)",
+    "Perte de revenus chiffrable causée par ce retard (montant et justificatifs)",
+    "Embauche compromise faute de certificat de travail (oui / non)",
+    "Employeur toujours en activité, ou en liquidation judiciaire (oui / non)",
+    "Urgence justifiant une procédure de référé (précisez)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Voyages et transport — */
+  "Vol retardé ou annulé": [
+    "Compagnie et numéro de vol",
+    "Date du vol",
+    "Aéroport de départ et aéroport d'arrivée",
+    "Vol annulé ou retardé",
+    "Heure d'arrivée prévue et heure d'arrivée réelle",
+    "Préavis reçu en cas d'annulation (nombre de jours)",
+    "Motif invoqué par la compagnie",
+    "Réacheminement, remboursement ou prise en charge proposés",
+    "Démarche déjà engagée auprès de la compagnie (date et réponse)",
+    "— À ne pas omettre —",
+    "Distance entre l'aéroport de départ et celui d'arrivée — elle détermine le montant de l'indemnisation",
+    "Vol au départ de l'Union européenne, ou à destination de l'Union avec une compagnie européenne (précisez)",
+    "Vol en correspondance sur une réservation unique (oui / non ; heure d'arrivée à la destination finale)",
+    "Présentation à l'enregistrement et à l'embarquement dans les délais (oui / non ; carte d'embarquement conservée)",
+    "Motif écrit avancé par la compagnie — reproduisez ses termes exacts",
+    "Billet acheté auprès d'un intermédiaire, ou compris dans un forfait touristique (oui / non)",
+    "Indemnisation, bon d'achat ou geste commercial déjà accepté (oui / non ; montant)",
+    "Frais supplémentaires engagés avec justificatifs (hôtel, repas, transport, nuit perdue)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Train annulé ou fortement retardé": [
+    "Transporteur et numéro de train",
+    "Date, gare de départ et gare d'arrivée",
+    "Train supprimé ou retardé",
+    "Motif annoncé par le transporteur",
+    "Prix du billet et type de tarif",
+    "Demande déjà déposée auprès du transporteur (date, numéro de dossier, réponse)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Retard exact à l'arrivée, en minutes — les seuils d'indemnisation sont fixés en minutes",
+    "Trajet national ou international, et titre de transport unique ou billets distincts",
+    "Correspondance manquée, et conséquences (vol perdu, nuit d'hôtel, journée annulée)",
+    "Frais engagés du fait du retard, avec justificatifs (taxi, hôtel, repas)",
+    "Proposition reçue du transporteur (bon d'achat, remboursement partiel) et votre réponse",
+    "Billet, justificatif de retard et échanges conservés (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Séjour ou location de vacances non conforme": [
+    "Vendeur du séjour (agence, plateforme, hôtel, particulier) et destination",
+    "Dates du séjour et montant payé",
+    "Ce qui avait été promis (descriptif, catégorie, prestations)",
+    "Ce que vous avez réellement trouvé",
+    "Photos ou constat datés (oui / non)",
+    "Solution proposée sur place (relogement, remboursement partiel)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Qualité exacte du vendeur : agence de voyages, organisateur de forfait, plateforme de mise en relation, ou particulier — le régime de responsabilité en dépend entièrement",
+    "Prestations réservées ensemble comme un forfait (transport et hébergement) — oui / non",
+    "Réclamation écrite adressée pendant le séjour (date, destinataire, forme) — la réclamation immédiate est déterminante",
+    "Délai de réclamation prévu au contrat après le retour, et date de votre réclamation",
+    "Preuve du descriptif au moment de la réservation (capture d'écran, brochure, courriel de confirmation)",
+    "Frais supplémentaires exposés sur place (hôtel de remplacement, repas, transport) avec justificatifs",
+    "Assurance annulation ou assistance souscrite avec le séjour (oui / non)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  "Colis perdu, volé ou endommagé": [
+    "Transporteur ou plateforme, et numéro de suivi",
+    "Vendeur du produit et date de la commande",
+    "Valeur du contenu et montant payé",
+    "Statut affiché par le suivi (livré, en transit, perdu)",
+    "Situation (jamais reçu, remis à un tiers, déposé sans signature, contenu endommagé)",
+    "Réclamation déjà déposée (auprès de qui, date, réponse)",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Transport commandé par le vendeur, ou par vous directement — cela détermine contre qui agir",
+    "Réserves écrites et motivées formulées à la livraison, ou dans les tout premiers jours (date, forme, termes employés)",
+    "Colis remis à un voisin, à un gardien, ou déposé sans signature (précisez ce que dit la preuve de livraison)",
+    "Valeur déclarée au transporteur, et plafond d'indemnisation stipulé aux conditions générales",
+    "Preuve du contenu (facture, photographies de l'emballage à l'ouverture, vidéo de déballage)",
+    "Enquête ouverte par le transporteur (numéro et date) et son issue",
+    "Plainte déposée en cas de vol (date et service)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+  /* — Famille — */
+  "Pension alimentaire impayée": [
+    "Décision fixant la pension (jugement, convention homologuée, divorce) et sa date",
+    "Montant mensuel dû et jour d'échéance",
+    "Nom du débiteur",
+    "Mois impayés et montant total de l'arriéré",
+    "Date du dernier versement reçu",
+    "Revalorisation annuelle prévue, et appliquée ou non",
+    "Ce que vous souhaitez",
+    "— À ne pas omettre —",
+    "Copie exécutoire de la décision en votre possession (oui / non) — elle est indispensable à tout recouvrement forcé",
+    "Décision signifiée au débiteur par commissaire de justice (date)",
+    "Mois impayé le plus ancien réclamé — les arriérés se prescrivent",
+    "Intermédiation financière par la caisse d'allocations familiales mise en place (oui / non ; date)",
+    "Paiement direct entre les mains de l'employeur ou de la banque déjà tenté (date et résultat)",
+    "Plainte pour abandon de famille déposée (date et service)",
+    "Employeur, banque ou adresse actuelle du débiteur connus (précisez)",
+    "Débiteur résidant à l'étranger, sans emploi déclaré, ou apparemment insolvable",
+    "Changement de situation depuis la décision (revenus, résidence des enfants, nouvelle charge de famille)",
+    "Identité exacte de la personne ou de la société mise en cause (nom ou dénomination, adresse, numéro SIREN si vous l'avez)",
+    "Démarche amiable déjà tentée (courrier simple, lettre recommandée, médiateur, conciliateur) — dates et réponses",
+    "Procédure, plainte ou décision déjà intervenue dans cette affaire (oui / non ; précisez)",
+    "Assurance de protection juridique (contrat habitation, automobile, carte bancaire, mutuelle, syndicat) — oui / non / je l'ignore",
+    "Pièces en ma possession (contrat, factures, photos, courriers, messages)",
+    "Précisions libres — plus vous êtes précis (dates, montants, noms, teneur des échanges), plus l'acte sera solide",
+  ],
+};
+
+/* Catalogue « Autre litige » : sélection fondée sur les contentieux les plus
+   fréquents (réclamations DGCCRF, injonctions de payer — prêts, prestations de
+   services et baux —, litiges de la vie courante logement / travail / voyage). */
+const CATALOGUE = [
+  { titre: "Logement et voisinage", items: ["Caution non restituée", "Loyers impayés — je suis bailleur", "Logement non décent ou travaux non faits", "Charges locatives ou régularisation contestées", "Trouble de voisinage (bruit, nuisances)", "Syndic ou copropriété"] },
+  { titre: "Achats et consommation", items: ["Achat en ligne non livré", "Produit en panne — garantie refusée", "Rétractation refusée (achat à distance)", "Abonnement impossible à résilier", "Facture d'énergie ou de télécom contestée", "Démarchage à domicile ou par téléphone"] },
+  { titre: "Véhicule", items: ["Vice caché — voiture d'occasion", "Garagiste — réparation ratée ou facture contestée", "Accident de la route — indemnisation refusée", "Location de voiture — frais contestés"] },
+  { titre: "Travaux et prestataires", items: ["Travaux mal réalisés", "Facture impayée par un client", "Prestation non conforme (déménageur, événement…)"] },
+  { titre: "Banque, assurance et crédit", items: ["Fraude bancaire", "Assurance — refus d'indemnisation", "Frais bancaires ou clôture de compte", "Crédit à la consommation — litige"] },
+  { titre: "Travail", items: ["Licenciement contesté", "Salaires ou heures supplémentaires impayés", "Documents de fin de contrat non remis"] },
+  { titre: "Voyages et transport", items: ["Vol retardé ou annulé", "Train annulé ou fortement retardé", "Séjour ou location de vacances non conforme", "Colis perdu, volé ou endommagé"] },
+  { titre: "Famille", items: ["Pension alimentaire impayée"] },
+];
+
+/* Un intertitre ouvre la ligne par un tiret cadratin suivi d'une espace ; il
+   n'appelle pas de réponse et disparaît à l'envoi. Le test ne porte que sur le
+   début de ligne, afin d'épargner les questions qui comportent un tiret
+   cadratin en incise (« Précisions libres — plus vous êtes précis… »). */
+function estIntertitre(l){ return /^—\s/.test(l); }
+
+/* Insère la trame correspondant à un libellé dans la zone de saisie. */
+function poserTrame(label){
   const el = activeInput();
-  el.value = btn.textContent + ' — ';
-  el.focus(); autoGrow(el);
+  const questions = TRAMES[label];
+
+  if(!questions){
+    clearTrame(el);
+    el.value = label + ' — ';
+    el.focus(); autoGrow(el);
+    return;
+  }
+
+  const entete = "Mon litige : " + label;
+  el.value = entete + "\n\n" + questions.map(q => estIntertitre(q) ? "\n" + q : q + " : ").join("\n");
+
+  el.classList.add('trame');
+  const aide = $('trameAide');
+  if(aide) aide.classList.add('on');
+
+  el.focus();
+  autoGrow(el);
+  /* Curseur en fin de première question, prêt à la saisie. */
+  const pos = (entete + "\n\n" + questions[0] + " : ").length;
+  try{ el.setSelectionRange(pos, pos); }catch(e){}
+  el.scrollTop = 0;
+  if(window.innerWidth <= 600){
+    setTimeout(()=>{ try{ el.closest('.bar').scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){} }, 60);
+  }
 }
+function usePill(btn){ poserTrame(btn.textContent.trim()); }
+
+/* ============ Catalogue « Autre litige » ============ */
+let catalogueMonte = false;
+function monterCatalogue(){
+  if(catalogueMonte) return;
+  const hote = $('catalogue');
+  if(!hote) return;
+  let html = '<div class="cat-head">'
+    + '<p>Choisissez la situation la plus proche de la vôtre : les questions utiles s\'afficheront dans la barre.</p>'
+    + '<button class="cat-retour" onclick="fermerCatalogue()">Retour</button>'
+    + '</div>';
+  CATALOGUE.forEach(g => {
+    html += '<div class="cat-groupe"><h3 class="cat-titre">' + esc(g.titre) + '</h3><div class="cat-liste">';
+    g.items.forEach(label => {
+      html += '<button class="cat-item" onclick="choisirLitige(this)">' + esc(label) + '</button>';
+    });
+    html += '</div></div>';
+  });
+  hote.innerHTML = html;
+  catalogueMonte = true;
+}
+function ouvrirCatalogue(){
+  monterCatalogue();
+  const p = $('pills'), m = $('plusRow'), c = $('catalogue');
+  if(p) p.hidden = true;
+  if(m) m.hidden = true;
+  if(c){ c.hidden = false; c.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+}
+function fermerCatalogue(){
+  const p = $('pills'), m = $('plusRow'), c = $('catalogue');
+  if(c) c.hidden = true;
+  if(p) p.hidden = false;
+  if(m) m.hidden = false;
+}
+function choisirLitige(btn){
+  const label = btn.textContent.trim();
+  fermerCatalogue();
+  poserTrame(label);
+}
+document.addEventListener('keydown', e => {
+  const c = $('catalogue');
+  if(e.key === 'Escape' && c && !c.hidden) fermerCatalogue();
+});
 
 /* ============ Pièces jointes ============ */
 function pickFiles(){ $('fileInput').click(); }
@@ -1209,9 +2149,21 @@ async function runRequest(txt, sentFiles, target, paidSession){
 }
 
 /* ============ Envoi ============ */
+/* Une trame partiellement remplie ne doit pas partir avec ses lignes vides :
+   on ne transmet que l'en-tête et les réponses effectivement renseignées. */
+function nettoyerTrame(t){
+  const lignes = t.split('\n');
+  return lignes
+    .filter((l, i) => i === 0 || (!/:\s*$/.test(l) && !estIntertitre(l.trim())))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 async function send(){
   const el = activeInput();
-  const txt = el.value.trim();
+  let txt = el.value.trim();
+  if(el.classList.contains('trame')) txt = nettoyerTrame(txt);
   if((!txt && !files.length) || busy) return;
 
   busy = true;
@@ -1221,7 +2173,7 @@ async function send(){
   const sentFiles = files;
   const attNames = sentFiles.length ? sentFiles.map(f=>f.name).join(' · ') : '';
   files = []; renderFiles();
-  el.value = ''; autoGrow(el);
+  el.value = ''; clearTrame(el); autoGrow(el);
 
   enterChat();
   renderUserMsg(txt || 'Documents joints', attNames);
