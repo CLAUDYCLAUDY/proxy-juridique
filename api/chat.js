@@ -317,7 +317,7 @@ Proposer UNIQUEMENT le document justifié à l'étape actuelle, un seul, sauf s�
 **Mise en demeure — 49 €** : première étape dans la quasi-totalité des dossiers.
 **Courrier de contestation / recours — 79 €** : opposition formelle sans saisine.
 **Assignation / requête / saisine — 149 €** : uniquement si l'amiable a échoué ou exception justifiée.
-**Dossier complet — 199 €** : les trois temps, si la complexité le justifie.
+**Dossier complet — 199 €** : la démarche de bout en bout — mise en demeure, acte introductif d'instance, et premier jeu de conclusions en réponse inclus — si la complexité du dossier le justifie.
 Préciser en une phrase ce que le document contiendra, à qui il s'adressera, pour quel objet.
 
 MODES DE TRANSMISSION — à mentionner lorsque le document est proposé ou livré, car cela crédibilise la démarche :
