@@ -168,9 +168,9 @@ nav{display:flex;gap:20px;align-items:center}
 /* ---------- Accueil ---------- */
 #landing{display:block}
 .hero{
-  min-height:calc(100dvh - 64px);
+  min-height:calc(86dvh - 64px);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:20px 24px 84px;text-align:center;
+  padding:20px 24px 40px;text-align:center;
 }
 .hero .label{margin-bottom:26px}
 .hero h1{
@@ -210,7 +210,18 @@ nav{display:flex;gap:20px;align-items:center}
   background:transparent;color:var(--encre);
   max-height:168px;padding:5px 0;
 }
+.bar textarea.trame{max-height:min(52dvh,430px)}
+@media(max-width:600px){.bar textarea.trame{max-height:min(38dvh,300px)}}
 .bar textarea::placeholder{color:#A8A296}
+.trame-aide{
+  max-width:720px;margin:10px auto 0;
+  font-size:12.5px;line-height:1.5;color:var(--brun);
+  text-align:center;letter-spacing:.01em;
+  opacity:0;transform:translateY(-2px);
+  transition:opacity .22s ease,transform .22s ease;
+  pointer-events:none;height:0;overflow:hidden;
+}
+.trame-aide.on{opacity:1;transform:none;height:auto;margin-bottom:2px}
 .icon-btn{
   width:38px;height:38px;flex-shrink:0;
   display:flex;align-items:center;justify-content:center;
@@ -263,7 +274,7 @@ nav{display:flex;gap:20px;align-items:center}
 }
 
 /* ---------- Bandes éditoriales ---------- */
-.strip{border-top:1px solid var(--ligne);padding:96px 24px}
+.strip{border-top:1px solid var(--ligne);padding:64px 24px 88px}
 .wrap{max-width:880px;margin:0 auto}
 .strip .label{display:block;text-align:center;margin-bottom:16px}
 .strip-title{
@@ -543,6 +554,8 @@ body.chatting .app{display:flex}
       </div>
     </div>
 
+    <p class="trame-aide" id="trameAide">Complétez les lignes que vous pouvez ; laissez les autres vides. Le trombone permet de joindre vos pièces.</p>
+
     <div class="pills">
       <button class="pill" onclick="usePill(this)">Caution non restituée</button>
       <button class="pill" onclick="usePill(this)">Vol retardé ou annulé</button>
@@ -805,22 +818,133 @@ function navTarifs(e){
 /* ============ Saisie ============ */
 function activeInput(){ return started ? $('inpChat') : $('inpHero'); }
 function autoGrow(el){
+  const petit = window.innerWidth <= 600;
+  const cap = el.classList.contains('trame')
+    ? (petit ? Math.min(Math.round(window.innerHeight * 0.38), 300)
+             : Math.min(Math.round(window.innerHeight * 0.52), 430))
+    : 168;
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 168) + 'px';
+  el.style.height = Math.min(el.scrollHeight, cap) + 'px';
+}
+function clearTrame(el){
+  el.classList.remove('trame');
+  const aide = $('trameAide');
+  if(aide) aide.classList.remove('on');
 }
 ['inpHero','inpChat'].forEach(id=>{
   const el = $(id);
-  el.addEventListener('input', ()=>autoGrow(el));
+  el.addEventListener('input', ()=>{ if(!el.value.trim()) clearTrame(el); autoGrow(el); });
   el.addEventListener('keydown', e=>{
     if(e.key==='Enter' && !e.shiftKey && window.innerWidth > 600){
       e.preventDefault(); send();
     }
   });
 });
+/* Trames de recueil : les éléments sans lesquels aucun acte ne peut être
+   solidement rédigé dans chaque contentieux (délais, qualité des parties,
+   preuves, quantum, démarches antérieures). L'utilisateur complète après
+   les deux points ; les lignes laissées vides seront reprises en dialogue. */
+const TRAMES = {
+  'Caution non restituée': [
+    "Date de sortie et de remise des clés",
+    "Montant du dépôt de garantie versé",
+    "Montant restitué à ce jour",
+    "État des lieux d'entrée établi (oui / non)",
+    "État des lieux de sortie établi (oui / non ; contradictoire ou non)",
+    "Justificatifs des retenues reçus (devis, factures)",
+    "Bailleur particulier, agence ou société",
+    "RIB et adresse transmis au bailleur, à quelle date",
+    "Relances déjà adressées (dates et forme)"
+  ],
+  'Vol retardé ou annulé': [
+    "Compagnie et numéro de vol",
+    "Date du vol",
+    "Aéroport de départ et aéroport d'arrivée",
+    "Vol annulé ou retardé",
+    "Heure d'arrivée prévue et heure d'arrivée réelle",
+    "Préavis reçu en cas d'annulation (nombre de jours)",
+    "Motif invoqué par la compagnie",
+    "Réacheminement, remboursement ou prise en charge proposés",
+    "Démarche déjà engagée auprès de la compagnie (date et réponse)",
+    "Frais supplémentaires engagés (hôtel, repas, transport)"
+  ],
+  'Achat en ligne non livré': [
+    "Nom du vendeur ou du site",
+    "Vendeur professionnel ou particulier",
+    "Date de la commande et numéro de commande",
+    "Montant payé et moyen de paiement",
+    "Date ou délai de livraison annoncé",
+    "Situation exacte (rien reçu, colis incomplet, colis endommagé)",
+    "Relances adressées au vendeur (dates et forme)",
+    "Réponse du vendeur, le cas échéant",
+    "Ce que vous souhaitez obtenir (livraison ou remboursement)"
+  ],
+  "Vice caché — voiture d'occasion": [
+    "Date d'achat du véhicule",
+    "Vendeur professionnel ou particulier",
+    "Prix payé",
+    "Marque, modèle, année et kilométrage lors de l'achat",
+    "Panne ou défaut constaté, et date de son apparition",
+    "Diagnostic écrit d'un garage (oui / non ; coût chiffré des réparations)",
+    "Contrôle technique remis lors de la vente (date et mentions)",
+    "Ce que l'annonce ou le vendeur affirmait sur l'état du véhicule",
+    "Échanges déjà eus avec le vendeur (dates et teneur)",
+    "Ce que vous souhaitez (annulation de la vente, réduction du prix, prise en charge des réparations)"
+  ],
+  'Fraude bancaire': [
+    "Banque concernée",
+    "Dates et montants des opérations contestées",
+    "Nature des opérations (paiement en ligne, retrait, virement)",
+    "Date à laquelle vous avez découvert les opérations",
+    "Date et forme du signalement à la banque (agence, téléphone, écrit)",
+    "Réponse de la banque et motif de son refus",
+    "Carte et identifiants perdus, volés, ou toujours en votre possession",
+    "Code confidentiel ou code reçu par SMS communiqué à un tiers, même sous pression",
+    "Plainte déposée (date et service)"
+  ],
+  'Travaux mal réalisés': [
+    "Nom de l'entreprise ou de l'artisan",
+    "Date du devis signé et montant total",
+    "Acomptes versés (montants et dates)",
+    "Nature des travaux commandés",
+    "Désordres ou malfaçons constatés",
+    "Date de la réception des travaux ou de l'abandon du chantier",
+    "Photos datées disponibles (oui / non)",
+    "Mises en demeure ou relances déjà adressées (dates)",
+    "Assurance décennale de l'entreprise connue (oui / non)",
+    "Ce que vous souhaitez (achèvement, reprise des malfaçons, remboursement, indemnisation)"
+  ]
+};
+
 function usePill(btn){
   const el = activeInput();
-  el.value = btn.textContent + ' — ';
-  el.focus(); autoGrow(el);
+  const label = btn.textContent.trim();
+  const questions = TRAMES[label];
+
+  if(!questions){
+    clearTrame(el);
+    el.value = label + ' — ';
+    el.focus(); autoGrow(el);
+    return;
+  }
+
+  const entete = label + " — voici ma situation :";
+  const corps = questions.map(q => q + " : ").join("\n");
+  el.value = entete + "\n\n" + corps + "\n\nPrécisions libres : \nPièces en ma possession : ";
+
+  el.classList.add('trame');
+  const aide = $('trameAide');
+  if(aide) aide.classList.add('on');
+
+  el.focus();
+  autoGrow(el);
+  /* Curseur en fin de première question, prêt à la saisie. */
+  const pos = (entete + "\n\n" + questions[0] + " : ").length;
+  try{ el.setSelectionRange(pos, pos); }catch(e){}
+  el.scrollTop = 0;
+  if(window.innerWidth <= 600){
+    setTimeout(()=>{ try{ el.closest('.bar').scrollIntoView({behavior:'smooth', block:'center'}); }catch(e){} }, 60);
+  }
 }
 
 /* ============ Pièces jointes ============ */
@@ -1209,9 +1333,21 @@ async function runRequest(txt, sentFiles, target, paidSession){
 }
 
 /* ============ Envoi ============ */
+/* Une trame partiellement remplie ne doit pas partir avec ses lignes vides :
+   on ne transmet que l'en-tête et les réponses effectivement renseignées. */
+function nettoyerTrame(t){
+  const lignes = t.split('\n');
+  return lignes
+    .filter((l, i) => i === 0 || !/:\s*$/.test(l))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 async function send(){
   const el = activeInput();
-  const txt = el.value.trim();
+  let txt = el.value.trim();
+  if(el.classList.contains('trame')) txt = nettoyerTrame(txt);
   if((!txt && !files.length) || busy) return;
 
   busy = true;
@@ -1221,7 +1357,7 @@ async function send(){
   const sentFiles = files;
   const attNames = sentFiles.length ? sentFiles.map(f=>f.name).join(' · ') : '';
   files = []; renderFiles();
-  el.value = ''; autoGrow(el);
+  el.value = ''; clearTrame(el); autoGrow(el);
 
   enterChat();
   renderUserMsg(txt || 'Documents joints', attNames);
